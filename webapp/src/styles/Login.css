@@ -1,6 +1,66 @@
+@import url('https://fonts.googleapis.com/css2?family=Geologica:wght@100..900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Geologica:wght@100..900&family=Manrope:wght@200..800&display=swap');
+
 * {
     color: #FFFF;
-    background-color: #171717;
     text-align: center;
-    
+    font-family: Manrope, sans-serif;
+}
+
+.logo-container {
+    margin-bottom: 4ch;
+    gap: 1ch;
+    margin-top: 3ch;
+}
+
+.logo {
+    width: 1px;
+    height: 1px;
+}
+
+.login-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background-color:#373737;
+    gap: 1ch;
+    width: 20%;
+    padding: 2ch;
+    margin: auto;
+    border-radius: 35px;
+}
+
+body {
+    background-color: #171717;
+}
+
+h1 {
+    font-family: Geologica, sans-serif;
+}
+
+input {
+    background-color: #4A4A4A;
+    border: none;
+    border-radius: 12px;
+}
+
+a {
+    color: #5468FF;
+}
+
+button {
+    font-family: Geologica, sans-serif;
+    background: #55F6C9;
+    background: linear-gradient(90deg,rgba(85, 246, 201, 1) 50%, rgba(108, 111, 236, 1) 100%);
+    width: 15ch;
+    height: 5ch;
+    color: #171717;
+    border: none;
+    border-radius: 12px;
+}
+
+button:hover {
+    cursor: pointer;
+    filter: brightness(0.9);
 }
