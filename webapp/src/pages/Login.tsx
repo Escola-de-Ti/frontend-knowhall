@@ -1,4 +1,5 @@
 import React from 'react';
+import SlideLogin from '../components/SlideLogin';
 import '../styles/login.css';
 
 const Login = () => {
@@ -15,14 +16,14 @@ const Login = () => {
       <div className="login-container">
         <form action="/login" method="POST">
           <h1>Bem Vindo!</h1>
-
+          <SlideLogin />
           <label htmlFor="username" className='username'>Nome de Usuário | E-mail</label>
           <input type="text" name="username" id="username" placeholder="Usuário" required/>
           
           <label htmlFor="password" className='password'>Senha</label>
           <input type="password" name="password" id="password" placeholder="Senha" required/>
 
-          <a href="/">Esqueci minha Senha.</a>
+          <a href="/recuperar-senha">Esqueci minha Senha.</a>
 
           <input type="submit" className="submit" value="ENTRAR"/>
         </form>
