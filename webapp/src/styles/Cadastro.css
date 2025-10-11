@@ -12,29 +12,20 @@
   --radius: 22px;
 }
 
-html,
-body,
-#root {
-  height: 100%;
-}
-body {
-  background: var(--bg);
-  color: var(--text);
-  font-family: Manrope, system-ui, sans-serif;
-}
+html, body, #root { height: 100%; }
+body { background: var(--bg); color: var(--text); font-family: Manrope, sans-serif; }
 
-.kh {
-  width: 100%;
-}
+.kh { width: 100%; }
 
+/* CARD à esquerda | LOGO à direita */
 .kh-page {
   max-width: 1200px;
   margin: 0 auto;
   padding: 0 20px 48px;
   display: grid;
-  grid-template-columns:420px 1fr;
+  grid-template-columns: 1fr 420px;
   gap: 48px;
-  align-items: start;
+  align-items: center;
 }
 
 .kh-col {
@@ -51,6 +42,7 @@ body {
   align-items: center;
   margin: 22px 0 6px;
 }
+
 .kh-logo-top img {
   height: 68px;
   filter: drop-shadow(0 6px 22px rgba(122, 92, 255, 0.35));
@@ -58,17 +50,19 @@ body {
 
 .kh-card {
   width: 100%;
-  max-width: 480px;
+  max-width: 500px;
   background: var(--card);
   border: 1px solid var(--stroke);
   border-radius: var(--radius);
   padding: 28px;
   text-align: center;
 }
+
+/* glow roxo (Cadastro) */
 .glow {
-    box-shadow:
-    0 0 60px rgba(85, 246, 201, .45),
-    0 0 110px rgba(85, 246, 201, .25);
+  box-shadow:
+    0 0 60px rgba(122, 92, 255, 0.45),
+    0 0 110px rgba(122, 92, 255, 0.25);
 }
 
 .kh-title {
@@ -83,15 +77,24 @@ body {
   gap: 16px;
   text-align: left;
 }
+
+.kh-grid {
+  display: grid;
+  grid-template-columns: minmax(280px, 1fr) minmax(280px, 1fr);
+  gap: 16px;
+}
+
 .kh-field {
   display: flex;
   flex-direction: column;
   gap: 6px;
 }
+
 .kh-field label {
   font-size: 14px;
   color: var(--soft);
 }
+
 .kh-field input {
   width: 100%;
   min-height: 48px;
@@ -102,23 +105,33 @@ body {
   color: var(--text);
   outline: none;
 }
+
 .kh-field input:focus {
   border-color: rgba(108, 111, 236, 0.6);
   box-shadow: 0 0 0 4px rgba(108, 111, 236, 0.15);
 }
 
 .req::after {
-  content: ' *';
+  content: " *";
   color: #ff5a5a;
 }
 
-.forgot {
+.kh-terms {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 14px;
+  color: var(--soft);
+  user-select: none;
+  line-height: 1.2;
+}
+
+.kh-terms a {
   color: #a8a0ff;
-  font-size: 13px;
-  text-align: center;
   text-decoration: none;
 }
-.forgot:hover {
+
+.kh-terms a:hover {
   text-decoration: underline;
 }
 
@@ -138,9 +151,11 @@ body {
     0 10px 30px rgba(108, 111, 236, 0.35),
     0 6px 18px rgba(85, 246, 201, 0.25);
 }
+
 .kh-btn:hover {
   transform: translateY(-1px);
 }
+
 .kh-btn:active {
   transform: translateY(0);
 }
@@ -148,14 +163,17 @@ body {
 .kh-side {
   display: flex;
   justify-content: center;
-  align-items: start;
+  align-items: center;
 }
+
 .kh-side img {
   max-width: 360px;
-  filter: drop-shadow(-18px 18px 0 rgba(0, 0, 0, 0.35))
+  filter:
+    drop-shadow(-18px 18px 0 rgba(0, 0, 0, 0.35))
     drop-shadow(0 0 70px rgba(108, 255, 211, 0.25));
 }
 
+/* Responsividade */
 @media (max-width: 1050px) {
   .kh-page {
     grid-template-columns: 1fr;
@@ -165,7 +183,16 @@ body {
   }
 }
 
-/* integra SlideLogin ao card e ocupa 100% */
+@media (max-width: 720px) {
+  .kh-grid {
+    grid-template-columns: 1fr;
+  }
+  .kh-btn {
+    width: 100%;
+  }
+}
+
+/* SlideLogin dentro do card */
 .kh-card .slide-container {
   width: 100%;
   margin: 0 auto 16px;
