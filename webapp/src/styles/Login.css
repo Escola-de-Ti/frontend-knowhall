@@ -12,7 +12,7 @@
   --radius: 22px;
 }
 
-html, body, #root { height: 100%; }
+html, body, #root { height: 100%; overflow-y: hidden; }
 body { background: var(--bg); color: var(--text); font-family: Manrope, system-ui, sans-serif; }
 
 .kh { width: 100%; }
@@ -98,6 +98,10 @@ body { background: var(--bg); color: var(--text); font-family: Manrope, system-u
 @media (max-width:1050px){
   .kh-page{ grid-template-columns:1fr; }
   .kh-side{ display:none; }
+}
+
+@media (max-height: 760px){
+  html, body{ overflow-y: auto; }
 }
 
 /* ==== SlideLogin dentro do card ==== */
