@@ -2,10 +2,10 @@
 
 :root {
   --bg: #171717;
-  --card: #2e2e31;
+  --card: #373737;
   --muted: #1b1b1f;
-  --text: #f5f6fb;
-  --soft: #b8bac7;
+  --text: #FFFFFF;
+  --soft: #DFDFDF;
   --stroke: rgba(255, 255, 255, 0.08);
   --g1: #55f6c9;
   --g2: #6c6fec;
@@ -32,7 +32,7 @@ body { background: var(--bg); color: var(--text); font-family: Manrope, sans-ser
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 12px;
+  gap: 24px;
 }
 
 .kh-logo-top {
@@ -50,11 +50,14 @@ body { background: var(--bg); color: var(--text); font-family: Manrope, sans-ser
 
 .kh-card {
   width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;      
   max-width: 500px;
   background: var(--card);
-  border: 1px solid var(--stroke);
+  border: 3px solid var(--soft);
   border-radius: var(--radius);
-  padding: 28px;
+  padding: 39px;
   text-align: center;
 }
 
@@ -80,7 +83,7 @@ body { background: var(--bg); color: var(--text); font-family: Manrope, sans-ser
 
 .kh-grid {
   display: grid;
-  grid-template-columns: minmax(280px, 1fr) minmax(280px, 1fr);
+  grid-template-columns: minmax(70px, 1fr) minmax(150px, 1fr);
   gap: 16px;
 }
 
@@ -99,8 +102,8 @@ body { background: var(--bg); color: var(--text); font-family: Manrope, sans-ser
   width: 100%;
   min-height: 48px;
   padding: 14px;
-  border-radius: 12px;
-  background: #3b3b3f;
+  border-radius: 5px;
+  background: #4A4A4A;
   border: 1px solid var(--stroke);
   color: var(--text);
   outline: none;
@@ -113,7 +116,7 @@ body { background: var(--bg); color: var(--text); font-family: Manrope, sans-ser
 
 .req::after {
   content: " *";
-  color: #ff5a5a;
+  color: #FF0000;
 }
 
 .kh-terms {
@@ -127,11 +130,7 @@ body { background: var(--bg); color: var(--text); font-family: Manrope, sans-ser
 }
 
 .kh-terms a {
-  color: #a8a0ff;
-  text-decoration: none;
-}
-
-.kh-terms a:hover {
+  color: #5468FF;
   text-decoration: underline;
 }
 
@@ -141,7 +140,7 @@ body { background: var(--bg); color: var(--text); font-family: Manrope, sans-ser
   border: none;
   border-radius: 14px;
   background: linear-gradient(90deg, var(--g1) 50%, var(--g2) 100%);
-  color: #111;
+  color: #171717;
   font-family: Geologica, sans-serif;
   font-weight: 700;
   letter-spacing: 0.5px;

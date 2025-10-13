@@ -18,17 +18,17 @@ const Cadastro = () => {
             <form action="/register" method="POST" className="kh-form">
               <div className="kh-grid">
                 <div className="kh-field">
-                  <label htmlFor="username" className="req">Nome de Usuário *</label>
+                  <label htmlFor="username" className="req">Nome de Usuário</label>
                   <input type="text" id="username" name="username" placeholder="Usuário" required />
                 </div>
 
                 <div className="kh-field">
-                  <label htmlFor="cpf" className="req">CPF *</label>
+                  <label htmlFor="cpf" className="req">CPF</label>
                   <input type="text" id="cpf" name="cpf" placeholder="000.000.000-00" required />
                 </div>
 
                 <div className="kh-field">
-                  <label htmlFor="email" className="req">E-mail *</label>
+                  <label htmlFor="email" className="req">E-mail</label>
                   <input type="email" id="email" name="email" placeholder="email@exemplo.com" required />
                 </div>
 
@@ -38,12 +38,12 @@ const Cadastro = () => {
                 </div>
 
                 <div className="kh-field">
-                  <label htmlFor="password" className="req">Senha *</label>
+                  <label htmlFor="password" className="req">Senha</label>
                   <input type="password" id="password" name="password" placeholder="Senha" required />
                 </div>
 
                 <div className="kh-field">
-                  <label htmlFor="confirm-password" className="req">Confirmar Senha *</label>
+                  <label htmlFor="confirm-password" className="req">Confirmar Senha</label>
                   <input
                     type="password"
                     id="confirm-password"
