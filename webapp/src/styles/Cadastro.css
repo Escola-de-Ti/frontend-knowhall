@@ -48,11 +48,11 @@ body { background: var(--bg); color: var(--text); font-family: Manrope, sans-ser
 /* ===== card ===== */
 .kh-card {
   width: 100%;
-  max-width: 520px;                 /* leve respiro a mais */
+  max-width: 520px;                
   background: var(--card);
-  border: 3px solid var(--soft);    /* mantém sua cor */
+  border: 3px solid var(--soft);    
   border-radius: var(--radius);
-  padding: 40px 36px;               /* padding consistente */
+  padding: 40px 36px;              
   text-align: center;
 
   display: flex;
@@ -62,7 +62,7 @@ body { background: var(--bg); color: var(--text); font-family: Manrope, sans-ser
 }
 
 /* glow roxo (Cadastro) — mantém sua cor */
-.glow {
+.kh-register .glow {
   box-shadow:
     0 0 60px rgba(122, 92, 255, 0.45),
     0 0 110px rgba(122, 92, 255, 0.25);
@@ -72,17 +72,17 @@ body { background: var(--bg); color: var(--text); font-family: Manrope, sans-ser
 .kh-title {
   font-family: Geologica, sans-serif;
   font-size: 28px;
-  margin: 0;                        /* card já tem gap */
+  margin: 0;                       
 }
 
 /* ===== formulário ===== */
 .kh-form {
   width: 100%;
-  max-width: 860px;                 /* seguro p/ campos largos */
+  max-width: 860px;                
   margin: 0 auto;
   display: flex;
   flex-direction: column;
-  gap: 20px;                        /* bloco a bloco (grid, termos, botão) */
+  gap: 20px;                      
   text-align: left;
 }
 
@@ -90,15 +90,15 @@ body { background: var(--bg); color: var(--text); font-family: Manrope, sans-ser
 .kh-grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(260px, 1fr));
-  column-gap: 20px;                 /* espaço entre colunas */
-  row-gap: 18px;                    /* espaço entre linhas */
+  column-gap: 20px;                
+  row-gap: 18px;               
 }
 
 /* cada campo */
 .kh-field {
   display: flex;
   flex-direction: column;
-  gap: 8px;                         /* label ↔ input */
+  gap: 8px;                  
 }
 
 .kh-field label {
@@ -110,15 +110,15 @@ body { background: var(--bg); color: var(--text); font-family: Manrope, sans-ser
   width: 100%;
   min-height: 48px;
   padding: 14px 16px;
-  border-radius: 8px;               /* levemente mais suave */
-  background: #4A4A4A;              /* mantém sua cor */
+  border-radius: 8px;             
+  background: #4A4A4A;           
   border: 1px solid var(--stroke);
   color: var(--text);
   outline: none;
 }
 
 .kh-field input:focus {
-  border-color: rgba(108, 111, 236, 0.6);     /* mantém seu foco */
+  border-color: rgba(108, 111, 236, 0.6);   
   box-shadow: 0 0 0 4px rgba(108, 111, 236, 0.15);
 }
 
@@ -149,7 +149,7 @@ body { background: var(--bg); color: var(--text); font-family: Manrope, sans-ser
   font-weight: 700;
   letter-spacing: 0.5px;
   cursor: pointer;
-  margin: 8px auto 0;               /* centraliza o botão */
+  margin: 8px auto 0;           
   box-shadow:
     0 10px 30px rgba(108, 111, 236, 0.35),
     0 6px 18px rgba(85, 246, 201, 0.25);

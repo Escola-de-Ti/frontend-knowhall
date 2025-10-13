@@ -4,7 +4,7 @@ import "../styles/cadastro.css";
 
 const Cadastro = () => {
   return (
-    <div className="kh">
+    <div className="kh kh-register">
       <div className="kh-page">
         <div className="kh-col">
           <div className="kh-logo-top">

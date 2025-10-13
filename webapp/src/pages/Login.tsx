@@ -4,7 +4,7 @@ import '../styles/login.css';
 
 const Login: React.FC = () => {
   return (
-    <div className="kh">
+    <div className="kh kh-login">
       <div className="kh-page">
         <div className="kh-side">
           <img src="/logo.svg" alt="Identidade Visual KnowHall" />
