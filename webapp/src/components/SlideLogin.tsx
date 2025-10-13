@@ -1,18 +1,35 @@
 import React from "react";
+import { useLocation, useNavigate } from "react-router-dom";
 import "../styles/SlideLogin.css";
-import { useNavigate } from "react-router-dom";
 
 export default function SlideLogin() {
+  const { pathname } = useLocation();
   const navigate = useNavigate();
 
+  const isLogin = pathname.startsWith("/login");
+  const isRegister = pathname.startsWith("/cadastro");
+
   return (
-    <div className="slide-container">
-      <div className="slide-register" onClick={() => navigate("/cadastro")}>
+    <div className="slide-container" role="tablist" aria-label="Alternar entre Cadastro e Login">
+      <button
+        type="button"
+        role="tab"
+        aria-selected={isRegister}
+        className={`slide-register ${isRegister ? "active" : ""}`}
+        onClick={() => navigate("/cadastro")}
+      >
         Cadastre-se
-      </div>
-      <div className="slide-login" onClick={() => navigate("/login")}>
+      </button>
+
+      <button
+        type="button"
+        role="tab"
+        aria-selected={isLogin}
+        className={`slide-login ${isLogin ? "active" : ""}`}
+        onClick={() => navigate("/login")}
+      >
         Login
-      </div>
+      </button>
     </div>
   );
 }
