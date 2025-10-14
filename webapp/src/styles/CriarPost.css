@@ -30,11 +30,13 @@
     height: 100vh;
     background-color: var(--background);
     font-family: 'Geologica', sans-serif;
+    text-align: left;
 }
 
 .form-section {
     align-items: center;
     display: flex;
+    text-align: left;
     flex-direction: column;
     justify-content: center;
     background-color: var(--card);
@@ -58,20 +60,58 @@ input {
 }
 
 .load-file {
-    border-style: dotted;
-    
+  width: 100%;
+  min-height: 180px;
+  border: 2px dashed var(--soft);
+  border-radius: 16px;
+  background: var(--card);
+  color: var(--soft);
+  display: grid;
+  place-items: center;
+  gap: 14px;
+  cursor: pointer;
+  text-align: center;
+  transition: border-color .2s ease, box-shadow .25s ease, background .2s ease;
+}
+
+.load-file:hover {
+  border-color: rgba(255,255,255,.25);
+  background: #33383a;
+}
+
+.load-file:has(input:focus),
+.load-file:has(input:hover) {
+  border-color: var(--g1);
+  box-shadow: 0 0 40px rgba(85,246,201,.25);
+}
+
+.load-file .load-icon {
+  width: 72px;
+  height: 72px;
+  opacity: .5;
+}
+
+.load-file p {
+  margin: 0;
+  font-size: 16px;
+  color: var(--soft);
+  user-select: none;
 }
 
 .button-post {
+    border: none;
     display: flex;
     justify-content: flex-end;
     gap: 1ch;
     margin-top: 1ch;
     background-color: var(--confirm-button);
     cursor: pointer;
+    box-shadow:0 10px 30px rgba(108,111,236,.35), 0 6px 18px rgba(85,246,201,.25);
+
 }
 
 .button-cancel {
+    border: none;
     background-color: var(--cancel-button);
     color: var(--text-secondary);
     cursor: pointer;
