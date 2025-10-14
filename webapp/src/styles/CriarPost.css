@@ -1,0 +1,78 @@
+@import url('https://fonts.googleapis.com/css2?family=Geologica:wght@100..900&family=Manrope:wght@200..800&display=swap');
+
+:root {
+    --background: #171717;
+    --card: #373737;
+    --text: #FFFFFF;
+    --text-secondary: #656565;
+    --cancel-button: #373737;
+    --confirm-button: #74A1D3;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    h1, h2, h3, h4, h5, h6, span, button {
+        font-family: 'Geologica', sans-serif;
+    }
+
+    p {
+        font-family: 'Manrope', sans-serif;
+    }
+}
+
+.new-post-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    background-color: var(--background);
+    font-family: 'Geologica', sans-serif;
+}
+
+.form-section {
+    align-items: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    background-color: var(--card);
+    border: var(--text) 1px solid;
+    padding: 2ch;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    width: 80ch;
+    max-width: 90%;
+}
+
+input {
+    width: 100%;
+    padding: 1ch;
+    margin-bottom: 1ch;
+    border: 1px solid var(--text-secondary);
+    border-radius: 4px;
+    background-color: var(--card);
+    color: var(--text);
+    font-size: 1rem;
+}
+
+.load-file {
+    border-style: dotted;
+    
+}
+
+.button-post {
+    display: flex;
+    justify-content: flex-end;
+    gap: 1ch;
+    margin-top: 1ch;
+    background-color: var(--confirm-button);
+    cursor: pointer;
+}
+
+.button-cancel {
+    background-color: var(--cancel-button);
+    color: var(--text-secondary);
+    cursor: pointer;
+}
