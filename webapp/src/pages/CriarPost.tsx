@@ -1,5 +1,6 @@
 import React from 'react';
 import '../styles/CriarPost.css';
+import DicasPost from '../components/DicasPosts';
 
 const CriarPost: React.FC = () => {
   return (
@@ -67,6 +68,8 @@ const CriarPost: React.FC = () => {
             </label>
           </div>
         </section>
+
+        <DicasPost />
       </div>
     </div>
   );

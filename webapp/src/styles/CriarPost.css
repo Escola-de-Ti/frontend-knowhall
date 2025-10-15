@@ -40,7 +40,7 @@ h1,h2,h3,button,label{ font-family:Geologica, sans-serif; }
 .button-cancel{
   border:1px solid rgba(255,255,255,.14);
   background:var(--cancel-button);
-  color:var(--text-secondary);
+  color:var(--text);
   padding:10px 16px;
   border-radius:10px;
   cursor:pointer;
@@ -84,7 +84,7 @@ h1,h2,h3,button,label{ font-family:Geologica, sans-serif; }
 .np-field input,
 .np-field textarea{
   width:100%;
-  background:#2f2f33;
+  background:var(--card);
   color:var(--text);
   border:1px solid rgba(255,255,255,.12);
   border-radius:10px;
@@ -115,7 +115,7 @@ h1,h2,h3,button,label{ font-family:Geologica, sans-serif; }
   min-height: 180px;
   border: 2px dashed var(--soft);
   border-radius: 12px;
-  background: #2f2f33;
+  background: var(--card);
   color: var(--soft);
   display:grid;
   place-items:center;
@@ -140,3 +140,7 @@ h1,h2,h3,button,label{ font-family:Geologica, sans-serif; }
 @media (max-width: 1050px){
   .np-grid{ grid-template-columns: 1fr; }
 }
+
+.np-grid { align-items: start; }
+
+.np-aside { align-self: start; }
