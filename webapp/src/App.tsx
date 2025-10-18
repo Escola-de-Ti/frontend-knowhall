@@ -8,11 +8,11 @@ import CriarPost from './pages/CriarPost';
 function App() {
   return (
     <>
-    <Routes>
-      <Route path="/login" element={<Login />} />
-      <Route path="/cadastro" element={<Cadastro />} />
-      <Route path="/criar-post" element={<CriarPost />} />
-    </Routes>
+      <Routes>
+        <Route path="/login" element={<Login />} />
+        <Route path="/cadastro" element={<Cadastro />} />
+        <Route path="/criar-post" element={<CriarPost />} />
+      </Routes>
     </>
   );
 }

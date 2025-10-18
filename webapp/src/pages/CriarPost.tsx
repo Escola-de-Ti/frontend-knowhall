@@ -1,5 +1,6 @@
 import React from 'react';
 import '../styles/CriarPost.css';
+import Recompensas from '../components/Recompensas';
 import DicasPost from '../components/DicasPosts';
 
 const CriarPost: React.FC = () => {
@@ -22,6 +23,8 @@ const CriarPost: React.FC = () => {
       </div>
 
       <div className="np-grid">
+        <Recompensas />
+
         <section className="np-card">
           <h2>Conteúdo do Post</h2>
 
@@ -29,6 +32,7 @@ const CriarPost: React.FC = () => {
             <label htmlFor="title">Título</label>
             <input
               id="title"
+              name="title"
               type="text"
               placeholder="Digite um título chamativo para seu post..."
               maxLength={100}
@@ -40,6 +44,7 @@ const CriarPost: React.FC = () => {
             <label htmlFor="content">Conteúdo</label>
             <textarea
               id="content"
+              name="content"
               placeholder="Compartilhe seu conhecimento, experiência ou dicas..."
               rows={8}
               maxLength={2500}
@@ -58,13 +63,14 @@ const CriarPost: React.FC = () => {
                 strokeLinecap="round"
                 strokeLinejoin="round"
                 className="load-icon"
+                aria-hidden="true"
               >
                 <path d="M21 15v3a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4v-3" />
                 <path d="M7 10l5-5 5 5" />
                 <path d="M12 5v12" />
               </svg>
               <p>Clique para adicionar imagens ou arraste aqui</p>
-              <input type="file" accept="image/*" multiple hidden />
+              <input type="file" name="images" accept="image/*" multiple hidden />
             </label>
           </div>
         </section>

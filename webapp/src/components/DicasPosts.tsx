@@ -1,5 +1,5 @@
-import React from "react";
-import "../styles/DicasPosts.css";
+import React from 'react';
+import '../styles/DicasPosts.css';
 
 export default function DicasPost() {
   return (

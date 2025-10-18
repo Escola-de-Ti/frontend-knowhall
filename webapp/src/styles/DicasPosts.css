@@ -43,8 +43,18 @@
 }
 
 /* Cores oficiais KnowHall */
-.tip-green > span  { background: #55F6C9; }
-.tip-pink  > span  { background: #F985CD; }
-.tip-purple> span  { background: #8476D9; }
-.tip-blue  > span  { background: #5468FF; }
-.tip-red   > span  { background: #F08E90; }
+.tip-green > span {
+  background: #55f6c9;
+}
+.tip-pink > span {
+  background: #f985cd;
+}
+.tip-purple > span {
+  background: #8476d9;
+}
+.tip-blue > span {
+  background: #5468ff;
+}
+.tip-red > span {
+  background: #f08e90;
+}

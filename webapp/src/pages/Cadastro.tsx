@@ -1,6 +1,6 @@
-import React from "react";
-import SlideLogin from "../components/SlideLogin";
-import "../styles/cadastro.css";
+import React from 'react';
+import SlideLogin from '../components/SlideLogin';
+import '../styles/cadastro.css';
 
 const Cadastro = () => {
   return (
@@ -18,18 +18,30 @@ const Cadastro = () => {
             <form action="/register" method="POST" className="kh-form">
               <div className="kh-grid">
                 <div className="kh-field">
-                  <label htmlFor="username" className="req">Nome de Usuário</label>
+                  <label htmlFor="username" className="req">
+                    Nome de Usuário
+                  </label>
                   <input type="text" id="username" name="username" placeholder="Usuário" required />
                 </div>
 
                 <div className="kh-field">
-                  <label htmlFor="cpf" className="req">CPF</label>
+                  <label htmlFor="cpf" className="req">
+                    CPF
+                  </label>
                   <input type="text" id="cpf" name="cpf" placeholder="000.000.000-00" required />
                 </div>
 
                 <div className="kh-field">
-                  <label htmlFor="email" className="req">E-mail</label>
-                  <input type="email" id="email" name="email" placeholder="email@exemplo.com" required />
+                  <label htmlFor="email" className="req">
+                    E-mail
+                  </label>
+                  <input
+                    type="email"
+                    id="email"
+                    name="email"
+                    placeholder="email@exemplo.com"
+                    required
+                  />
                 </div>
 
                 <div className="kh-field">
@@ -38,12 +50,22 @@ const Cadastro = () => {
                 </div>
 
                 <div className="kh-field">
-                  <label htmlFor="password" className="req">Senha</label>
-                  <input type="password" id="password" name="password" placeholder="Senha" required />
+                  <label htmlFor="password" className="req">
+                    Senha
+                  </label>
+                  <input
+                    type="password"
+                    id="password"
+                    name="password"
+                    placeholder="Senha"
+                    required
+                  />
                 </div>
 
                 <div className="kh-field">
-                  <label htmlFor="confirm-password" className="req">Confirmar Senha</label>
+                  <label htmlFor="confirm-password" className="req">
+                    Confirmar Senha
+                  </label>
                   <input
                     type="password"
                     id="confirm-password"
@@ -59,7 +81,9 @@ const Cadastro = () => {
                 Li e estou de Acordo com os <a href="#">Termos de privacidade</a>
               </label>
 
-              <button type="submit" className="kh-btn">CADASTRAR</button>
+              <button type="submit" className="kh-btn">
+                CADASTRAR
+              </button>
             </form>
           </div>
         </div>
