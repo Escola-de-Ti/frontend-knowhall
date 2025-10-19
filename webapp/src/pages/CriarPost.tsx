@@ -2,6 +2,7 @@ import React from 'react';
 import '../styles/CriarPost.css';
 import Recompensas from '../components/Recompensas';
 import DicasPost from '../components/DicasPosts';
+import TagsSection from '../components/Tags';
 
 const CriarPost: React.FC = () => {
   return (
@@ -76,6 +77,7 @@ const CriarPost: React.FC = () => {
         </section>
 
         <DicasPost />
+        <TagsSection />
       </div>
     </div>
   );
