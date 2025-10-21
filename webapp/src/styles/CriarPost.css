@@ -1,0 +1,296 @@
+@import url('https://fonts.googleapis.com/css2?family=Geologica:wght@100..900&family=Manrope:wght@200..800&family=Press+Start+2P&display=swap');
+
+:root {
+  --background: #171717;
+  --card: #373737;
+  --text: #ffffff;
+  --text-secondary: #656565;
+  --cancel-button: #373737;
+  --confirm-button: #74a1d3;
+  --soft: #b8bac7;
+  --g1: #55f6c9;
+  --g2: #6c6fec;
+  --radius: 14px;
+  --kh-green: #55f6c9;
+  --kh-pink: #f985cd;
+  --kh-purple: #8476d9;
+  --kh-blue: #5468ff;
+  --kh-red: #f08e90;
+}
+
+/* reset básico */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+body {
+  background: var(--background);
+  color: var(--text);
+  font-family: Manrope, sans-serif;
+}
+h1,
+h2,
+h3,
+button,
+label {
+  font-family: Geologica, sans-serif;
+}
+
+/* ===== container e header ===== */
+.new-post-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 24px 20px 48px;
+}
+
+.np-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 18px;
+}
+.np-head-text h1 {
+  font-size: 28px;
+}
+.np-head-text p {
+  color: var(--text-secondary);
+  margin-top: 6px;
+}
+
+/* ações (botões) */
+.np-actions {
+  display: flex;
+  gap: 12px;
+}
+.button-cancel {
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  background: var(--cancel-button);
+  color: var(--text);
+  padding: 10px 16px;
+  border-radius: 10px;
+  cursor: pointer;
+}
+.button-post {
+  border: 0;
+  color: #0f0f10;
+  padding: 10px 18px;
+  border-radius: 10px;
+  cursor: pointer;
+  background: linear-gradient(90deg, var(--g1) 50%, var(--g2) 100%);
+  box-shadow:
+    0 8px 24px rgba(108, 111, 236, 0.28),
+    0 4px 14px rgba(85, 246, 201, 0.22);
+  font-weight: 700;
+}
+.button-cancel:hover {
+  filter: brightness(1.05);
+}
+.button-post:hover {
+  filter: brightness(1.08);
+}
+
+/* ===== grid principal ===== */
+.np-grid {
+  display: grid;
+  grid-template-columns: 300px 1fr 340px;
+  gap: 24px;
+  align-items: start;
+}
+
+/* card do formulário */
+.np-card {
+  background: var(--card);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
+  padding: 22px 22px 24px;
+}
+.np-card h2 {
+  font-size: 20px;
+  margin-bottom: 16px;
+}
+
+/* campos */
+.np-field {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+.np-field label {
+  color: #e8e8e8;
+  font-size: 14px;
+}
+
+.np-field input,
+.np-field textarea {
+  width: 100%;
+  background: var(--card);
+  color: var(--text);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 10px;
+  outline: none;
+  padding: 12px 14px;
+  font-size: 15px;
+}
+.np-field textarea {
+  resize: vertical;
+  min-height: 160px;
+}
+
+.np-field input::placeholder,
+.np-field textarea::placeholder {
+  color: #8a8f99;
+}
+
+.np-field input:focus,
+.np-field textarea:focus {
+  border-color: rgba(108, 111, 236, 0.6);
+  box-shadow: 0 0 0 4px rgba(108, 111, 236, 0.15);
+}
+
+/* contador */
+.np-counter {
+  color: var(--text-secondary);
+  font-size: 12px;
+}
+
+/* ===== dropzone (label) ===== */
+.load-file {
+  width: 100%;
+  min-height: 180px;
+  border: 2px dashed var(--soft);
+  border-radius: 12px;
+  background: var(--card);
+  color: var(--soft);
+  display: grid;
+  place-items: center;
+  gap: 14px;
+  cursor: pointer;
+  text-align: center;
+  transition:
+    border-color 0.2s,
+    box-shadow 0.25s,
+    background 0.2s;
+}
+.load-file:hover {
+  border-color: rgba(255, 255, 255, 0.25);
+  background: #33383a;
+}
+.load-file:has(input:focus),
+.load-file:has(input:hover) {
+  border-color: var(--g1);
+  box-shadow: 0 0 40px rgba(85, 246, 201, 0.22);
+}
+.load-icon {
+  width: 72px;
+  height: 72px;
+  opacity: 0.52;
+}
+.load-file p {
+  margin: 0;
+  font-size: 15px;
+  color: var(--soft);
+  user-select: none;
+}
+
+/* ===== responsivo ===== */
+@media (max-width: 1050px) {
+  .np-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.np-grid {
+  align-items: start;
+}
+
+.np-aside {
+  align-self: start;
+}
+
+/* Coluna de recompensas (esquerda) */
+.rewards-stack {
+  display: grid;
+  gap: 24px;
+  align-self: start;
+}
+
+/* Card com borda gradiente vertical (verde → rosa) */
+.rewards-card {
+  background: var(--card);
+  border: 2px solid transparent;
+  border-radius: 18px;
+  padding: 18px 22px 20px;
+  background-image:
+    linear-gradient(var(--card), var(--card)),
+    linear-gradient(180deg, var(--kh-green), var(--kh-pink));
+  background-origin: padding-box, border-box;
+  background-clip: padding-box, border-box;
+  box-shadow:
+    0 0 0 1px rgba(255, 255, 255, 0.06) inset,
+    0 10px 30px rgba(85, 246, 201, 0.08),
+    0 -10px 30px rgba(249, 133, 205, 0.08);
+}
+
+/* Título 8-bit com “sombra pixel” */
+.rewards-title {
+  font-family: 'Press Start 2P', system-ui, monospace;
+  font-size: 20px;
+  line-height: 1.25;
+  color: #f5f6fb;
+  margin: 4px 0 14px;
+  text-shadow:
+    0 2px 0 rgba(0, 0, 0, 0.35),
+    2px 0 0 rgba(0, 0, 0, 0.35),
+    2px 2px 0 rgba(0, 0, 0, 0.35),
+    4px 4px 0 rgba(0, 0, 0, 0.25);
+}
+
+/* Linhas */
+.rewards-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 18px;
+}
+.rewards-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+}
+.rewards-label {
+  color: var(--text);
+  font-size: 18px;
+}
+.rewards-value {
+  font-weight: 800;
+  font-size: 18px;
+  letter-spacing: 0.2px;
+}
+.rewards-value.green {
+  color: var(--kh-green);
+}
+.rewards-value.pink {
+  color: var(--kh-pink);
+}
+.rewards-value.blue {
+  color: var(--kh-blue);
+}
+/* extras se precisar
+.rewards-value.purple{ color:var(--kh-purple); }
+.rewards-value.red   { color:var(--kh-red); }
+*/
+
+@media (max-width: 900px) {
+  .rewards-title {
+    font-size: 16px;
+  }
+  .rewards-label,
+  .rewards-value {
+    font-size: 16px;
+  }
+}

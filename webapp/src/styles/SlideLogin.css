@@ -1,47 +1,69 @@
+/* container pílula */
 .slide-container {
-    width: 100%;
-    height: 5ch;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 2ch;
-    background-color: #171717;
-    border: none;
-    border-radius: 12px;
+  width: 100%;
+  height: 46px;
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  padding: 6px;
+  margin-bottom: 24px;
+  background: #171717;
+  border-radius: 9999px;
+  border: none;
+  box-shadow: 0 0 15px rgba(122, 92, 255, 0.2);
 }
 
+/* botões base */
+.slide-register,
 .slide-login {
-    width: 50%;
-    height: 100%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    color: #FFFFFF;
-    font-family: Geologica, sans-serif;
-    font-size: 15px;
-    background-color: #373737;
-    border-top-left-radius: 12px;
-    border-bottom-left-radius: 12px;
+  flex: 1;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: #fff;
+  font-family: Geologica, sans-serif;
+  font-size: 15px;
+  background: #373737;
+  border: none;
+  border-radius: 9999px;
+  transition: 0.2s;
+  user-select: none;
+  cursor: pointer;
 }
 
-.slide-register {
-    width: 50%;
-    height: 100%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    color: #FFFFFF;
-    font-family: Geologica, sans-serif;
-    font-size: 15px;
-    background-color: #373737;
-    border-top-right-radius: 12px;
-    border-bottom-right-radius: 12px;
+/* estado ativo (mesmo degradê do projeto) */
+.slide-register.active,
+.slide-login.active {
+  background: linear-gradient(135deg, #6cffd3, #7a5cff);
+  color: #111;
 }
 
-.slide-register:hover{
-    cursor: pointer;
+/* glow por página (evita conflito entre telas) */
+.kh-login .slide-login.active {
+  /* verde no LOGIN */
+  box-shadow:
+    0 0 0 2px rgba(0, 0, 0, 0.35) inset,
+    0 0 18px rgba(85, 246, 201, 0.35),
+    0 0 36px rgba(85, 246, 201, 0.22);
+}
+.kh-register .slide-register.active {
+  /* roxo no CADASTRO */
+  box-shadow:
+    0 0 0 2px rgba(0, 0, 0, 0.35) inset,
+    0 0 18px rgba(122, 92, 255, 0.35),
+    0 0 36px rgba(122, 92, 255, 0.22);
 }
 
-.slide-login:hover{
-    cursor: pointer;
+/* integração com o card */
+.kh-card .slide-container {
+  width: 100%;
+  margin: 0 auto 24px;
+}
+
+/* acessibilidade/foco */
+.slide-register:focus-visible,
+.slide-login:focus-visible {
+  outline: 2px solid rgba(108, 111, 236, 0.6);
+  outline-offset: 2px;
 }
