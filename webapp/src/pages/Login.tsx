@@ -1,6 +1,6 @@
 import React from 'react';
 import SlideLogin from '../components/SlideLogin';
-import '../styles/login.css';
+import '../styles/Login.css';
 
 const Login: React.FC = () => {
   return (
