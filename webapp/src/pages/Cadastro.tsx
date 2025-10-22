@@ -1,6 +1,6 @@
 import React from 'react';
 import SlideLogin from '../components/SlideLogin';
-import '../styles/cadastro.css';
+import '../styles/Cadastro.css';
 
 const Cadastro = () => {
   return (
