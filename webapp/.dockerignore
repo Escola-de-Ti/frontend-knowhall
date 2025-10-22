@@ -4,4 +4,6 @@ dist
 .gitignore
 Dockerfile
 docker-compose.yml
-docker-compose.dev.yml
+npm-debug.log
+yarn-error.log
+.vscode
