@@ -1,0 +1,60 @@
+.np-aside {
+  background: var(--card);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
+  padding: 18px 16px;
+  color: var(--text);
+  position: sticky;
+  top: 24px;
+}
+
+.np-aside h3 {
+  font-size: 16px;
+  margin-bottom: 12px;
+}
+
+.np-tips {
+  list-style: none;
+  display: grid;
+  gap: 10px;
+  margin: 0;
+  padding: 0;
+}
+
+.tip {
+  display: grid;
+  grid-template-columns: 14px 1fr;
+  align-items: start;
+  gap: 10px;
+  color: var(--text);
+  font-size: 14px;
+  line-height: 1.4;
+}
+
+.tip > span {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  margin-top: 6px;
+  box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.04);
+}
+
+.tip-green > span {
+  background: #55f6c9;
+}
+
+.tip-pink > span {
+  background: #f985cd;
+}
+
+.tip-purple > span {
+  background: #8476d9;
+}
+
+.tip-blue > span {
+  background: #5468ff;
+}
+
+.tip-red > span {
+  background: #f08e90;
+}
