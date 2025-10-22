@@ -1,1 +1,8 @@
-npm test
+#!/usr/bin/env sh
+. "$(dirname "$0")/_/husky.sh"
+
+# formata e linta só o que mudou
+npx lint-staged
+
+# checagem de tipos (opcional; pode deixar em CI)
+# npm run typecheck
