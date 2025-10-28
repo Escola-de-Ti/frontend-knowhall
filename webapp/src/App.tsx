@@ -1,9 +1,9 @@
 import React from 'react';
-import logo from './logo.svg';
 import Login from './pages/Login';
 import Cadastro from './pages/Cadastro';
 import { Routes, Route } from 'react-router-dom';
 import CriarPost from './pages/CriarPost';
+import Perfil from './pages/Perfil';
 
 function App() {
   return (
@@ -12,6 +12,8 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/cadastro" element={<Cadastro />} />
         <Route path="/criar-post" element={<CriarPost />} />
+        <Route path="/perfil" element={<Perfil />} />
+        <Route path="*" element={<div>Página não encontrada</div>} />
       </Routes>
     </>
   );
