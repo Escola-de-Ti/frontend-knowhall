@@ -1,0 +1,13 @@
+:root {
+    --background-color: #171717;
+}
+
+.perfil-page-container {
+    background-color: var(--background-color);
+    min-height: 100vh;
+    padding: 40px;
+    box-sizing: border-box;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}

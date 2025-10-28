@@ -1,0 +1,109 @@
+@import url('https://fonts.googleapis.com/css2?family=Geologica:wght@100..900&family=Manrope:wght@200..800&display=swap');
+
+:root {
+  --background: #373737;
+  --text-color: #ffffff;
+  --background-border: #656565;
+  --interest: #8476D9;
+  --button-fade-green: #55F5C9;
+  --button-fade-purple: #8478D9;
+}
+
+.perfil-details-container{
+  background: var(--background);
+  border: 2px solid var(--background-border);
+  border-radius: 20px;
+  padding: 28px;
+  color: var(--text-color);
+  display: grid;
+  gap: 20px;
+  font-family: Manrope, system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+}
+
+.perfil-head{
+  display: grid;
+  justify-items: center;
+  gap: 10px;
+  text-align: center;
+}
+
+.perfil-avatar{
+  width: 120px;
+  height: 120px;
+  border-radius: 999px;
+  background: radial-gradient(100% 100% at 30% 20%, #ffb7c8 0%, #f48fb1 45%, #e57373 100%);
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  border: 2px solid rgba(255,255,255,.15);
+}
+.perfil-avatar img{
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.perfil-avatar span{
+  font-family: Geologica, Manrope, sans-serif;
+  font-weight: 800;
+  font-size: 42px;
+  color: #171717;
+}
+
+.perfil-name{
+  font-family: Geologica, Manrope, sans-serif;
+  font-size: 24px;
+  font-weight: 800;
+  margin: 0;
+  color: var(--text-color);
+}
+.perfil-email{
+  font-size: 14px;
+  color: var(--text-color);
+}
+
+.perfil-bio{
+  margin: 6px 0 0;
+  line-height: 1.6;
+  color: var(--text-color);
+  font-size: 15px;
+}
+
+.perfil-actions{
+  margin-top: 4px;
+}
+.perfil-edit-btn{
+  border: 0;
+  padding: 10px 16px;
+  border-radius: 12px;
+  background: linear-gradient(90deg, var(--button-fade-green), var(--button-fade-purple));
+  color: #111;
+  font-weight: 800;
+  font-family: Geologica, Manrope, sans-serif;
+  cursor: pointer;
+  box-shadow: 0 6px 22px rgba(132,120,217,.25), 0 3px 10px rgba(85,245,201,.18);
+}
+.perfil-edit-btn:hover{ transform: translateY(-1px); }
+.perfil-edit-btn:active{ transform: translateY(0); }
+
+.perfil-interests h3{
+  margin: 10px 0 8px;
+  font-weight: 800;
+  font-size: 18px;
+  color: var(--text-color);
+  font-family: Geologica, Manrope, sans-serif;
+}
+.perfil-tags{
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+.perfil-tag{
+  padding: 8px 12px;
+  border-radius: 999px;
+  background: transparent;
+  color: var(--interest);
+  border: 1.5px solid var(--interest);
+  font-size: 14px;
+  cursor: pointer;
+}
+.perfil-tag:hover{ background: rgba(132,118,217,.12); }
