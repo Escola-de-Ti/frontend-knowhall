@@ -1,0 +1,9 @@
+@import url('https://fonts.googleapis.com/css2?family=Geologica:wght@100..900&family=Manrope:wght@200..800&display=swap');
+
+:root {
+    --background-color: #373737;
+    --background-border-color: #545454;
+    --text-color: #FFFFFF;
+    --achivement-background: #38403D;
+    --achivement-border-color: #4AAE92;
+}
