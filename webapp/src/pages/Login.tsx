@@ -1,20 +1,29 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import SlideLogin from '../components/SlideLogin';
 import '../styles/Login.css';
-import { useAuth } from '../hooks/useAuth';
-import { useNavigate } from 'react-router-dom';
 
 const Login: React.FC = () => {
-  const [usernameOrEmail, setUE] = useState('');
-  const [password, setPassword] = useState('');
-  const { signIn, loading } = useAuth();
   const nav = useNavigate();
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
+  const hasBasic = !!import.meta.env.VITE_API_USER;
 
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
-    const ok = await signIn(usernameOrEmail, password);
-    if (ok) nav('/perfil');
-    else alert('Falha no login');
+    try {
+      if (hasBasic) {
+        localStorage.setItem('kh_token', 'dev-basic');
+      } else {
+        // JWT real
+        // chame seu service de login aqui:
+        // await login(usernameOUemail, password)
+      }
+      nav('/perfil');
+    } catch (err: any) {
+      console.error('Erro no login:', err?.response || err?.message || err);
+      alert('Falha no login: ' + (err?.response?.data?.message || 'verifique o console'));
+    }
   }
 
   return (
@@ -32,21 +41,41 @@ const Login: React.FC = () => {
           <div className="kh-card glow">
             <h1 className="kh-title">Bem Vindo!</h1>
             <SlideLogin />
-            <form className="kh-form" onSubmit={onSubmit}>
+            <form onSubmit={onSubmit} className="kh-form">
               <div className="kh-field">
-                <label htmlFor="username" className="req">Nome de Usuário | E-mail</label>
-                <input id="username" value={usernameOrEmail} onChange={e=>setUE(e.target.value)} placeholder="Usuário" required />
+                <label htmlFor="username" className="req">
+                  Nome de Usuário | E-mail
+                </label>
+                <input
+                  type="text"
+                  id="username"
+                  placeholder="Usuário"
+                  required
+                  value={username}
+                  onChange={(e) => setUsername(e.target.value)}
+                />
               </div>
 
               <div className="kh-field">
-                <label htmlFor="password" className="req">Senha</label>
-                <input id="password" type="password" value={password} onChange={e=>setPassword(e.target.value)} placeholder="Senha" required />
+                <label htmlFor="password" className="req">
+                  Senha
+                </label>
+                <input
+                  type="password"
+                  id="password"
+                  placeholder="Senha"
+                  required
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                />
               </div>
 
-              <a href="/recuperar-senha" className="forgot">Esqueci minha Senha.</a>
+              <a href="/recuperar-senha" className="forgot">
+                Esqueci minha Senha.
+              </a>
 
-              <button type="submit" className="kh-btn" disabled={loading}>
-                {loading ? 'Entrando...' : 'ENTRAR'}
+              <button type="submit" className="kh-btn">
+                ENTRAR
               </button>
             </form>
           </div>
