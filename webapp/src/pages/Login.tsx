@@ -1,28 +1,30 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import SlideLogin from '../components/SlideLogin';
-import '../styles/Login.css';
+import React, { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
+import SlideLogin from '../components/SlideLogin'
+import '../styles/Login.css'
+import { login } from '../services/auth.service' // <--- ADICIONE ESTA LINHA
 
 const Login: React.FC = () => {
-  const nav = useNavigate();
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
-  const hasBasic = !!import.meta.env.VITE_API_USER;
+  const nav = useNavigate()
+  const [username, setUsername] = useState('')
+  const [password, setPassword] = useState('')
+  const hasBasic = !!import.meta.env.VITE_API_USER
 
   async function onSubmit(e: React.FormEvent) {
-    e.preventDefault();
+    e.preventDefault()
     try {
       if (hasBasic) {
-        localStorage.setItem('kh_token', 'dev-basic');
+        // modo desenvolvimento (sem JWT)
+        localStorage.setItem('kh_token', 'dev-basic')
       } else {
-        // JWT real
-        // chame seu service de login aqui:
-        // await login(usernameOUemail, password)
+        // modo produção (com JWT real)
+        await login(username, password)
       }
-      nav('/perfil');
+
+      nav('/perfil')
     } catch (err: any) {
-      console.error('Erro no login:', err?.response || err?.message || err);
-      alert('Falha no login: ' + (err?.response?.data?.message || 'verifique o console'));
+      console.error('Erro no login:', err?.response || err?.message || err)
+      alert('Falha no login: ' + (err?.response?.data?.message || 'verifique o console'))
     }
   }
 
@@ -82,7 +84,7 @@ const Login: React.FC = () => {
         </div>
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default Login;
+export default Login
