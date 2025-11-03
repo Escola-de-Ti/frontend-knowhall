@@ -1,20 +1,40 @@
-version: "3.9"
 services:
-  web-dev:
-    image: node:20-alpine
-    working_dir: /app
-    command: sh -c "npm ci && npm run dev -- --host 0.0.0.0"
-    ports:
-      - "5173:5173"
-    volumes:
-      - .:/app
-      - /app/node_modules
+  db:
+    image: postgres:16
+    container_name: kh-postgres
     environment:
-      - VITE_API_URL=http://localhost:3333
-
-  web-prod:
-    build:
-      context: .
-      dockerfile: Dockerfile
+      POSTGRES_DB: knowhall
+      POSTGRES_USER: khuser
+      POSTGRES_PASSWORD: khpass
     ports:
-      - "8080:80"
+      - "5432:5432"
+    volumes:
+      - kh_pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U khuser -d knowhall"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+
+  api:
+    image: ghcr.io/escola-de-ti/api-know-hall:sha-410dec0
+    container_name: api-knowhall
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/knowhall
+      SPRING_DATASOURCE_USERNAME: khuser
+      SPRING_DATASOURCE_PASSWORD: khpass
+      SERVER_PORT: 8080
+
+      SUPABASE_URL: https://ngcpneleayfvgbikdjcf.supabase.co
+      SUPABASE_TOKEN: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5nY3BuZWxlYXlmdmdiaWtkamNmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTg4MDAzNTAsImV4cCI6MjA3NDM3NjM1MH0._N1Z7zq5rq5zuzNG_O-C3xnr2azv4Fus9zWCCkFR5J0
+      SUPABASE_BUCKET: files
+
+      # (opcional) desativar liquibase se precisar
+      # SPRING_LIQUIBASE_ENABLED: "false"
+    ports:
+      - "8080:8080"
+volumes:
+  kh_pgdata:
