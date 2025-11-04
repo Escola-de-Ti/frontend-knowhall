@@ -1,27 +1,29 @@
-import React, { useState } from 'react'
-import '../styles/Perfil.css'
-import PerfilDetalhes from '../components/perfil/PerfilDetalhes'
-import PerfilHistorico from '../components/perfil/PerfilHistorico'
-import PerfilSlide from '../components/perfil/PerfilSlide'
+import React, { useState } from 'react';
+import '../styles/Perfil.css';
+import PerfilDetalhes from '../components/perfil/PerfilDetalhes';
+import PerfilHistorico from '../components/perfil/PerfilHistorico';
+import PerfilSlide from '../components/perfil/PerfilSlide';
+import PerfilConquistas from '../components/perfil/PerfilConquistas';
 
 const Perfil: React.FC = () => {
-  const [aba, setAba] = useState('Conquistas')
+  const [aba, setAba] = useState('Conquistas');
+  const idUsuario = 1;
 
   return (
     <div className="perfil-page-container">
       <div className="perfil-wrap">
         <div className="perfil-grid">
           <PerfilDetalhes
-            id_usuario={1}
+            id_usuario={idUsuario}
             email="kauan.hb2004@gmail.com"
             nome="Kauan Henrique Bertalha"
             biografia="Desenvolvedor Full Stack com 8 anos de experiência..."
             id_imagem_perfil=""
             status_usuario="ATIVO"
             tipo_usuario="PADRAO"
-            interesses={['MySQL','JavaScript']}
-            onEditar={()=>{}}
-            onInteresseClick={()=>{}}
+            interesses={['MySQL', 'JavaScript']}
+            onEditar={() => {}}
+            onInteresseClick={() => {}}
           />
 
           <PerfilHistorico
@@ -40,13 +42,18 @@ const Perfil: React.FC = () => {
         </div>
 
         <PerfilSlide
-          tabs={['Conquistas','Atividades','Certificados','Estatísticas']}
+          tabs={['Conquistas', 'Atividades', 'Certificados', 'Estatísticas']}
           value={aba}
           onChange={setAba}
         />
+
+        {aba === 'Conquistas' && <PerfilConquistas />}
+        {aba === 'Atividades' && <div style={{ height: 160 }} />}
+        {aba === 'Certificados' && <div style={{ height: 160 }} />}
+        {aba === 'Estatísticas' && <div style={{ height: 160 }} />}
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default Perfil
+export default Perfil;
