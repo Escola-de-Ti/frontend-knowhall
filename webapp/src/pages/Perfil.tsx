@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import '../styles/Perfil.css';
 import PerfilDetalhes from '../components/perfil/PerfilDetalhes';
+import PerfilAtividades from '../components/perfil/PerfilAtividades';
 import PerfilHistorico from '../components/perfil/PerfilHistorico';
 import PerfilSlide from '../components/perfil/PerfilSlide';
 import PerfilConquistas from '../components/perfil/PerfilConquistas';
@@ -48,7 +49,7 @@ const Perfil: React.FC = () => {
         />
 
         {aba === 'Conquistas' && <PerfilConquistas />}
-        {aba === 'Atividades' && <div style={{ height: 160 }} />}
+        {aba === 'Atividades' && <PerfilAtividades />}
         {aba === 'Certificados' && <div style={{ height: 160 }} />}
         {aba === 'Estatísticas' && <div style={{ height: 160 }} />}
       </div>
