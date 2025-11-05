@@ -10,10 +10,13 @@ export default function FeedActions({ onCriarPost, onFiltros }: Props) {
   return (
     <div className="feed-actions">
       <button className="btn-primary" onClick={onCriarPost}>
-        + Criar Post
+        <span className="ico-plus" aria-hidden />
+        <span className="label">Criar Post</span>
       </button>
+
       <button className="btn-ghost" onClick={onFiltros}>
-        ⚙️ Filtros
+        <span className="ico-filter" aria-hidden />
+        <span className="label label-gradient">Filtros</span>
       </button>
     </div>
   );
