@@ -1,0 +1,28 @@
+.feed-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.btn-primary {
+  padding: 10px 16px;
+  border-radius: 12px;
+  background: linear-gradient(90deg, #55f5c9, #8478d9);
+  color: #111;
+  font-weight: 900;
+  border: 0;
+  cursor: pointer;
+  box-shadow:
+    0 6px 22px rgba(132, 120, 217, 0.25),
+    0 3px 10px rgba(85, 245, 201, 0.18);
+}
+
+.btn-ghost {
+  padding: 10px 16px;
+  border-radius: 12px;
+  background: #222;
+  color: #fff;
+  cursor: pointer;
+  border: 1.5px solid #404040;
+  font-weight: 800;
+}

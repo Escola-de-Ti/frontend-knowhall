@@ -1,35 +1,35 @@
-import React, { useState } from 'react'
-import SlideLogin from '../components/SlideLogin'
-import '../styles/Cadastro.css'
-import { useNavigate } from 'react-router-dom'
-import { criarUsuario } from '../services/usuario.service'
+import React, { useState } from 'react';
+import SlideLogin from '../components/SlideLogin';
+import '../styles/Cadastro.css';
+import { useNavigate } from 'react-router-dom';
+import { criarUsuario } from '../services/usuario.service';
 
 const Cadastro = () => {
-  const nav = useNavigate()
+  const nav = useNavigate();
   const [form, setForm] = useState({
     username: '',
     cpf: '',
     email: '',
     phone: '',
     password: '',
-    confirm: ''
-  })
-  const [loading, setLoading] = useState(false)
+    confirm: '',
+  });
+  const [loading, setLoading] = useState(false);
 
   function onChange(e: React.ChangeEvent<HTMLInputElement>) {
-    setForm({ ...form, [e.target.name]: e.target.value })
+    setForm({ ...form, [e.target.name]: e.target.value });
   }
 
   function onlyDigits(v: string) {
-    return (v || '').replace(/\D+/g, '')
+    return (v || '').replace(/\D+/g, '');
   }
 
   async function onSubmit(e: React.FormEvent) {
-    e.preventDefault()
+    e.preventDefault();
 
     if (form.password !== form.confirm) {
-      alert('Senhas não conferem')
-      return
+      alert('Senhas não conferem');
+      return;
     }
 
     const payload = {
@@ -38,25 +38,25 @@ const Cadastro = () => {
       senha: form.password,
       cpf: form.cpf ? onlyDigits(form.cpf) : undefined,
       telefone: form.phone ? onlyDigits(form.phone) : undefined,
-      tipoUsuario: 'ALUNO'
-    }
+      tipoUsuario: 'ALUNO',
+    };
 
-    setLoading(true)
+    setLoading(true);
     try {
-      await criarUsuario(payload as any)
-      alert('Conta criada com sucesso! Faça login.')
-      nav('/login')
+      await criarUsuario(payload as any);
+      alert('Conta criada com sucesso! Faça login.');
+      nav('/login');
     } catch (err: any) {
       const msg =
         err?.response?.data?.message ||
         err?.response?.data?.error ||
         (typeof err?.response?.data === 'string' ? err.response.data : '') ||
         err?.message ||
-        'Erro ao criar conta'
-      console.error('Erro no cadastro:', { payload, err: err?.response || err })
-      alert(msg)
+        'Erro ao criar conta';
+      console.error('Erro no cadastro:', { payload, err: err?.response || err });
+      alert(msg);
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
   }
 
@@ -75,18 +75,37 @@ const Cadastro = () => {
             <form onSubmit={onSubmit} className="kh-form">
               <div className="kh-grid">
                 <div className="kh-field">
-                  <label htmlFor="username" className="req">Nome de Usuário</label>
-                  <input id="username" name="username" required value={form.username} onChange={onChange} />
+                  <label htmlFor="username" className="req">
+                    Nome de Usuário
+                  </label>
+                  <input
+                    id="username"
+                    name="username"
+                    required
+                    value={form.username}
+                    onChange={onChange}
+                  />
                 </div>
 
                 <div className="kh-field">
-                  <label htmlFor="cpf" className="req">CPF</label>
+                  <label htmlFor="cpf" className="req">
+                    CPF
+                  </label>
                   <input id="cpf" name="cpf" required value={form.cpf} onChange={onChange} />
                 </div>
 
                 <div className="kh-field">
-                  <label htmlFor="email" className="req">E-mail</label>
-                  <input id="email" name="email" type="email" required value={form.email} onChange={onChange} />
+                  <label htmlFor="email" className="req">
+                    E-mail
+                  </label>
+                  <input
+                    id="email"
+                    name="email"
+                    type="email"
+                    required
+                    value={form.email}
+                    onChange={onChange}
+                  />
                 </div>
 
                 <div className="kh-field">
@@ -95,13 +114,31 @@ const Cadastro = () => {
                 </div>
 
                 <div className="kh-field">
-                  <label htmlFor="password" className="req">Senha</label>
-                  <input id="password" name="password" type="password" required value={form.password} onChange={onChange} />
+                  <label htmlFor="password" className="req">
+                    Senha
+                  </label>
+                  <input
+                    id="password"
+                    name="password"
+                    type="password"
+                    required
+                    value={form.password}
+                    onChange={onChange}
+                  />
                 </div>
 
                 <div className="kh-field">
-                  <label htmlFor="confirm" className="req">Confirmar Senha</label>
-                  <input id="confirm" name="confirm" type="password" required value={form.confirm} onChange={onChange} />
+                  <label htmlFor="confirm" className="req">
+                    Confirmar Senha
+                  </label>
+                  <input
+                    id="confirm"
+                    name="confirm"
+                    type="password"
+                    required
+                    value={form.confirm}
+                    onChange={onChange}
+                  />
                 </div>
               </div>
 
@@ -122,7 +159,7 @@ const Cadastro = () => {
         </div>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default Cadastro
+export default Cadastro;

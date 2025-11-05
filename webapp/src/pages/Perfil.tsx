@@ -7,6 +7,7 @@ import PerfilSlide from '../components/perfil/PerfilSlide';
 import PerfilConquistas from '../components/perfil/PerfilConquistas';
 import PerfilCertificados from '../components/perfil/PerfilCertificados';
 import PerfilEstatisticas from '../components/perfil/PerfilEstatisticas';
+import NavBar from '../components/NavBar';
 
 const Perfil: React.FC = () => {
   const [aba, setAba] = useState('Conquistas');
@@ -14,6 +15,7 @@ const Perfil: React.FC = () => {
 
   return (
     <div className="perfil-page-container">
+      <NavBar />
       <div className="perfil-wrap">
         <div className="perfil-grid">
           <PerfilDetalhes

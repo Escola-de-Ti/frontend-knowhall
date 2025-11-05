@@ -1,0 +1,54 @@
+@import url('https://fonts.googleapis.com/css2?family=Geologica:wght@100..900&family=Manrope:wght@200..800&display=swap');
+
+:root {
+  --bg: #141414;
+  --panel: #1f1f1f;
+  --panel-2: #222;
+  --bd: #3b3b3b;
+  --text: #fff;
+  --muted: #cfcfcf;
+}
+
+html,
+body {
+  background: var(--bg);
+}
+
+.feed-page {
+  width: 100%;
+  color: var(--text);
+}
+
+.feed-container {
+  max-width: 1200px;
+  margin: 18px auto 48px;
+  padding: 0 24px;
+  display: grid;
+  grid-template-columns: 280px 1fr 280px;
+  gap: 18px;
+}
+
+.feed-left,
+.feed-right {
+  min-height: 20px;
+}
+
+.feed-center {
+  display: grid;
+  gap: 16px;
+}
+
+.posts-stack {
+  display: grid;
+  gap: 16px;
+}
+
+@media (max-width: 1100px) {
+  .feed-container {
+    grid-template-columns: 1fr;
+  }
+  .feed-left,
+  .feed-right {
+    display: none;
+  }
+}
