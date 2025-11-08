@@ -15,7 +15,11 @@ type Props = { post: PostModel; onMoreClick?: (id: number) => void };
 
 export default function Post({ post, onMoreClick }: Props) {
   return (
-    <article className="post-card">
+    <article
+      className="post-card"
+      onClick={() => onMoreClick?.(post.id)}
+      style={{ cursor: 'pointer' }}
+    >
       <header className="post-head">
         <div className="post-avatar" aria-hidden>
           {post.autor.iniciais}
@@ -35,7 +39,10 @@ export default function Post({ post, onMoreClick }: Props) {
         <button
           className="post-more"
           aria-label="Mais opções"
-          onClick={() => onMoreClick?.(post.id)}
+          onClick={(e) => {
+            e.stopPropagation();
+            onMoreClick?.(post.id);
+          }}
         >
           …
         </button>
@@ -53,12 +60,25 @@ export default function Post({ post, onMoreClick }: Props) {
       </div>
 
       <footer className="post-footer">
-        <button className="kpi kpi-up" type="button" aria-label="Upvotes">
+        <button
+          className="kpi kpi-up"
+          type="button"
+          aria-label="Upvotes"
+          onClick={(e) => e.stopPropagation()}
+        >
           <span className="ico-up" aria-hidden />
           <span className="kpi-val">{post.metrica.upvotes}</span>
         </button>
 
-        <button className="kpi kpi-com" type="button" aria-label="Comentários">
+        <button
+          className="kpi kpi-com"
+          type="button"
+          aria-label="Comentários"
+          onClick={(e) => {
+            e.stopPropagation();
+            onMoreClick?.(post.id);
+          }}
+        >
           <span className="ico-com" aria-hidden />
           <span className="kpi-val">{post.metrica.comentarios}</span>
         </button>

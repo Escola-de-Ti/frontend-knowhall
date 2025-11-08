@@ -2,12 +2,16 @@ import React, { useState } from 'react';
 import '../styles/Feed.css';
 
 import NavBar from '../components/NavBar';
-import PostCard, { Post } from '../components/feed/Post';
+import PostCard, { PostModel } from '../components/feed/Post';
 import WorkshopList, { WorkshopItem } from '../components/feed/WorkshopList';
 import RankingList, { RankUser } from '../components/feed/RankingList';
+import PostDetailsModal, {
+  PostDetails,
+  PostCommentModel,
+} from '../components/feed/PostDetailsModal';
 
 export default function Feed() {
-  const [posts] = useState<Post[]>([
+  const [posts] = useState<PostModel[]>([
     {
       id: 1,
       autor: { nome: 'Andre Jacob', iniciais: 'AJ', nivel: 13 },
@@ -72,6 +76,44 @@ export default function Feed() {
     { id: 10, nome: 'Gabi Ferreira', iniciais: 'GF', nivel: 10, tokens: '3.600' },
   ];
 
+  const [open, setOpen] = useState(false);
+  const [current, setCurrent] = useState<PostDetails | null>(null);
+  const [comments, setComments] = useState<PostCommentModel[]>([]);
+
+  function openPost(id: number) {
+    const base = posts.find((p) => p.id === id)!;
+    const post: PostDetails = {
+      id,
+      titulo: base.titulo,
+      corpo: base.corpo,
+      autor: { nome: base.autor.nome, iniciais: base.autor.iniciais, nivel: base.autor.nivel },
+      tags: base.tags,
+      metrica: { upvotes: 37, supervotes: 5, comentarios: base.metrica.comentarios },
+      tempo: base.tempo,
+    };
+    const cmts: PostCommentModel[] = [
+      {
+        id: 101,
+        autor: { nome: 'Kauan', iniciais: 'KB', nivel: 9 },
+        texto: 'Idempotência com chaves únicas por transação.',
+        tempo: 'há 2h',
+        upvotes: 12,
+        supervotes: 2,
+      },
+      {
+        id: 102,
+        autor: { nome: 'Maria', iniciais: 'MA', nivel: 7 },
+        texto: 'Armazene eventId do webhook e ignore duplicados.',
+        tempo: 'há 1h',
+        upvotes: 5,
+        supervotes: 1,
+      },
+    ];
+    setCurrent(post);
+    setComments(cmts);
+    setOpen(true);
+  }
+
   return (
     <div className="feed-page">
       <NavBar />
@@ -98,7 +140,7 @@ export default function Feed() {
 
           <div className="posts-stack">
             {posts.map((p) => (
-              <PostCard key={p.id} post={p} />
+              <PostCard key={p.id} post={p} onMoreClick={() => openPost(p.id)} />
             ))}
           </div>
         </section>
@@ -107,6 +149,13 @@ export default function Feed() {
           <RankingList users={ranking} onVerMais={() => {}} />
         </aside>
       </main>
+
+      <PostDetailsModal
+        open={open}
+        onClose={() => setOpen(false)}
+        post={current}
+        comments={comments}
+      />
     </div>
   );
 }
