@@ -19,7 +19,7 @@ export default function NavBar() {
 
       <div className="nav-actions">
         <button className="token-chip" aria-label="Saldo de tokens">
-          <span className="token-ico" />
+          <img src="/token_ico.svg" alt="Token" className="token-ico" />
           <span className="token-val">2.780</span>
         </button>
 

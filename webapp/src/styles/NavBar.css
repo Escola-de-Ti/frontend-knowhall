@@ -129,11 +129,11 @@
   cursor: pointer;
 }
 .token-ico {
-  width: 14px;
-  height: 14px;
-  border-radius: 999px;
-  background: #ffc857;
-  box-shadow: inset 0 0 0 2px rgba(0, 0, 0, 0.25);
+  width: 16px;
+  height: 16px;
+  display: inline-block;
+  object-fit: contain;
+  vertical-align: middle;
 }
 .token-val {
   line-height: 1;
