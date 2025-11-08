@@ -16,7 +16,7 @@ export default function RankingList({ users, onVerMais }: Props) {
     <aside className="rk-panel">
       <header className="rk-head">
         <span className="rk-trophy" aria-hidden />
-        <div>
+        <div className="rk-headtxt">
           <h3>Top 10 Ranking</h3>
           <p>Os melhores desenvolvedores da comunidade</p>
         </div>
@@ -32,22 +32,27 @@ export default function RankingList({ users, onVerMais }: Props) {
 
               <div className="rk-avatar">{u.iniciais}</div>
 
-              <div className="rk-info">
-                <strong className="rk-name">{u.nome}</strong>
-                <span className="rk-level">Nvl. {u.nivel}</span>
-              </div>
+              <div className="rk-main">
+                <strong className="rk-name" title={u.nome}>
+                  {u.nome}
+                </strong>
 
-              <div className="rk-tokens">
-                <img src="/token_ico.svg" alt="Token" className="token-ico" />
-                <span className="rk-txt">{u.tokens}</span>
+                <div className="rk-badges">
+                  <span className="pill level-pill">Nvl. {u.nivel}</span>
+                  <span className="pill token-pill">
+                    <img src="/token_ico.svg" alt="" className="rk-token-ico" />
+                    <span className="rk-token-val">{u.tokens}</span>
+                  </span>
+                </div>
               </div>
             </li>
           );
         })}
       </ul>
 
-      <button className="rk-more" onClick={onVerMais}>
-        + Ver mais
+      <button className="rk-more" onClick={onVerMais} type="button">
+        <span className="rk-more-plus" aria-hidden />
+        <span className="rk-more-text">Ver mais</span>
       </button>
     </aside>
   );

@@ -31,9 +31,10 @@
   border-radius: 12px;
   background: #2a2a2a;
   border: 1px solid #ffffff22;
-  mask: url('data:image/svg+xml;utf8,\
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="%23fff" d="M4 5q0-1.2.9-2.1T7 2h11q.425 0 .713.288T19 3v15.5q0 .625-.438 1.062T17.5 20H7q-1.65 0-2.825-1.175T3 16.001V5zm3 0v11q0 .425.288.713T7 17h10V4H7.5q-.625 0-1.062.438T6 5zm2 7.5l3-2l3 2V6H8v6.5z"/></svg>')
-    no-repeat center/68% 68%;
+  background-image: url('/public/workshop.svg');
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 60%;
 }
 .ws-txt h3 {
   margin: 0;
