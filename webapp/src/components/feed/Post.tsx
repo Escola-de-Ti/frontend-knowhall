@@ -17,14 +17,18 @@ export default function Post({ post, onMoreClick }: Props) {
   return (
     <article className="post-card">
       <header className="post-head">
-        <div className="post-avatar">{post.autor.iniciais}</div>
+        <div className="post-avatar" aria-hidden>
+          {post.autor.iniciais}
+        </div>
 
         <div className="post-meta">
           <strong className="post-autor">{post.autor.nome}</strong>
           <div className="post-sub">
-            <span className="time">{post.tempo}</span>
+            <span className="post-time">{post.tempo}</span>
             <span className="dot" />
-            <span className="level-pill">Nvl. {post.autor.nivel}</span>
+            <span className="level-pill">
+              <span className="level-text">Nvl. {post.autor.nivel}</span>
+            </span>
           </div>
         </div>
 
@@ -33,7 +37,7 @@ export default function Post({ post, onMoreClick }: Props) {
           aria-label="Mais opções"
           onClick={() => onMoreClick?.(post.id)}
         >
-          <span />
+          …
         </button>
       </header>
 
@@ -49,14 +53,15 @@ export default function Post({ post, onMoreClick }: Props) {
       </div>
 
       <footer className="post-footer">
-        <div className="kpi kpi-up">
+        <button className="kpi kpi-up" type="button" aria-label="Upvotes">
           <span className="ico-up" aria-hidden />
           <span className="kpi-val">{post.metrica.upvotes}</span>
-        </div>
-        <div className="kpi kpi-com">
+        </button>
+
+        <button className="kpi kpi-com" type="button" aria-label="Comentários">
           <span className="ico-com" aria-hidden />
           <span className="kpi-val">{post.metrica.comentarios}</span>
-        </div>
+        </button>
       </footer>
     </article>
   );
