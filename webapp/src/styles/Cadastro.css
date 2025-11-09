@@ -12,19 +12,33 @@
   --radius: 22px;
 }
 
-html, body, #root { height: 100%; overflow-y: hidden; }
-body { background: var(--bg); color: var(--text); font-family: Manrope, sans-serif; }
+html, body, #root { 
+  height: 100vh;
+  overflow: hidden;
+  margin: 0;
+  padding: 0;
+}
 
-.kh { width: 100%; }
+body { 
+  background: var(--bg); 
+  color: var(--text); 
+  font-family: Manrope, sans-serif; 
+}
+
+.kh { 
+  width: 100%; 
+  height: 100vh;
+}
 
 /* ===== layout base ===== */
 .kh-page {
-  max-width: 1200px;
+  max-width: 1400px;
+  height: 100vh;
   margin: 0 auto;
-  padding: 0 20px 48px;
+  padding: 0 20px;
   display: grid;
-  grid-template-columns: 1fr 420px; /* card à esq | logo à dir */
-  gap: 48px;
+  grid-template-columns: 1fr 380px;
+  gap: 40px;
   align-items: center;
 }
 
@@ -32,7 +46,10 @@ body { background: var(--bg); color: var(--text); font-family: Manrope, sans-ser
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 24px;
+  gap: 12px;
+  max-height: 100vh;
+  overflow-y: auto;
+  padding: 10px 0;
 }
 
 .kh-logo-top {
@@ -40,28 +57,31 @@ body { background: var(--bg); color: var(--text); font-family: Manrope, sans-ser
   display: flex;
   justify-content: center;
   align-items: center;
-  margin: 22px 0 6px;
+  margin: 8px 0 4px;
 }
 
-.kh-logo-top img { height: 68px; filter: drop-shadow(0 6px 22px rgba(122, 92, 255, 0.35)); }
+.kh-logo-top img { 
+  height: 50px;
+  filter: drop-shadow(0 6px 22px rgba(122, 92, 255, 0.35)); 
+}
 
 /* ===== card ===== */
 .kh-card {
   width: 100%;
-  max-width: 520px;                
+  max-width: 580px;
   background: var(--card);
-  border: 3px solid var(--soft);    
+  border: 3px solid var(--soft);
   border-radius: var(--radius);
-  padding: 40px 36px;              
+  padding: 24px 28px 28px;
   text-align: center;
 
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 18px;                        /* espaçamento entre título/abas/form */
+  gap: 12px;
 }
 
-/* glow roxo (Cadastro) — mantém sua cor */
+/* glow roxo (Cadastro) */
 .kh-register .glow {
   box-shadow:
     0 0 60px rgba(122, 92, 255, 0.45),
@@ -71,151 +91,218 @@ body { background: var(--bg); color: var(--text); font-family: Manrope, sans-ser
 /* ===== título ===== */
 .kh-title {
   font-family: Geologica, sans-serif;
-  font-size: 28px;
-  margin: 0;                       
+  font-size: 24px;
+  margin: 0;
 }
 
 /* ===== formulário ===== */
 .kh-form {
   width: 100%;
-  max-width: 860px;                
   margin: 0 auto;
   display: flex;
   flex-direction: column;
-  gap: 20px;                      
+  gap: 12px;
   text-align: left;
 }
 
 /* grid dos campos */
 .kh-grid {
   display: grid;
-  grid-template-columns: repeat(2, minmax(260px, 1fr));
-  column-gap: 20px;                
-  row-gap: 18px;               
+  grid-template-columns: repeat(2, 1fr);
+  column-gap: 16px;
+  row-gap: 12px;
+  width: 100%;
+}
+
+/* evita estourar para fora do card */
+.kh-grid > .kh-field { 
+  min-width: 0; 
 }
 
 /* cada campo */
 .kh-field {
   display: flex;
   flex-direction: column;
-  gap: 8px;                  
+  gap: 6px;
 }
 
 .kh-field label {
-  font-size: 14px;
+  font-size: 13px;
   color: var(--soft);
 }
 
 .kh-field input {
   width: 100%;
-  min-height: 48px;
-  padding: 14px 16px;
-  border-radius: 8px;             
-  background: #4A4A4A;           
+  min-height: 42px;
+  padding: 10px 14px;
+  border-radius: 8px;
+  background: #4A4A4A;
   border: 1px solid var(--stroke);
   color: var(--text);
   outline: none;
+  box-sizing: border-box;
+  font-size: 14px;
 }
 
 .kh-field input:focus {
-  border-color: rgba(108, 111, 236, 0.6);   
-  box-shadow: 0 0 0 4px rgba(108, 111, 236, 0.15);
+  border-color: rgba(108, 111, 236, 0.6);
+  box-shadow: 0 0 0 3px rgba(108, 111, 236, 0.15);
 }
 
-.req::after { content: " *"; color: #FF0000; }
+.req::after { 
+  content: " *"; 
+  color: #FF0000; 
+}
 
 /* termos + link */
 .kh-terms {
   display: flex;
   align-items: center;
-  gap: 10px;
-  font-size: 14px;
+  gap: 8px;
+  font-size: 12px;
   color: var(--soft);
   user-select: none;
-  line-height: 1.2;
+  line-height: 1.3;
+  margin-top: 4px;
 }
 
-.kh-terms a { color: #5468FF; text-decoration: underline; }
+.kh-terms a { 
+  color: #5468FF; 
+  text-decoration: underline; 
+}
 
 /* botão */
 .kh-btn {
-  width: 240px;
-  height: 48px;
+  width: 220px;
+  height: 44px;
   border: none;
   border-radius: 14px;
   background: linear-gradient(90deg, var(--g1) 50%, var(--g2) 100%);
   color: #171717;
   font-family: Geologica, sans-serif;
   font-weight: 700;
+  font-size: 15px;
   letter-spacing: 0.5px;
   cursor: pointer;
-  margin: 8px auto 0;           
+  margin: 10px auto 0;
   box-shadow:
     0 10px 30px rgba(108, 111, 236, 0.35),
     0 6px 18px rgba(85, 246, 201, 0.25);
 }
 
-.kh-btn:hover { transform: translateY(-1px); }
-.kh-btn:active { transform: translateY(0); }
+.kh-btn:hover { 
+  transform: translateY(-1px); 
+}
+
+.kh-btn:active { 
+  transform: translateY(0); 
+}
+
+.kh-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none !important;
+}
 
 /* logo lateral */
-.kh-side { display: flex; justify-content: center; align-items: center; }
+.kh-side { 
+  display: flex; 
+  justify-content: center; 
+  align-items: center; 
+}
+
 .kh-side img {
-  max-width: 360px;
+  max-width: 320px;
   filter:
     drop-shadow(-18px 18px 0 rgba(0, 0, 0, 0.35))
     drop-shadow(0 0 70px rgba(108, 255, 211, 0.25));
 }
 
-/* ===== responsividade ===== */
-@media (max-width: 1050px) {
-  .kh-page { grid-template-columns: 1fr; }
-  .kh-side { display: none; }
-}
-
-@media (max-width: 720px) {
-  .kh-grid { grid-template-columns: 1fr; row-gap: 14px; }
-  .kh-btn { width: 100%; }
-}
-
-@media (max-height: 760px){
-  html, body{ overflow-y: auto; }
-}
-
 /* SlideLogin dentro do card */
 .kh-card .slide-container {
   width: 100%;
-  margin: 0 auto 16px;
+  margin: 0 auto 8px;
 }
 
-/* ---- FIX DE ESPAÇAMENTO E ESTOURO NA GRID ---- */
+/* ===== MENSAGENS DE ERRO E SUCESSO ===== */
 
-/* garante que a grid nunca ultrapasse o card e ocupe 100% */
-.kh-form { width: 100%; }
-.kh-grid { width: 100%; }
-
-/* duas colunas iguais + respiro maior entre colunas/linhas */
-.kh-grid{
-  grid-template-columns: repeat(2, 1fr);
-  column-gap: 24px;      /* espaço horizontal entre colunas */
-  row-gap: 20px;         /* espaço vertical entre linhas */
+.error {
+  color: #ff4444;
+  font-size: 11px;
+  margin-top: 3px;
+  display: block;
+  animation: fadeIn 0.3s ease;
 }
 
-/* evita estourar para fora do card */
-.kh-grid > .kh-field { min-width: 0; }
-
-/* mais espaço entre label e input e altura padronizada */
-.kh-field{ gap: 10px; }
-.kh-field input{
-  min-height: 52px;
-  padding: 14px 16px;
-  box-sizing: border-box;
-  width: 100%;
+.success-message {
+  background: rgba(85, 246, 201, 0.15);
+  border: 1px solid rgba(85, 246, 201, 0.4);
+  color: var(--g1);
+  padding: 10px 14px;
+  border-radius: 8px;
+  margin-bottom: 8px;
+  text-align: center;
+  font-size: 13px;
+  animation: fadeIn 0.3s ease;
 }
 
-/* respiro abaixo da grid e antes do botão */
-.kh-grid + .kh-terms{ margin-top: 8px; }
-.kh-terms + .kh-btn{ margin-top: 18px; }
+.error-message {
+  background: rgba(255, 68, 68, 0.15);
+  border: 1px solid rgba(255, 68, 68, 0.4);
+  color: #ff4444;
+  padding: 10px 14px;
+  border-radius: 8px;
+  margin-bottom: 8px;
+  text-align: center;
+  font-size: 13px;
+  animation: fadeIn 0.3s ease;
+}
 
-/* leve ajuste de padding geral */
-.kh-card{ padding: 40px 36px 44px; }
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ===== RESPONSIVIDADE ===== */
+
+@media (max-width: 1050px) {
+  .kh-page { 
+    grid-template-columns: 1fr;
+    height: auto;
+    min-height: 100vh;
+  }
+  
+  html, body, #root {
+    overflow-y: auto;
+  }
+  
+  .kh { 
+    height: auto;
+  }
+  
+  .kh-side { 
+    display: none; 
+  }
+}
+
+@media (max-width: 720px) {
+  .kh-grid { 
+    grid-template-columns: 1fr; 
+    row-gap: 10px; 
+  }
+  .kh-btn { 
+    width: 100%; 
+  }
+}
+
+@media (max-height: 800px) {
+  .kh-col {
+    overflow-y: auto;
+  }
+}
