@@ -1,0 +1,152 @@
+@import url('https://fonts.googleapis.com/css2?family=Geologica:wght@100..900&family=Manrope:wght@200..800&display=swap');
+
+:root {
+  --panel-bg: #373737;
+  --panel-bd: #545454;
+  --text: #fff;
+  --item-bg: #3f3f3f;
+  --item-bd: #6b6b6b;
+  --muted: #dcdcdc;
+  --btn-bg: #2d2d2d;
+  --btn-bd: #7e7e7e;
+  --btn-bg-red: #4a2e2e;
+  --btn-bd-red: #e77b7b;
+}
+
+.certificados-container {
+  background: var(--panel-bg);
+  border: 2px solid var(--panel-bd);
+  border-radius: 20px;
+  padding: 18px;
+  color: var(--text);
+  display: grid;
+  gap: 16px;
+  font-family: Manrope, system-ui, sans-serif;
+}
+
+.certificados-head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.certificados-head h3 {
+  margin: 0;
+  font-weight: 800;
+  font-size: 18px;
+  font-family: Geologica, Manrope, sans-serif;
+}
+.certificados-ico {
+  width: 28px;
+  height: 28px;
+  display: grid;
+  place-items: center;
+  border: 1.5px solid #ffffff3f;
+  border-radius: 10px;
+}
+
+.certificados-list {
+  display: grid;
+  gap: 14px;
+}
+
+.certificado-card {
+  display: grid;
+  grid-template-columns: 80px 1fr auto;
+  align-items: center;
+  gap: 16px;
+  background: var(--item-bg);
+  border: 2px solid var(--item-bd);
+  border-radius: 16px;
+  padding: 12px 16px;
+}
+
+.certificado-thumb {
+  width: 80px;
+  height: 80px;
+  background: #2c2c2c;
+  border-radius: 10px;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  border: 1.5px solid #ffffff22;
+}
+.certificado-thumb img {
+  width: 60%;
+  opacity: 0.6;
+}
+
+.certificado-info {
+  display: grid;
+  gap: 4px;
+}
+.certificado-info h4 {
+  margin: 0;
+  font-family: Geologica, Manrope, sans-serif;
+  font-weight: 800;
+  font-size: 17px;
+}
+.certificado-info p {
+  margin: 0;
+  font-size: 14px;
+  color: var(--muted);
+}
+
+.btn-exibir {
+  border-radius: 10px;
+  border: 1.5px solid var(--btn-bd);
+  background: var(--btn-bg);
+  color: var(--text);
+  padding: 8px 14px;
+  font-family: Geologica, Manrope, sans-serif;
+  font-weight: 700;
+  font-size: 13px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  text-decoration: none;
+  transition: all 0.2s ease;
+}
+.btn-exibir:hover {
+  transform: translateY(-1px);
+  border-color: #aaa;
+}
+.btn-vermelho {
+  border-color: var(--btn-bd-red);
+  background: var(--btn-bg-red);
+}
+.btn-vermelho:hover {
+  filter: brightness(1.1);
+}
+
+@media (max-width: 880px) {
+  .certificado-card {
+    grid-template-columns: 60px 1fr;
+    grid-template-areas:
+      'thumb info'
+      'btn btn';
+    align-items: start;
+  }
+  .certificado-thumb {
+    grid-area: thumb;
+    width: 60px;
+    height: 60px;
+  }
+  .certificado-info {
+    grid-area: info;
+  }
+  .btn-exibir {
+    grid-area: btn;
+    justify-self: start;
+    margin-top: 8px;
+  }
+}
+
+.btn-vermelho {
+  border-color: var(--btn-bd-red);
+  background: var(--btn-bg-red);
+  color: #fff;
+}
+.btn-vermelho:hover {
+  filter: brightness(1.1);
+}

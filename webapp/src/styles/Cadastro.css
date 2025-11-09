@@ -4,8 +4,8 @@
   --bg: #171717;
   --card: #373737;
   --muted: #1b1b1f;
-  --text: #FFFFFF;
-  --soft: #DFDFDF;
+  --text: #ffffff;
+  --soft: #dfdfdf;
   --stroke: rgba(255, 255, 255, 0.08);
   --g1: #55f6c9;
   --g2: #6c6fec;
@@ -30,7 +30,6 @@ body {
   height: 100vh;
 }
 
-/* ===== layout base ===== */
 .kh-page {
   max-width: 1400px;
   height: 100vh;
@@ -65,7 +64,6 @@ body {
   filter: drop-shadow(0 6px 22px rgba(122, 92, 255, 0.35)); 
 }
 
-/* ===== card ===== */
 .kh-card {
   width: 100%;
   max-width: 580px;
@@ -88,14 +86,12 @@ body {
     0 0 110px rgba(122, 92, 255, 0.25);
 }
 
-/* ===== título ===== */
 .kh-title {
   font-family: Geologica, sans-serif;
   font-size: 24px;
   margin: 0;
 }
 
-/* ===== formulário ===== */
 .kh-form {
   width: 100%;
   margin: 0 auto;
@@ -105,7 +101,6 @@ body {
   text-align: left;
 }
 
-/* grid dos campos */
 .kh-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
@@ -119,7 +114,6 @@ body {
   min-width: 0; 
 }
 
-/* cada campo */
 .kh-field {
   display: flex;
   flex-direction: column;
@@ -154,7 +148,6 @@ body {
   color: #FF0000; 
 }
 
-/* termos + link */
 .kh-terms {
   display: flex;
   align-items: center;
@@ -171,7 +164,6 @@ body {
   text-decoration: underline; 
 }
 
-/* botão */
 .kh-btn {
   width: 220px;
   height: 44px;

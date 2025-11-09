@@ -146,7 +146,7 @@ const Login: React.FC = () => {
         </div>
       </div>
     </div>
-  );
-};
+  )
+}
 
 export default Login;

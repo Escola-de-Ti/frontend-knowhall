@@ -1,0 +1,161 @@
+@import url('https://fonts.googleapis.com/css2?family=Geologica:wght@600;700;800;900&family=Manrope:wght@400;500;600;700;800&display=swap');
+
+:root {
+  --feed-bg: #111;
+  --panel-bg: #373737;
+  --panel-bd: #2e2e2e;
+  --btn-bg: #171717;
+  --btn-post-text-faded1: #5be4cb;
+  --btn-post-text-faded2: #8476d9;
+  --btn-filter-text-faded1: #e283d0;
+  --btn-filter-text-faded2: #9a79d7;
+  --btn-filter-border-faded1: #e283d0;
+  --btn-filter-border-faded2: #9a79d7;
+  --filters-h: 44px;
+}
+
+.feed-page {
+  background: var(--feed-bg);
+  min-height: 100vh;
+}
+
+.feed-container {
+  max-width: 1280px;
+  margin: 12px auto 64px;
+  padding: 0 20px;
+  display: grid;
+  grid-template-columns: 320px 1fr 360px;
+  gap: 24px;
+  align-items: start;
+}
+
+.feed-left  { margin-top: 12px; }
+.feed-center{ margin-top: 12px; }
+
+.feed-right {
+  margin-top: calc(var(--filters-h) + 30px);
+  align-self: start;
+  position: sticky; top: 96px;
+}
+
+.feed-center {
+  display: grid;
+  gap: 18px;
+}
+.posts-stack {
+  display: grid;
+  gap: 18px;
+}
+
+.feed-left-head {
+  margin-bottom: 16px;
+  display: flex;
+  justify-content: flex-start;
+}
+
+.feed-filters-bar {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  margin-bottom: 2px;
+}
+
+.btn-create {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 100px;
+  border-radius: 12px;
+  border: 1.6px solid transparent;
+  background:
+    linear-gradient(var(--btn-bg), var(--btn-bg)) padding-box,
+    linear-gradient(90deg, var(--btn-post-text-faded1), var(--btn-post-text-faded2)) border-box;
+  box-shadow:
+    0 0 18px rgba(91, 228, 203, 0.25),
+    0 0 22px rgba(132, 118, 217, 0.18);
+  cursor: pointer;
+}
+.lbl-grad {
+  background-image: linear-gradient(
+    90deg,
+    var(--btn-post-text-faded1),
+    var(--btn-post-text-faded2)
+  );
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  font:
+    900 15px Geologica,
+    Manrope,
+    system-ui,
+    sans-serif;
+  letter-spacing: 0.2px;
+}
+.ico-plus {
+  width: 18px;
+  height: 18px;
+  background: linear-gradient(90deg, var(--btn-post-text-faded1), var(--btn-post-text-faded2));
+  mask: url('data:image/svg+xml;utf8,\
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="%23000" d="M11 5a1 1 0 0 1 2 0v6h6a1 1 0 1 1 0 2h-6v6a1 1 0 1 1-2 0v-6H5a1 1 0 1 1 0-2h6z"/></svg>')
+    no-repeat center/contain;
+}
+
+.btn-filter {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 20px;
+  border-radius: 12px;
+  border: 1.8px solid transparent;
+  background:
+    linear-gradient(var(--btn-bg), var(--btn-bg)) padding-box,
+    linear-gradient(90deg, var(--btn-filter-border-faded1), var(--btn-filter-border-faded2))
+      border-box;
+  box-shadow:
+    0 0 14px rgba(226, 131, 208, 0.22),
+    0 0 18px rgba(154, 121, 215, 0.16);
+  cursor: pointer;
+}
+.lbl-filter {
+  background-image: linear-gradient(
+    90deg,
+    var(--btn-filter-text-faded1),
+    var(--btn-filter-text-faded2)
+  );
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  font:
+    800 15px Geologica,
+    Manrope,
+    system-ui,
+    sans-serif;
+  letter-spacing: 0.2px;
+}
+.ico-filter {
+  width: 18px;
+  height: 18px;
+  background: linear-gradient(90deg, var(--btn-filter-text-faded1), var(--btn-filter-text-faded2));
+  mask: url('data:image/svg+xml;utf8,\
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="%23000" d="M3 5h18l-7 8v5a1 1 0 0 1-.553.894l-3 1.5A1 1 0 0 1 9 19v-6z"/></svg>')
+    no-repeat center/contain;
+}
+
+/* Responsivo */
+@media (max-width: 1220px) {
+  .feed-container {
+    grid-template-columns: 300px 1fr 320px;
+  }
+}
+@media (max-width: 1024px) {
+  .feed-container {
+    grid-template-columns: 1fr;
+  }
+  .feed-left,
+  .feed-right {
+    display: none;
+  }
+  .feed-filters-bar {
+    justify-content: flex-start;
+  }
+}
