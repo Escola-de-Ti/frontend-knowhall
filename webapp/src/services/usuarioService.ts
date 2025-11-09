@@ -10,7 +10,7 @@ interface UsuarioCreateDTO {
   biografia?: string;
   senha: string;
   imageBase64?: string;
-  tipoUsuario: 'ALUNO' | 'PROFESSOR' | 'ADMIN';
+  tipoUsuario: 'ALUNO' | 'INSTRUTOR' | 'ADMINISTRADOR';
   tags?: any[];
 }
 

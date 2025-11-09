@@ -1,5 +1,3 @@
-// Serviço de autenticação e gerenciamento de tokens
-
 import { buildApiUrl } from '../config/api.config';
 import API_CONFIG from '../config/api.config';
 
@@ -11,7 +9,7 @@ interface JwtTokenDTO {
 }
 
 interface DecodedToken {
-  sub: string; // email do usuário
+  sub: string;
   iss: string;
   iat: number;
   exp: number;
