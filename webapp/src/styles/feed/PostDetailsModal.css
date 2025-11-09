@@ -1,0 +1,279 @@
+@import url('https://fonts.googleapis.com/css2?family=Geologica:wght@100..900&family=Manrope:wght@200..800&display=swap');
+
+:root {
+  --details-bg: #373737;
+  --details-header: #272727;
+  --details-border-left: #62b1a1;
+  --details-border-right: #dd7ea3;
+  --details-text: #ffffff;
+  --details-comments-bg: #575757;
+  --details-comments-border: #ca7994;
+}
+
+.kh-modal {
+  position: fixed;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  z-index: 9999;
+  font-family: Manrope, system-ui, sans-serif;
+}
+.kh-modal-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.55);
+  backdrop-filter: blur(2px);
+}
+
+.kh-modal-panel {
+  position: relative;
+  width: min(960px, 92vw);
+  max-height: 88vh;
+  overflow: auto;
+  background: var(--details-bg);
+  color: var(--details-text);
+  border-radius: 16px;
+  border: 2px solid transparent;
+  background-clip: padding-box, border-box;
+  background-image:
+    linear-gradient(var(--details-bg), var(--details-bg)),
+    linear-gradient(90deg, var(--details-border-left), var(--details-border-right));
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.35);
+}
+
+.kh-modal-header {
+  display: grid;
+  grid-template-columns: 48px 1fr 32px;
+  gap: 12px;
+  align-items: center;
+  padding: 16px 20px;
+  background: var(--details-header);
+  border-top-left-radius: 16px;
+  border-top-right-radius: 16px;
+}
+.kh-modal-header .title {
+  margin: 0;
+  font:
+    700 18px/1.1 Geologica,
+    Manrope,
+    sans-serif;
+  letter-spacing: 0.2px;
+}
+.kh-modal-header .meta {
+  opacity: 0.9;
+  font-size: 12px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+.kh-modal-header .meta .dot {
+  width: 4px;
+  height: 4px;
+  border-radius: 999px;
+  background: #6c6662;
+}
+.kh-modal-header .close {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: transparent;
+  color: var(--details-text);
+  cursor: pointer;
+}
+.kh-modal-header .close:hover {
+  background: rgba(255, 255, 255, 0.06);
+}
+.kh-modal-header .close::before {
+  content: '×';
+  display: block;
+  text-align: center;
+  line-height: 30px;
+  font-size: 18px;
+}
+
+.level-pill {
+  padding: 4px 8px;
+  border-radius: 10px;
+  border: 1.5px solid transparent;
+  background:
+    linear-gradient(var(--details-header), var(--details-header)) padding-box,
+    linear-gradient(90deg, var(--lvl-c1, #55f3ca), var(--lvl-c2, #5469fe)) border-box;
+}
+.level-text {
+  background: linear-gradient(90deg, var(--lvl-c1, #55f3ca), var(--lvl-c2, #5469fe));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  font-weight: 800;
+  font-family: Geologica, Manrope, sans-serif;
+}
+
+.kh-modal-body {
+  padding: 16px 20px 24px;
+}
+.descricao {
+  opacity: 0.95;
+  white-space: pre-wrap;
+  margin: 0 0 12px;
+}
+
+.tags {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 12px;
+}
+.tag {
+  font-size: 12px;
+  color: var(--details-text);
+  opacity: 0.9;
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  padding: 6px 10px;
+  border-radius: 999px;
+}
+
+.votes {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 10px;
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  background: rgba(0, 0, 0, 0.15);
+  color: var(--details-text);
+  cursor: pointer;
+  transition:
+    transform 0.12s ease,
+    background 0.18s ease,
+    border-color 0.18s ease;
+}
+.btn.sm {
+  padding: 4px 8px;
+  border-radius: 8px;
+  font-size: 12px;
+}
+.btn:hover {
+  transform: translateY(-1px);
+  background: rgba(255, 255, 255, 0.06);
+  border-color: rgba(255, 255, 255, 0.28);
+}
+.sep {
+  width: 1px;
+  height: 20px;
+  background: rgba(255, 255, 255, 0.16);
+  margin: 0 6px;
+}
+.kpi {
+  opacity: 0.9;
+  font-size: 12px;
+}
+
+.ico-star {
+  width: 18px;
+  height: 18px;
+  display: inline-block;
+  background: var(--kpi-neutral, #bfb8b4);
+  mask: url('data:image/svg+xml;utf8,\
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">\
+<path fill="%23000" d="M12 17.27 18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/>\
+</svg>')
+    no-repeat center/contain;
+}
+.btn.up:hover .ico-up {
+  background: var(--kpi-up, #5ee3b9);
+}
+.btn.super:hover .ico-star {
+  background: var(--kpi-com, #c58af5);
+}
+.btn.com:hover .ico-com {
+  background: var(--kpi-com, #c58af5);
+}
+
+.btn.link {
+  background: transparent;
+  border-color: transparent;
+  padding-left: 4px;
+  padding-right: 6px;
+  color: var(--kpi-com, #c58af5);
+}
+.btn.link:hover {
+  background: rgba(0, 0, 0, 0.08);
+  border-color: rgba(255, 255, 255, 0.12);
+}
+
+.comments-sep {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 6px 0 14px;
+  padding-top: 10px;
+  border-top: 1px solid rgba(255, 255, 255, 0.16);
+}
+.comments-sep .ico-com {
+  width: 18px;
+  height: 18px;
+  display: inline-block;
+  background: var(--kpi-com, #c58af5);
+  mask: url('data:image/svg+xml;utf8,\
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">\
+<path fill="%23000" d="M20 2H4a2 2 0 0 0-2 2v18l4-4h14a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2m0 12H5.17L4 15.17V4h16z"/>\
+</svg>')
+    no-repeat center/contain;
+}
+.comments-sep .lbl {
+  font-weight: 700;
+  color: var(--kpi-com, #c58af5);
+}
+
+.comments {
+  display: grid;
+  gap: 12px;
+}
+.comment {
+  background: var(--details-comments-bg);
+  border: 1px solid var(--details-comments-border);
+  border-radius: 12px;
+  padding: 10px 12px;
+}
+.comment-head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.author {
+  opacity: 0.95;
+  font-size: 12px;
+}
+.comment-text {
+  margin: 8px 0 6px;
+}
+.comment-actions {
+  display: flex;
+  gap: 8px;
+}
+.children {
+  display: grid;
+  gap: 8px;
+  margin-top: 8px;
+  padding-left: 16px;
+}
+
+.post-avatar.post-avatar--sm {
+  width: 28px;
+  height: 28px;
+  font-size: 12px;
+}
+
+.btn:focus-visible,
+.kh-modal-header .close:focus-visible {
+  outline: 2px solid var(--details-border-right);
+  outline-offset: 2px;
+}
