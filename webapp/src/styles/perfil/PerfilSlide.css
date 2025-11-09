@@ -1,0 +1,66 @@
+:root{
+  --background-slide:#373737;
+  --slide-text-color:#ffffff;
+  --slide-border-color:#656565;
+  --slide-hover: rgba(255,255,255,.06);
+  --slide-active: rgba(255,255,255,.10);
+}
+
+.perfil-slide{
+  position: relative;
+  display: grid;
+  grid-auto-flow: column;
+  align-items: center;
+
+  background: var(--background-slide);
+  border: 2px solid var(--slide-border-color);
+  border-radius: 18px;
+  padding: 6px;
+  overflow: hidden;
+  user-select: none;
+  gap: 0;
+}
+
+.perfil-slide-indicator{
+  position: absolute;
+  top: 6px;
+  left: 6px;
+  height: calc(100% - 12px);
+  width: var(--w, 0px);
+  transform: translateX(var(--x, 0px));
+  border-radius: 14px;
+  background: var(--slide-active);
+  border: 1px solid rgba(255,255,255,.18);
+  box-shadow: inset 0 0 0 1px rgba(0,0,0,.25), 0 2px 8px rgba(0,0,0,.20);
+  transition: transform .18s ease, width .18s ease;
+  will-change: transform, width;
+}
+
+.perfil-slide-tab{
+  position: relative;
+  z-index: 1;
+  appearance: none;
+  border: 0;
+  background: transparent;
+  color: rgba(255,255,255,.75);
+  font: 600 14px/1 Manrope, system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+  padding: 10px 24px;  
+  border-radius: 12px;
+  cursor: pointer;
+  transition: color .18s ease, background .18s ease;
+}
+.perfil-slide-tab:hover{ background: var(--slide-hover); }
+.perfil-slide-tab.is-active{ color: var(--slide-text-color); }
+
+@media (max-width: 560px){
+  .perfil-slide{
+    grid-template-columns: repeat(2, 1fr);
+    row-gap: 6px;
+  }
+  .perfil-slide-indicator{ display:none; }
+  .perfil-slide-tab{
+    text-align: center;
+    width: 100%;
+  }
+  .perfil-slide-tab.is-active{ background: var(--slide-active); }
+}

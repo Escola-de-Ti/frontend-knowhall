@@ -1,0 +1,258 @@
+@import url('https://fonts.googleapis.com/css2?family=Geologica:wght@100..900&family=Manrope:wght@200..800&display=swap');
+
+:root {
+  --bg: #171717;
+  --card: #373737;
+  --muted: #1b1b1f;
+  --text: #ffffff;
+  --soft: #dfdfdf;
+  --stroke: rgba(255, 255, 255, 0.08);
+  --g1: #55f6c9;
+  --g2: #6c6fec;
+  --radius: 22px;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+  overflow-y: hidden;  
+  background: var(--bg);
+}
+
+body {
+  color: var(--text);
+  font-family: Manrope, sans-serif;
+}
+
+.kh {
+  width: 100%;
+}
+
+.kh-page {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px 48px;
+  display: grid;
+  grid-template-columns: 1fr 420px; 
+  gap: 48px;
+  align-items: center;
+}
+
+.kh-col {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 24px;
+}
+
+.kh-logo-top {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 22px 0 6px;
+}
+
+.kh-logo-top img {
+  height: 68px;
+  filter: drop-shadow(0 6px 22px rgba(122, 92, 255, 0.35));
+}
+
+.kh-card {
+  width: 100%;
+  max-width: 520px;
+  background: var(--card);
+  border: 3px solid var(--soft);
+  border-radius: var(--radius);
+  padding: 40px 36px;
+  text-align: center;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 18px;
+}
+
+.kh-register .glow {
+  box-shadow:
+    0 0 60px rgba(122, 92, 255, 0.45),
+    0 0 110px rgba(122, 92, 255, 0.25);
+}
+
+.kh-title {
+  font-family: Geologica, sans-serif;
+  font-size: 28px;
+  margin: 0;
+}
+
+.kh-form {
+  width: 100%;
+  max-width: 860px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  text-align: left;
+}
+
+.kh-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(260px, 1fr));
+  column-gap: 20px;
+  row-gap: 18px;
+}
+
+.kh-field {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.kh-field label {
+  font-size: 14px;
+  color: var(--soft);
+}
+
+.kh-field input {
+  width: 100%;
+  min-height: 48px;
+  padding: 14px 16px;
+  border-radius: 8px;
+  background: #4a4a4a;
+  border: 1px solid var(--stroke);
+  color: var(--text);
+  outline: none;
+}
+
+.kh-field input:focus {
+  border-color: rgba(108, 111, 236, 0.6);
+  box-shadow: 0 0 0 4px rgba(108, 111, 236, 0.15);
+}
+
+.req::after {
+  content: ' *';
+  color: #ff0000;
+}
+
+.kh-terms {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 14px;
+  color: var(--soft);
+  user-select: none;
+  line-height: 1.2;
+}
+
+.kh-terms a {
+  color: #5468ff;
+  text-decoration: underline;
+}
+
+.kh-btn {
+  width: 240px;
+  height: 48px;
+  border: none;
+  border-radius: 14px;
+  background: linear-gradient(90deg, var(--g1) 50%, var(--g2) 100%);
+  color: #171717;
+  font-family: Geologica, sans-serif;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  cursor: pointer;
+  margin: 8px auto 0;
+  box-shadow:
+    0 10px 30px rgba(108, 111, 236, 0.35),
+    0 6px 18px rgba(85, 246, 201, 0.25);
+}
+
+.kh-btn:hover {
+  transform: translateY(-1px);
+}
+.kh-btn:active {
+  transform: translateY(0);
+}
+
+.kh-side {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.kh-side img {
+  max-width: 360px;
+  filter: drop-shadow(-18px 18px 0 rgba(0, 0, 0, 0.35))
+    drop-shadow(0 0 70px rgba(108, 255, 211, 0.25));
+}
+
+@media (max-width: 1050px) {
+  .kh-page {
+    grid-template-columns: 1fr;
+  }
+  .kh-side {
+    display: none;
+  }
+}
+
+@media (max-width: 720px) {
+  .kh-grid {
+    grid-template-columns: 1fr;
+    row-gap: 14px;
+  }
+  .kh-btn {
+    width: 100%;
+  }
+}
+
+@media (max-height: 760px) {
+  html,
+  body {
+    overflow-y: auto;
+  }
+}
+
+.kh-card .slide-container {
+  width: 100%;
+  margin: 0 auto 16px;
+}
+
+.kh-form {
+  width: 100%;
+}
+
+.kh-grid {
+  width: 100%;
+}
+
+.kh-grid {
+  grid-template-columns: repeat(2, 1fr);
+  column-gap: 24px;
+  row-gap: 20px;
+}
+
+.kh-grid > .kh-field {
+  min-width: 0;
+}
+
+.kh-field {
+  gap: 10px;
+}
+
+.kh-field input {
+  min-height: 52px;
+  padding: 14px 16px;
+  box-sizing: border-box;
+  width: 100%;
+}
+
+.kh-grid + .kh-terms {
+  margin-top: 8px;
+}
+.kh-terms + .kh-btn {
+  margin-top: 18px;
+}
+
+.kh-card {
+  padding: 40px 36px 44px;
+}

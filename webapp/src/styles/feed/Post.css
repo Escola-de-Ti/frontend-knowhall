@@ -1,0 +1,207 @@
+@import url('https://fonts.googleapis.com/css2?family=Geologica:wght@100..900&family=Manrope:wght@200..800&display=swap');
+
+:root {
+  --card-bg: #2a2a2a;
+  --card-bd: #302e2e;
+  --text: #ffffff;
+  --muted: #cfcfcf;
+  --time: #89807d;
+  --avatar: #8476d9;
+  --tag: #8476d9;
+  --tag-bg: transparent;
+  --tag-bd: #8476d9;
+  --lvl-c1: #55f3ca;
+  --lvl-c2: #5469fe;
+  --kpi-neutral: #bfb8b4;
+  --kpi-up: #5ee3b9;
+  --kpi-com: #c58af5;
+}
+
+.post-card {
+  background: var(--card-bg);
+  border: 1.5px solid var(--card-bd);
+  border-radius: 14px;
+  padding: 18px 26px;
+  width: 100%;
+  max-width: 780px;
+  margin: 0 auto;
+  color: var(--text);
+  display: grid;
+  gap: 12px;
+}
+
+.post-head {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: 12px;
+}
+
+.post-avatar {
+  width: 52px;
+  height: 52px;
+  border-radius: 999px;
+  display: grid;
+  place-items: center;
+  background: var(--avatar);
+  color: #111;
+  font-weight: 900;
+  font-family: Geologica, Manrope, sans-serif;
+}
+
+.post-meta {
+  display: grid;
+  gap: 4px;
+}
+.post-autor {
+  font-family: Geologica, Manrope, sans-serif;
+  font-weight: 800;
+  font-size: 18px;
+  line-height: 1.1;
+}
+.post-sub {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 13px;
+}
+.post-time {
+  color: var(--time);
+}
+.post-sub .dot {
+  width: 4px;
+  height: 4px;
+  border-radius: 999px;
+  background: #6c6662;
+}
+
+.level-pill {
+  padding: 4px 8px;
+  border-radius: 10px;
+  border: 1.5px solid transparent;
+  background:
+    linear-gradient(var(--card-bg), var(--card-bg)) padding-box,
+    linear-gradient(90deg, var(--lvl-c1), var(--lvl-c2)) border-box;
+}
+.level-text {
+  background: linear-gradient(90deg, var(--lvl-c1), var(--lvl-c2));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  font-weight: 800;
+  font-family: Geologica, Manrope, sans-serif;
+}
+
+.post-more {
+  background: transparent;
+  border: 0;
+  color: #ccc;
+  cursor: pointer;
+  font-size: 20px;
+  line-height: 1;
+  padding: 4px;
+}
+
+.post-title {
+  margin: 2px 0 0;
+  font-family: Geologica, Manrope, sans-serif;
+  font-weight: 700;
+  font-size: 22px;
+  letter-spacing: 0.2px;
+}
+.post-body {
+  margin: 0;
+  color: #f1f1f1;
+  opacity: 0.92;
+  line-height: 1.6;
+  font-family: Manrope, system-ui, sans-serif;
+}
+
+.post-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 4px;
+}
+.tag {
+  padding: 6px 10px;
+  border-radius: 999px;
+  background: var(--tag-bg);
+  border: 1.5px solid var(--tag-bd);
+  color: var(--tag);
+  font-size: 13px;
+  font-weight: 700;
+  font-family: Geologica, Manrope, sans-serif;
+}
+
+.post-footer {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 2px;
+}
+.kpi {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  border-radius: 10px;
+  border: 1px solid #3a3837;
+  background: #242323;
+  cursor: pointer;
+  transition: all 0.18s ease;
+}
+.kpi .kpi-val {
+  font-family: Geologica, Manrope, sans-serif;
+  font-weight: 800;
+  letter-spacing: 0.2px;
+  color: #ddd;
+}
+
+.ico-up,
+.ico-com {
+  width: 18px;
+  height: 18px;
+  display: inline-block;
+  background: var(--kpi-neutral);
+}
+
+.ico-up {
+  mask: url('data:image/svg+xml;utf8,\
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="%23000" d="M12 4l6 7h-4v9H10V11H6z"/></svg>')
+    no-repeat center/contain;
+}
+/* balão de comentário */
+.ico-com {
+  width: 18px;
+  height: 18px;
+  display: inline-block;
+  mask: url('data:image/svg+xml;utf8,\
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">\
+<path fill="%23000" d="M20 2H4a2 2 0 0 0-2 2v18l4-4h14a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2m0 12H5.17L4 15.17V4h16z"/>\
+</svg>') no-repeat center/contain;
+  background: var(--muted);
+  transition: background 0.2s ease;
+}
+
+/* cores ao hover */
+.kpi-up:hover .ico-up {
+  background: var(--kpi-up);
+}
+.kpi-com:hover .ico-com {
+  background: var(--kpi-com);
+}
+.kpi:hover {
+  border-color: #4a4847;
+  box-shadow: 0 0 0 2px #00000033 inset;
+}
+
+@media (max-width: 640px) {
+  .post-title {
+    font-size: 20px;
+  }
+  .post-avatar {
+    width: 46px;
+    height: 46px;
+  }
+}

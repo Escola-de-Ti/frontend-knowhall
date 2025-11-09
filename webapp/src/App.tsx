@@ -1,25 +1,35 @@
 import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import { Routes, Route, Navigate } from 'react-router-dom';
+import Login from './pages/Login';
+import Cadastro from './pages/Cadastro';
+import CriarPost from './pages/CriarPost';
+import Perfil from './pages/Perfil';
+import Feed from './pages/Feed';
+import { JSX } from 'react';
+
+function isAuth() {
+  const basic = import.meta.env.VITE_API_USER;
+  const token = localStorage.getItem('kh_token');
+  return !!token || !!basic;
+}
+
+function Protected({ children }: { children: JSX.Element }) {
+  return isAuth() ? children : <Navigate to="/login" replace />;
+}
 
 function App() {
+  const home = isAuth() ? <Navigate to="/perfil" replace /> : <Navigate to="/login" replace />;
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <Routes>
+      <Route path="/login" element={<Login />} />
+      <Route path="/cadastro" element={<Cadastro />} />
+      <Route path="/criar-post" element={<Protected><CriarPost /></Protected>} />
+      <Route path="/perfil" element={<Protected><Perfil /></Protected>} />
+      <Route path="/feed" element={<Feed />} />
+      <Route path="/" element={home} />
+      <Route path="*" element={<div>Página não encontrada</div>} />
+    </Routes>
   );
 }
 
