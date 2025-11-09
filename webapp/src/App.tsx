@@ -5,6 +5,7 @@ import Cadastro from './pages/Cadastro';
 import CriarPost from './pages/CriarPost';
 import Perfil from './pages/Perfil';
 import Feed from './pages/Feed';
+import Ranking from './pages/Ranking';
 import { JSX } from 'react';
 
 function isAuth() {
@@ -26,7 +27,9 @@ function App() {
       <Route path="/cadastro" element={<Cadastro />} />
       <Route path="/criar-post" element={<Protected><CriarPost /></Protected>} />
       <Route path="/perfil" element={<Protected><Perfil /></Protected>} />
-      <Route path="/feed" element={<Feed />} />
+      <Route path="/feed" element={<Protected><Feed /></Protected>} />
+      <Route path="/ranking" element={<Ranking/>}/>
+
       <Route path="/" element={home} />
       <Route path="*" element={<div>Página não encontrada</div>} />
     </Routes>
