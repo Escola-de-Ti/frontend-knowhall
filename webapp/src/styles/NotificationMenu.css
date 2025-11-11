@@ -1,0 +1,74 @@
+.nm-overlay {
+  position: fixed;
+  inset: 0;
+  background: transparent;
+  z-index: 40;
+}
+.nm-panel {
+  position: absolute;
+  top: 44px;
+  right: 0;
+  width: 320px;
+  max-width: 88vw;
+  background: #2f2f31;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 14px;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.35);
+  z-index: 41;
+  overflow: hidden;
+}
+.nm-header {
+  padding: 12px 14px;
+  font-weight: 700;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  color: #fff;
+}
+.nm-item {
+  width: 100%;
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  padding: 12px 14px;
+  background: transparent;
+  border: 0;
+  cursor: pointer;
+  color: #eaeaea;
+}
+.nm-item:hover {
+  background: rgba(255, 255, 255, 0.05);
+}
+.nm-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 999px;
+  margin-top: 6px;
+  background: #45e0b3;
+}
+.nm-dot.read {
+  background: #7a7a7a;
+}
+.nm-body {
+  display: grid;
+}
+.nm-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: #fff;
+}
+.nm-sub {
+  font-size: 12px;
+  opacity: 0.75;
+}
+.nm-ver-todas {
+  width: 100%;
+  background: transparent;
+  border: 0;
+  color: #bfc7ff;
+  font-weight: 700;
+  padding: 12px 14px;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  cursor: pointer;
+}
+.nm-ver-todas:hover {
+  background: rgba(255, 255, 255, 0.05);
+}
