@@ -6,6 +6,7 @@ import CriarPost from './pages/CriarPost';
 import CriarWorkshop from './pages/CriarWorkshop';
 import Perfil from './pages/Perfil';
 import Feed from './pages/Feed';
+import EditarPerfil from './pages/EditarPerfil';
 
 function isAuth() {
   const basic = import.meta.env.VITE_API_USER;
@@ -24,6 +25,7 @@ function App() {
       <Route path="/criar-workshop" element={<CriarWorkshop />} />
       <Route path="/perfil" element={<Perfil />} />
       <Route path="/feed" element={<Feed />} />
+      <Route path="/perfil/editar-perfil" element={<EditarPerfil />} />
       <Route path="/" element={home} />
       <Route path="*" element={<div>Página não encontrada</div>} />
     </Routes>
