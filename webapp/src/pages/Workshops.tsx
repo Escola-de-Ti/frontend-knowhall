@@ -8,10 +8,14 @@ import '../styles/Workshops.css';
 type EnrolledWorkshop = UiWorkshop & {
   completed?: boolean;
   rating?: number;
+  mine?: boolean;
+  tokens?: number;
 };
 
+type Tab = 'disponiveis' | 'inscritos' | 'meus';
+
 export default function Workshops() {
-  const [tab, setTab] = useState<'disponiveis' | 'inscritos'>('disponiveis');
+  const [tab, setTab] = useState<Tab>('disponiveis');
   const [data, setData] = useState<EnrolledWorkshop[]>([]);
   const navigate = useNavigate();
 
@@ -19,26 +23,54 @@ export default function Workshops() {
     let mounted = true;
     listWorkshops()
       .then((r) => {
-        if (mounted) setData(r);
+        if (mounted) setData(r as EnrolledWorkshop[]);
       })
       .catch(() => {
         setData([
           {
             id: '1',
-            title: 'Introdução ao React Hooks',
+            title: 'Back-end com Node.js',
             description:
-              'Aprenda os conceitos fundamentais dos React Hooks e como utilizá-los em seus projetos.',
-            mentor: { name: 'Matheus Rossini' },
-            date: '15 Nov 2025',
+              'Crie APIs REST rápidas e escaláveis para a web utilizando Node.js e o framework Express.',
+            mentor: { name: 'Andre Jacob' },
+            date: '15 Set 2024',
             durationHours: 2,
             startTime: '19:00',
             endTime: '21:00',
-            enrolled: true,
-            completed: true,
-            rating: 4.7,
+            enrolled: false,
+            mine: true,
+            tokens: 500,
           },
           {
             id: '2',
+            title: 'Python para Análise de Dados',
+            description:
+              'Aprenda a manipular, analisar e visualizar dados de forma prática utilizando Python e a biblioteca Pandas.',
+            mentor: { name: 'Andre Jacob' },
+            date: '15 Set 2024',
+            durationHours: 2,
+            startTime: '19:00',
+            endTime: '21:00',
+            enrolled: false,
+            mine: true,
+            tokens: 650,
+          },
+          {
+            id: '3',
+            title: 'Cloud com AWS',
+            description:
+              'Domine os conceitos e serviços essenciais da computação em nuvem com a Amazon Web Services (AWS).',
+            mentor: { name: 'Andre Jacob' },
+            date: '15 Set 2024',
+            durationHours: 2,
+            startTime: '19:00',
+            endTime: '21:00',
+            enrolled: false,
+            mine: true,
+            tokens: 700,
+          },
+          {
+            id: '4',
             title: 'TypeScript Avançado',
             description: 'Workshop sobre funcionalidades avançadas do TypeScript.',
             mentor: { name: 'Gabriel Marassi' },
@@ -49,30 +81,6 @@ export default function Workshops() {
             enrolled: true,
             rating: 4.7,
           },
-          {
-            id: '3',
-            title: 'Python para Análise de Dados',
-            description:
-              'Aprenda a manipular, analisar e visualizar dados de forma prática utilizando Python e Pandas.',
-            mentor: { name: 'Andre Jacob' },
-            date: '15 Dez 2025',
-            durationHours: 2,
-            startTime: '19:00',
-            endTime: '21:00',
-            enrolled: false,
-          },
-          {
-            id: '4',
-            title: 'Desenvolvimento Mobile com Flutter',
-            description:
-              'Crie aplicativos nativos de alta performance para Android e iOS com um único código-fonte.',
-            mentor: { name: 'Kauan Bertalha' },
-            date: '15 Dez 2025',
-            durationHours: 2,
-            startTime: '19:00',
-            endTime: '21:00',
-            enrolled: false,
-          },
         ]);
       });
     return () => {
@@ -80,13 +88,15 @@ export default function Workshops() {
     };
   }, []);
 
-  const filtered = useMemo(
-    () =>
-      tab === 'disponiveis' ? data.filter((w) => !w.enrolled) : data.filter((w) => w.enrolled),
-    [data, tab]
-  );
+  const filtered = useMemo(() => {
+    if (tab === 'meus') return data.filter((w) => w.mine);
+    if (tab === 'inscritos') return data.filter((w) => w.enrolled);
+    return data.filter((w) => !w.enrolled); // disponíveis
+  }, [data, tab]);
 
+  const activeIdx = tab === 'disponiveis' ? 0 : tab === 'inscritos' ? 1 : 2;
   const isInscritos = tab === 'inscritos';
+  const isMeus = tab === 'meus';
 
   return (
     <>
@@ -104,27 +114,39 @@ export default function Workshops() {
               <p className="wk-sub">Aprenda com especialistas da comunidade</p>
             </div>
 
-            <button className="wk-filter">
-              <span className="ico-filter" />
-              Filtros
-            </button>
+            <div className="wk-actions">
+              <button className="wk-filter">
+                <span className="ico-filter" />
+                Filtros
+              </button>
+              <button className="wk-create" onClick={() => navigate('/criar-workshop/')}>
+                <span className="ico-plus" />
+                Criar Workshop
+              </button>
+            </div>
           </div>
         </div>
 
         <div className="wk-tabs-wrap">
           <div className="wk-tabs">
-            <span className={`wk-tabs-thumb ${isInscritos ? 'is-right' : 'is-left'}`} />
+            <span className={`wk-tabs-thumb pos-${activeIdx}`} />
             <button
-              className={`wk-tab ${!isInscritos ? 'is-active' : ''}`}
+              className={`wk-tab ${activeIdx === 0 ? 'is-active' : ''}`}
               onClick={() => setTab('disponiveis')}
             >
               Workshops Disponíveis
             </button>
             <button
-              className={`wk-tab ${isInscritos ? 'is-active' : ''}`}
+              className={`wk-tab ${activeIdx === 1 ? 'is-active' : ''}`}
               onClick={() => setTab('inscritos')}
             >
               Inscritos
+            </button>
+            <button
+              className={`wk-tab ${activeIdx === 2 ? 'is-active' : ''}`}
+              onClick={() => setTab('meus')}
+            >
+              Meus Workshops
             </button>
           </div>
         </div>
@@ -142,6 +164,9 @@ export default function Workshops() {
                 >
                   <header className="wk-row">
                     <h2 className="wk-card-title">{w.title}</h2>
+                    {typeof w.tokens === 'number' && !isInscritos && (
+                      <span className="wk-chip-tokens">{w.tokens} tokens</span>
+                    )}
                     {isInscritos && (
                       <span className={`wk-chip-status ${w.completed ? 'ok' : 'info'}`}>
                         {statusLabel}
@@ -183,12 +208,24 @@ export default function Workshops() {
                         </div>
                       </div>
 
-                      <div className="wk-cta-row">
-                        <button className="wk-cta" onClick={() => navigate(`/workshops/${w.id}`)}>
-                          <span className="wk-cta-ico" />
-                          <span>Inscreva-se</span>
-                        </button>
-                      </div>
+                      {!isMeus ? (
+                        <div className="wk-cta-row">
+                          <button className="wk-cta" onClick={() => navigate(`/workshops/${w.id}`)}>
+                            <span className="wk-cta-ico" />
+                            <span>Inscreva-se</span>
+                          </button>
+                        </div>
+                      ) : (
+                        <div className="wk-card-actions">
+                          <button
+                            className="wk-btn-edit"
+                            onClick={() => navigate(`/workshops/${w.id}/editar`)}
+                          >
+                            <span className="ico-edit" />
+                            Editar Configurações
+                          </button>
+                        </div>
+                      )}
                     </>
                   )}
 
@@ -206,7 +243,6 @@ export default function Workshops() {
                           </div>
                         )}
                       </div>
-
                       <button
                         className="wk-btn-join"
                         onClick={() => navigate(`/workshops/${w.id}`)}
