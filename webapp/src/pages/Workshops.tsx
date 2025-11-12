@@ -5,9 +5,14 @@ import { listWorkshops, UiWorkshop } from '../services/workshops.service';
 import NavBar from '../components/NavBar';
 import '../styles/Workshops.css';
 
+type EnrolledWorkshop = UiWorkshop & {
+  completed?: boolean;
+  rating?: number;
+};
+
 export default function Workshops() {
   const [tab, setTab] = useState<'disponiveis' | 'inscritos'>('disponiveis');
-  const [data, setData] = useState<UiWorkshop[]>([]);
+  const [data, setData] = useState<EnrolledWorkshop[]>([]);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -24,23 +29,25 @@ export default function Workshops() {
             description:
               'Aprenda os conceitos fundamentais dos React Hooks e como utilizá-los em seus projetos.',
             mentor: { name: 'Matheus Rossini' },
-            date: '15 Set 2025',
+            date: '15 Nov 2025',
             durationHours: 2,
             startTime: '19:00',
             endTime: '21:00',
-            enrolled: false,
+            enrolled: true,
+            completed: true,
+            rating: 4.7,
           },
           {
             id: '2',
-            title: 'APIs com Node.js e Express',
-            description:
-              'Crie APIs REST rápidas e escaláveis utilizando Node.js e o framework Express.',
+            title: 'TypeScript Avançado',
+            description: 'Workshop sobre funcionalidades avançadas do TypeScript.',
             mentor: { name: 'Gabriel Marassi' },
             date: '21 Nov 2025',
             durationHours: 1.5,
             startTime: '20:00',
             endTime: '21:30',
-            enrolled: false,
+            enrolled: true,
+            rating: 4.7,
           },
           {
             id: '3',
@@ -48,11 +55,11 @@ export default function Workshops() {
             description:
               'Aprenda a manipular, analisar e visualizar dados de forma prática utilizando Python e Pandas.',
             mentor: { name: 'Andre Jacob' },
-            date: '15 Set 2025',
+            date: '15 Dez 2025',
             durationHours: 2,
             startTime: '19:00',
             endTime: '21:00',
-            enrolled: true,
+            enrolled: false,
           },
           {
             id: '4',
@@ -60,7 +67,7 @@ export default function Workshops() {
             description:
               'Crie aplicativos nativos de alta performance para Android e iOS com um único código-fonte.',
             mentor: { name: 'Kauan Bertalha' },
-            date: '15 Set 2025',
+            date: '15 Dez 2025',
             durationHours: 2,
             startTime: '19:00',
             endTime: '21:00',
@@ -78,6 +85,8 @@ export default function Workshops() {
       tab === 'disponiveis' ? data.filter((w) => !w.enrolled) : data.filter((w) => w.enrolled),
     [data, tab]
   );
+
+  const isInscritos = tab === 'inscritos';
 
   return (
     <>
@@ -104,15 +113,15 @@ export default function Workshops() {
 
         <div className="wk-tabs-wrap">
           <div className="wk-tabs">
-            <span className={`wk-tabs-thumb ${tab === 'disponiveis' ? 'is-left' : 'is-right'}`} />
+            <span className={`wk-tabs-thumb ${isInscritos ? 'is-right' : 'is-left'}`} />
             <button
-              className={`wk-tab ${tab === 'disponiveis' ? 'is-active' : ''}`}
+              className={`wk-tab ${!isInscritos ? 'is-active' : ''}`}
               onClick={() => setTab('disponiveis')}
             >
               Workshops Disponíveis
             </button>
             <button
-              className={`wk-tab ${tab === 'inscritos' ? 'is-active' : ''}`}
+              className={`wk-tab ${isInscritos ? 'is-active' : ''}`}
               onClick={() => setTab('inscritos')}
             >
               Inscritos
@@ -123,53 +132,93 @@ export default function Workshops() {
         {filtered.length === 0 ? (
           <div className="wk-empty">Nada por aqui.</div>
         ) : (
-          <div className="wk-grid">
-            {filtered.map((w) => (
-              <article key={w.id} className="wk-card">
-                <div className="wk-card-head">
-                  <h2 className="wk-card-title">{w.title}</h2>
-                </div>
+          <div className={`wk-grid ${isInscritos ? 'is-enrolled' : ''}`}>
+            {filtered.map((w) => {
+              const statusLabel = w.completed ? 'Concluído' : 'Inscrito';
+              return (
+                <article
+                  key={w.id}
+                  className={`wk-card ${isInscritos ? 'enrolled' : ''} ${w.completed ? 'done' : ''}`}
+                >
+                  <header className="wk-row">
+                    <h2 className="wk-card-title">{w.title}</h2>
+                    {isInscritos && (
+                      <span className={`wk-chip-status ${w.completed ? 'ok' : 'info'}`}>
+                        {statusLabel}
+                      </span>
+                    )}
+                  </header>
 
-                <p className="wk-desc">{w.description}</p>
+                  <p className="wk-desc">{w.description}</p>
 
-                <div className="wk-mentor">
-                  <div className="wk-avatar">
-                    {w.mentor.name
-                      .split(' ')
-                      .map((s) => s[0])
-                      .slice(0, 2)
-                      .join('')}
-                  </div>
-                  <div className="wk-mentor-info">
-                    <div className="wk-mentor-name">{w.mentor.name}</div>
-                  </div>
-                </div>
+                  {!isInscritos && (
+                    <>
+                      <div className="wk-mentor">
+                        <div className="wk-avatar">
+                          {w.mentor.name
+                            .split(' ')
+                            .map((s) => s[0])
+                            .slice(0, 2)
+                            .join('')}
+                        </div>
+                        <div className="wk-mentor-info">
+                          <div className="wk-mentor-name">{w.mentor.name}</div>
+                        </div>
+                      </div>
 
-                <div className="wk-meta">
-                  <div className="wk-meta-item">
-                    <span className="wk-ico wk-cal" />
-                    <span>{w.date}</span>
-                  </div>
-                  <div className="wk-meta-item">
-                    <span className="wk-ico wk-time" />
-                    <span>{w.durationHours}h</span>
-                  </div>
-                  <div className="wk-meta-item">
-                    <span className="wk-ico wk-clock" />
-                    <span>
-                      {w.startTime} - {w.endTime}
-                    </span>
-                  </div>
-                </div>
+                      <div className="wk-meta">
+                        <div className="wk-meta-item">
+                          <span className="wk-ico wk-cal" />
+                          <span>{w.date}</span>
+                        </div>
+                        <div className="wk-meta-item">
+                          <span className="wk-ico wk-time" />
+                          <span>{w.durationHours}h</span>
+                        </div>
+                        <div className="wk-meta-item">
+                          <span className="wk-ico wk-clock" />
+                          <span>
+                            {w.startTime} - {w.endTime}
+                          </span>
+                        </div>
+                      </div>
 
-                <div className="wk-cta-row">
-                  <button className="wk-cta" onClick={() => navigate(`/workshops/${w.id}`)}>
-                    <span className="wk-cta-ico" />
-                    <span>Inscreva-se</span>
-                  </button>
-                </div>
-              </article>
-            ))}
+                      <div className="wk-cta-row">
+                        <button className="wk-cta" onClick={() => navigate(`/workshops/${w.id}`)}>
+                          <span className="wk-cta-ico" />
+                          <span>Inscreva-se</span>
+                        </button>
+                      </div>
+                    </>
+                  )}
+
+                  {isInscritos && (
+                    <div className="wk-enroll-footer">
+                      <div className="wk-enroll-meta">
+                        <div className="wk-inline">
+                          <span className="wk-ico wk-cal" />
+                          <span className="wk-inline-text">{w.date}</span>
+                        </div>
+                        {typeof w.rating === 'number' && (
+                          <div className="wk-inline">
+                            <span className="wk-ico wk-star" />
+                            <span className="wk-inline-text">{w.rating.toFixed(1)}</span>
+                          </div>
+                        )}
+                      </div>
+
+                      <button
+                        className="wk-btn-join"
+                        onClick={() => navigate(`/workshops/${w.id}`)}
+                      >
+                        <span className="ico-video" />
+                        Entrar
+                      </button>
+                    </div>
+                  )}
+                </article>
+              );
+            })}
           </div>
         )}
       </div>
