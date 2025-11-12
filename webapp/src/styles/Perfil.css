@@ -56,3 +56,110 @@ body {
     margin: var(--space-2) 2px var(--space-2);
   }
 }
+
+.perfil-card {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 16px;
+  padding: 20px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
+  backdrop-filter: blur(8px);
+}
+
+.perfil-detalhes-card,
+.perfil-historico-card {
+  overflow: hidden;
+}
+
+.ph-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.ph-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.ph-left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.nivel-pill,
+.token-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  border-radius: 999px;
+  padding: 8px 12px;
+  font-weight: 700;
+  font-size: 14px;
+  letter-spacing: 0.2px;
+}
+
+.nivel-pill {
+  color: #141414;
+  background: linear-gradient(135deg, #f08e90, #8476d9);
+  box-shadow: 0 0 14px rgba(240, 142, 144, 0.25);
+}
+
+.token-pill {
+  color: #141414;
+  background: linear-gradient(135deg, #55f6c9, #8476d9);
+  box-shadow: 0 0 14px rgba(85, 246, 201, 0.25);
+}
+
+.ph-right .rank-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 12px;
+  padding: 8px 12px;
+  background: rgba(255, 255, 255, 0.03);
+  font-weight: 800;
+  font-size: 14px;
+}
+.ph-right .rank-badge img {
+  width: 20px;
+  height: 20px;
+  object-fit: contain;
+}
+
+.kpi-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12px;
+}
+.kpi-item {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 14px;
+  padding: 14px;
+  text-align: center;
+}
+.kpi-value {
+  font-size: 22px;
+  font-weight: 800;
+  line-height: 1;
+  margin-bottom: 6px;
+}
+.kpi-label {
+  font-size: 12px;
+  opacity: 0.8;
+}
+
+@media (max-width: 980px) {
+  .kpi-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+.perfil-slide {
+  margin: 0 2px var(--space-3) 2px;
+}

@@ -7,7 +7,7 @@ type PerfilHistoricoProps = {
   ranking: number;
   xpAtual: number;
   xpNecessario: number;
-  progresso: number; // 0–100
+  progresso: number;
   posts: number;
   upvotes: number;
   comentarios: number;
@@ -19,9 +19,6 @@ export default function PerfilHistorico({
   nivel,
   tokens,
   ranking,
-  xpAtual,
-  xpNecessario,
-  progresso,
   posts,
   upvotes,
   comentarios,
@@ -51,36 +48,20 @@ export default function PerfilHistorico({
         <span className="chip chip-tokens">T {fmt(tokens)}</span>
       </div>
 
-      <div className="next-level-container">
-        <span className="next-level-label">Progresso para o próximo nível</span>
-        <div
-          className="next-level-bar"
-          role="progressbar"
-          aria-valuemin={0}
-          aria-valuemax={100}
-          aria-valuenow={progresso}
-        >
-          <div className="next-level-progress" style={{ width: `${progresso}%` }} />
-        </div>
-        <span className="xp-legend">
-          {fmt(xpAtual)} / {fmt(xpNecessario)} XP
-        </span>
-      </div>
-
       <div className="kpis">
-        <div className="kpi kpi-posts">
+        <div className="kpi">
           <strong>{fmt(posts)}</strong>
           <span>Posts</span>
         </div>
-        <div className="kpi kpi-upvotes">
+        <div className="kpi">
           <strong>{fmt(upvotes)}</strong>
           <span>Upvotes</span>
         </div>
-        <div className="kpi kpi-comments">
+        <div className="kpi">
           <strong>{fmt(comentarios)}</strong>
           <span>Comentários</span>
         </div>
-        <div className="kpi kpi-workshops">
+        <div className="kpi">
           <strong>{fmt(workshops)}</strong>
           <span>Workshops</span>
         </div>
