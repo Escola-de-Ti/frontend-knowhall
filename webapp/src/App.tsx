@@ -6,7 +6,7 @@ import CriarPost from './pages/CriarPost';
 import CriarWorkshop from './pages/CriarWorkshop';
 import Perfil from './pages/Perfil';
 import Feed from './pages/Feed';
-import HistoricoTransacoes from './pages/HistoricoTransacoes'; 
+import Ranking from './pages/Ranking';
 import { JSX } from 'react';
 
 function isAuth() {
@@ -25,7 +25,8 @@ function App() {
       <Route path="/criar-post" element={<Protected><CriarPost /></Protected>} />
       <Route path="/perfil" element={<Protected><Perfil /></Protected>} />
       <Route path="/feed" element={<Protected><Feed /></Protected>} />
-      <Route path="/historico-transacoes" element={<HistoricoTransacoes />}/>
+      <Route path="/ranking" element={<Ranking/>}/>
+
       <Route path="/" element={home} />
       <Route path="*" element={<div>Página não encontrada</div>} />
     </Routes>

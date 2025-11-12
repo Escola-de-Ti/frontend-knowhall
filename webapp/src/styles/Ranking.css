@@ -1,0 +1,168 @@
+.ranking-page {
+  background-color: #0b0b0f;
+  min-height: 100vh;
+  color: #fff;
+  font-family: 'Inter', sans-serif;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.ranking-container {
+  width: 100%;
+  max-width: 900px;
+  padding: 24px;
+}
+
+.ranking-title {
+  font-size: 24px;
+  font-weight: 700;
+  margin-bottom: 4px;
+}
+
+.ranking-subtitle {
+  color: #aaa;
+  margin-bottom: 24px;
+}
+
+.ranking-stats {
+  display: flex;
+  justify-content: flex-start;
+  gap: 12px;
+  margin-bottom: 24px;
+}
+
+.stat-card {
+  flex: 1;
+  min-width: 180px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background-color: #141417;
+  border-radius: 12px;
+  padding: 16px 20px;
+}
+
+.stat-icon {
+  font-size: 24px;
+}
+
+.stat-card h2 {
+  font-size: 13px;
+  font-weight: 500;
+  color: #bbb;
+}
+
+.stat-card p {
+  font-size: 20px;
+  font-weight: 700;
+}
+
+.stat-card.green p {
+  color: #6ef7c3;
+}
+
+.stat-card.blue p {
+  color: #7da6ff;
+}
+
+.ranking-list {
+  margin-top: 20px;
+}
+
+.ranking-global-title {
+  font-size: 16px;
+  font-weight: 600;
+  margin-bottom: 12px;
+  color: #ccc;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.ranking-title-icon {
+  color: gold;
+  font-size: 18px;
+}
+
+/* ---- Cards ---- */
+.ranking-card {
+  border-radius: 10px;
+  padding: 14px 18px;
+  margin-bottom: 10px;
+  border: 1px solid #222;
+  transition: transform 0.2s ease;
+}
+
+.ranking-card:hover {
+  transform: scale(1.01);
+}
+
+.top-three {
+  color: #fff;
+  font-weight: 600;
+}
+
+.ranking-info {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  width: 100%;
+}
+
+.ranking-left {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  min-width: 220px;
+}
+
+.ranking-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.user-trophy {
+  font-size: 18px;
+}
+
+.ranking-position {
+  font-weight: 700;
+  color: #ddd;
+}
+
+.ranking-name {
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.ranking-level-tokens {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 4px;
+}
+
+.level-badge {
+  background-color: #1f1f27;
+  border-radius: 6px;
+  padding: 2px 8px;
+  font-size: 12px;
+  color: #82caff;
+}
+
+.token-badge {
+  background-color: #1f1f27;
+  border-radius: 6px;
+  padding: 2px 8px;
+  font-size: 12px;
+  color: #ffd580;
+}
+
+.navbar-wrapper {
+  width: 100%;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
