@@ -6,6 +6,8 @@ import CriarPost from './pages/CriarPost';
 import CriarWorkshop from './pages/CriarWorkshop';
 import Perfil from './pages/Perfil';
 import Feed from './pages/Feed';
+import Workshops from './pages/Workshops';
+import NotFound from './components/NotFound';
 
 function isAuth() {
   const basic = import.meta.env.VITE_API_USER;
@@ -14,7 +16,7 @@ function isAuth() {
 }
 
 function App() {
-  const home = isAuth() ? <Navigate to="/perfil" replace /> : <Navigate to="/login" replace />;
+  const home = isAuth() ? <Navigate to="/feed" replace /> : <Navigate to="/feed" replace />;
 
   return (
     <Routes>
@@ -24,8 +26,9 @@ function App() {
       <Route path="/criar-workshop" element={<CriarWorkshop />} />
       <Route path="/perfil" element={<Perfil />} />
       <Route path="/feed" element={<Feed />} />
+      <Route path="/workshops" element={<Workshops />} />
       <Route path="/" element={home} />
-      <Route path="*" element={<div>Página não encontrada</div>} />
+      <Route path="*" element={<NotFound />} />
     </Routes>
   );
 }
