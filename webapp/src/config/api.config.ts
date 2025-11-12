@@ -1,4 +1,3 @@
-// Configuração centralizada da API
 const REACT_APP_API_BASE_URL = 'http://localhost:8080'
 
 const API_CONFIG = {
@@ -9,6 +8,9 @@ const API_CONFIG = {
     USUARIOS_USER: '/usuarios/user',
     LOGIN: '/usuarios/login',
     REFRESH: '/usuarios/refresh',
+    POSTS: '/posts',
+    TAGS: '/tags',
+    TAGS_POPULAR: '/tags/popular',
   },
   TIMEOUT: 30000,
 };
