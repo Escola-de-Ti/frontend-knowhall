@@ -1,0 +1,95 @@
+.historico-page {
+  background-color: #0b0b0f;
+  min-height: 100vh;
+  color: #fff;
+  font-family: "Inter", sans-serif;
+}
+
+.historico-container {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 24px;
+}
+
+.historico-title {
+  font-size: 22px;
+  font-weight: 700;
+  margin-bottom: 20px;
+}
+
+.historico-loading {
+  text-align: center;
+  color: #aaa;
+  margin-top: 40px;
+}
+
+.transacoes-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.transacao-card {
+  background-color: #141417;
+  border-radius: 10px;
+  padding: 14px 18px;
+  border: 1px solid #222;
+  transition: transform 0.2s ease;
+}
+
+.transacao-card:hover {
+  transform: scale(1.01);
+}
+
+.transacao-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.transacao-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.transacao-motivo {
+  color: #fff;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.transacao-quantidade {
+  font-size: 15px;
+  font-weight: 600;
+  margin-top: 4px;
+}
+
+.transacao-acoes {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 6px;
+}
+
+.btn-suporte {
+  background-color: #2d2d35;
+  border: none;
+  color: #82caff;
+  padding: 4px 8px;
+  border-radius: 6px;
+  font-size: 11px;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.btn-toggle {
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+.transacao-data {
+  color: #888;
+  font-size: 12px;
+  margin-top: 8px;
+}
