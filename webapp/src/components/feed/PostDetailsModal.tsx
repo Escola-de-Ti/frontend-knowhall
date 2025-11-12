@@ -1,4 +1,5 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
+import '../../styles/feed/PostDetailsModal.css';
 
 export type PostUser = { id?: number; nome: string; iniciais: string; nivel: number };
 export type PostDetails = {
@@ -28,6 +29,17 @@ type Props = {
 };
 
 export default function PostDetailsModal({ open, onClose, post, comments }: Props) {
+  const [localComments, setLocalComments] = useState<PostCommentModel[]>([]);
+  const [replyTarget, setReplyTarget] = useState<null | 'post' | number>(null);
+  const [replyText, setReplyText] = useState('');
+
+  useEffect(() => {
+    if (!open) return;
+    setLocalComments(comments);
+    setReplyTarget(null);
+    setReplyText('');
+  }, [open, comments]);
+
   useEffect(() => {
     if (!open) return;
     const onKey = (e: KeyboardEvent) => {
@@ -42,233 +54,293 @@ export default function PostDetailsModal({ open, onClose, post, comments }: Prop
     };
   }, [open, onClose]);
 
+  const CURRENT_USER: PostUser = useMemo(() => ({ nome: 'Você', iniciais: 'VC', nivel: 1 }), []);
+
   if (!open || !post) return null;
 
+  function openReplyForPost() {
+    setReplyTarget('post');
+    setReplyText('');
+  }
+  function openReplyForComment(id: number) {
+    setReplyTarget(id);
+    setReplyText('');
+  }
+  function cancelReply() {
+    setReplyTarget(null);
+    setReplyText('');
+  }
+
+  function submitReply() {
+    const text = replyText.trim();
+    if (!text) return;
+
+    const newItem: PostCommentModel = {
+      id: Date.now(),
+      autor: CURRENT_USER,
+      texto: text,
+      tempo: 'agora',
+      upvotes: 0,
+      supervotes: 0,
+      respostas: [],
+    };
+
+    if (replyTarget === 'post') {
+      setLocalComments((prev) => [newItem, ...prev]);
+    } else if (typeof replyTarget === 'number') {
+      setLocalComments((prev) => addReply(prev, replyTarget, newItem));
+    }
+    setReplyTarget(null);
+    setReplyText('');
+  }
+
+  function onReplyKeyDown(e: React.KeyboardEvent<HTMLTextAreaElement>) {
+    if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
+      e.preventDefault();
+      submitReply();
+    }
+  }
+
   return (
-    <div
-      role="dialog"
-      aria-modal="true"
-      style={{ position: 'fixed', inset: 0, zIndex: 9999, display: 'grid', placeItems: 'center' }}
-    >
-      <div
-        onClick={onClose}
-        style={{
-          position: 'absolute',
-          inset: 0,
-          background: 'rgba(15,15,20,.66)',
-          backdropFilter: 'blur(2px)',
-        }}
-      />
-      <section
-        onClick={(e) => e.stopPropagation()}
-        style={{
-          position: 'relative',
-          width: 'min(960px, 92vw)',
-          maxHeight: '88vh',
-          overflow: 'auto',
-          background: '#0b0f14',
-          border: '1px solid #1c232c',
-          borderRadius: 16,
-          boxShadow: '0 10px 40px rgba(0,0,0,.5)',
-          color: '#e6edf3',
-        }}
-      >
-        <header
-          style={{
-            display: 'grid',
-            gridTemplateColumns: '48px 1fr 32px',
-            gap: 12,
-            alignItems: 'center',
-            padding: '16px 20px',
-            borderBottom: '1px solid #131a22',
-            background: 'linear-gradient(180deg, rgba(255,255,255,.02), transparent)',
-          }}
-        >
-          <div
-            aria-hidden
-            style={{
-              width: 48,
-              height: 48,
-              borderRadius: 12,
-              display: 'grid',
-              placeItems: 'center',
-              background: 'linear-gradient(135deg, #3c77ff, #7d3cff)',
-              color: '#fff',
-              fontWeight: 700,
-            }}
-          >
+    <div className="kh-modal" role="dialog" aria-modal="true" onClick={onClose}>
+      <div className="kh-modal-backdrop" />
+      <section className="kh-modal-panel" onClick={(e) => e.stopPropagation()}>
+        <header className="kh-modal-header">
+          <div className="post-avatar" aria-hidden>
             {post.autor.iniciais}
           </div>
-          <div>
-            <h3 style={{ margin: 0, fontSize: 18 }}>{post.titulo}</h3>
-            <div
-              style={{
-                color: '#a8b3c0',
-                fontSize: 12,
-                display: 'inline-flex',
-                gap: 6,
-                alignItems: 'center',
-              }}
-            >
-              <span>{post.autor.nome}</span>
-              <span>•</span>
-              <span>{post.tempo}</span>
+
+          <div className="head-col">
+            <h3 className="title">{post.titulo}</h3>
+            <div className="meta">
+              <span className="autor">{post.autor.nome}</span>
+              <span className="dot" />
+              <span className="level-pill">
+                <span className="level-text">Nvl. {post.autor.nivel}</span>
+              </span>
+              <span className="dot" />
+              <span className="tempo">{post.tempo}</span>
             </div>
           </div>
-          <button
-            onClick={onClose}
-            aria-label="Fechar"
-            style={{
-              width: 32,
-              height: 32,
-              border: '1px solid #1c232c',
-              borderRadius: 8,
-              background: '#0f141a',
-              color: '#9fb3c8',
-              fontSize: 18,
-              cursor: 'pointer',
-            }}
-          >
-            ×
-          </button>
+
+          <button className="close" onClick={onClose} aria-label="Fechar" />
         </header>
 
-        <article style={{ padding: '16px 20px 24px 20px' }}>
-          <p style={{ color: '#c7d1db', whiteSpace: 'pre-wrap' }}>{post.corpo}</p>
+        <article className="kh-modal-body">
+          <p className="descricao">{post.corpo}</p>
 
-          <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginBottom: 12 }}>
+          <div className="tags">
             {post.tags.map((t) => (
-              <span
-                key={t}
-                style={{
-                  fontSize: 12,
-                  color: '#a8b3c0',
-                  background: '#0f141a',
-                  border: '1px solid #1c232c',
-                  padding: '6px 10px',
-                  borderRadius: 999,
-                }}
-              >
+              <span key={t} className="tag">
                 #{t}
               </span>
             ))}
           </div>
 
-          <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 12 }}>
-            <button
-              style={{
-                display: 'inline-flex',
-                gap: 6,
-                padding: '8px 10px',
-                borderRadius: 10,
-                border: '1px solid #1c232c',
-                background: '#0f141a',
-                color: '#c7d1db',
-                cursor: 'pointer',
-              }}
-            >
-              ⬆ <span>{post.metrica.upvotes}</span>
+          <div className="votes">
+            <button className="btn up" type="button" aria-label="Upvote">
+              <span className="ico-up" aria-hidden />
+              <span>{post.metrica.upvotes}</span>
+            </button>
+            <button className="btn super" type="button" aria-label="Superlike">
+              <span className="ico-star" aria-hidden />
+              <span>{post.metrica.supervotes}</span>
             </button>
             <button
-              style={{
-                display: 'inline-flex',
-                gap: 6,
-                padding: '8px 10px',
-                borderRadius: 10,
-                border: '1px solid #1c232c',
-                background: '#0f141a',
-                color: '#c7d1db',
-                cursor: 'pointer',
-              }}
+              className="btn com"
+              type="button"
+              aria-label="Comentários"
+              onClick={openReplyForPost}
             >
-              ⭐ <span>{post.metrica.supervotes}</span>
+              <span className="ico-com" aria-hidden />
+              <span>{post.metrica.comentarios}</span>
             </button>
-            <span style={{ width: 1, height: 20, background: '#1c232c', margin: '0 6px' }} />
-            <span style={{ color: '#9fb3c8', fontSize: 12 }}>
-              {post.metrica.comentarios} comentários
-            </span>
           </div>
 
-          <section style={{ display: 'grid', gap: 12 }}>
-            {comments.map((c) => (
-              <div
+          {replyTarget === 'post' && (
+            <ReplyBox
+              value={replyText}
+              onChange={setReplyText}
+              onCancel={cancelReply}
+              onSubmit={submitReply}
+              onKeyDown={onReplyKeyDown}
+              placeholder="Comentar este post…"
+            />
+          )}
+
+          <div className="comments-sep">
+            <span className="ico-com" aria-hidden />
+            <span className="lbl">Comentários</span>
+          </div>
+
+          <section className="comments">
+            {localComments.map((c) => (
+              <CommentNode
                 key={c.id}
-                style={{
-                  border: '1px solid #121a22',
-                  background: '#0e1319',
-                  borderRadius: 12,
-                  padding: '10px 12px',
-                }}
-              >
-                <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                  <div
-                    aria-hidden
-                    style={{
-                      width: 28,
-                      height: 28,
-                      borderRadius: 8,
-                      display: 'grid',
-                      placeItems: 'center',
-                      background: 'linear-gradient(135deg, #3c77ff, #7d3cff)',
-                      color: '#fff',
-                      fontSize: 12,
-                      fontWeight: 700,
-                    }}
-                  >
-                    {c.autor.iniciais}
-                  </div>
-                  <div style={{ color: '#a8b3c0', fontSize: 12 }}>
-                    <span>{c.autor.nome}</span>
-                    <span style={{ margin: '0 6px' }}>•</span>
-                    <span>{c.tempo}</span>
-                  </div>
-                </div>
-                <p style={{ color: '#d5dee7', margin: '8px 0 6px 0' }}>{c.texto}</p>
-                {c.respostas?.length ? (
-                  <div style={{ display: 'grid', gap: 8, marginTop: 8, marginLeft: 16 }}>
-                    {c.respostas.map((r) => (
-                      <div
-                        key={r.id}
-                        style={{
-                          border: '1px solid #121a22',
-                          background: '#0e1319',
-                          borderRadius: 12,
-                          padding: '10px 12px',
-                        }}
-                      >
-                        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                          <div
-                            aria-hidden
-                            style={{
-                              width: 28,
-                              height: 28,
-                              borderRadius: 8,
-                              display: 'grid',
-                              placeItems: 'center',
-                              background: 'linear-gradient(135deg, #3c77ff, #7d3cff)',
-                              color: '#fff',
-                              fontSize: 12,
-                              fontWeight: 700,
-                            }}
-                          >
-                            {r.autor.iniciais}
-                          </div>
-                          <div style={{ color: '#a8b3c0', fontSize: 12 }}>
-                            <span>{r.autor.nome}</span>
-                            <span style={{ margin: '0 6px' }}>•</span>
-                            <span>{r.tempo}</span>
-                          </div>
-                        </div>
-                        <p style={{ color: '#d5dee7', margin: '8px 0 6px 0' }}>{r.texto}</p>
-                      </div>
-                    ))}
-                  </div>
-                ) : null}
-              </div>
+                c={c}
+                depth={0}
+                onResponderClick={openReplyForComment}
+                replyTarget={replyTarget}
+                replyText={replyText}
+                setReplyText={setReplyText}
+                cancelReply={cancelReply}
+                submitReply={submitReply}
+                onReplyKeyDown={onReplyKeyDown}
+              />
             ))}
           </section>
         </article>
       </section>
+    </div>
+  );
+}
+
+function addReply(
+  tree: PostCommentModel[],
+  parentId: number,
+  item: PostCommentModel
+): PostCommentModel[] {
+  return tree.map((n) => {
+    if (n.id === parentId) {
+      const respostas = Array.isArray(n.respostas) ? n.respostas : [];
+      return { ...n, respostas: [item, ...respostas] };
+    }
+    if (n.respostas?.length) {
+      return { ...n, respostas: addReply(n.respostas, parentId, item) };
+    }
+    return n;
+  });
+}
+
+function ReplyBox({
+  value,
+  onChange,
+  onCancel,
+  onSubmit,
+  onKeyDown,
+  placeholder,
+}: {
+  value: string;
+  onChange: (v: string) => void;
+  onCancel: () => void;
+  onSubmit: () => void;
+  onKeyDown: (e: React.KeyboardEvent<HTMLTextAreaElement>) => void;
+  placeholder: string;
+}) {
+  return (
+    <div className="reply-box">
+      <textarea
+        className="reply-input"
+        rows={3}
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+        onKeyDown={onKeyDown}
+        placeholder={placeholder}
+      />
+      <div className="reply-actions">
+        <button type="button" className="btn sm" onClick={onCancel}>
+          Cancelar
+        </button>
+        <button
+          type="button"
+          className="btn sm primary"
+          onClick={onSubmit}
+          disabled={!value.trim()}
+          title="Ctrl+Enter para enviar"
+        >
+          <span className="ico-send" aria-hidden />
+          <span>Enviar</span>
+        </button>
+      </div>
+    </div>
+  );
+}
+
+function CommentNode({
+  c,
+  depth,
+  onResponderClick,
+  replyTarget,
+  replyText,
+  setReplyText,
+  cancelReply,
+  submitReply,
+  onReplyKeyDown,
+}: {
+  c: PostCommentModel;
+  depth: number;
+  onResponderClick: (parentId: number) => void;
+  replyTarget: null | 'post' | number;
+  replyText: string;
+  setReplyText: (v: string) => void;
+  cancelReply: () => void;
+  submitReply: () => void;
+  onReplyKeyDown: (e: React.KeyboardEvent<HTMLTextAreaElement>) => void;
+}) {
+  const isReplyingHere = replyTarget === c.id;
+
+  return (
+    <div className="comment" style={{ marginLeft: depth * 16 }}>
+      <div className="comment-head">
+        <div className="post-avatar post-avatar--sm" aria-hidden>
+          {c.autor.iniciais}
+        </div>
+        <div className="author">
+          <span className="nome">{c.autor.nome}</span>
+        </div>
+      </div>
+
+      <p className="comment-text">{c.texto}</p>
+
+      <div className="comment-actions">
+        <button className="btn sm up" type="button" aria-label="Upvote comentário">
+          <span className="ico-up" aria-hidden />
+          <span>{c.upvotes}</span>
+        </button>
+        <button className="btn sm super" type="button" aria-label="Superlike comentário">
+          <span className="ico-star" aria-hidden />
+          <span>{c.supervotes}</span>
+        </button>
+        <button
+          className="btn sm link"
+          type="button"
+          onClick={() => onResponderClick(c.id)}
+          aria-label="Responder comentário"
+        >
+          <span className="ico-com" aria-hidden />
+          <span>Responder</span>
+        </button>
+      </div>
+
+      {isReplyingHere && (
+        <ReplyBox
+          value={replyText}
+          onChange={setReplyText}
+          onCancel={cancelReply}
+          onSubmit={submitReply}
+          onKeyDown={onReplyKeyDown}
+          placeholder="Responder este comentário…"
+        />
+      )}
+
+      {!!c.respostas?.length && (
+        <div className="children">
+          {c.respostas!.map((r) => (
+            <CommentNode
+              key={r.id}
+              c={r}
+              depth={depth + 1}
+              onResponderClick={onResponderClick}
+              replyTarget={replyTarget}
+              replyText={replyText}
+              setReplyText={setReplyText}
+              cancelReply={cancelReply}
+              submitReply={submitReply}
+              onReplyKeyDown={onReplyKeyDown}
+            />
+          ))}
+        </div>
+      )}
     </div>
   );
 }

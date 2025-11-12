@@ -2,48 +2,67 @@
 
 :root {
   --bg: #171717;
-  --card: #2e2e31;
+  --card: #373737;
   --muted: #1b1b1f;
-  --text: #f5f6fb;
-  --soft: #b8bac7;
+  --text: #FFFFFF;
+  --soft: #DFDFDF;
   --stroke: rgba(255, 255, 255, 0.08);
   --g1: #55f6c9;
   --g2: #6c6fec;
   --radius: 22px;
 }
 
-html,
-body,
-#root {
-  height: 100%;
-  overflow-y: hidden;
+html, body, #root {
+  height: 100vh;
+  overflow: hidden;
+  margin: 0;
+  padding: 0;
 }
 
 body {
   background: var(--bg);
   color: var(--text);
-  font-family: Manrope, system-ui, sans-serif;
+  font-family: Manrope, sans-serif;
 }
 
 .kh {
   width: 100%;
+  height: 100vh;
 }
 
+/* ===== layout base ===== */
 .kh-page {
-  max-width: 1200px;
+  max-width: 1400px;
+  height: 100vh;
   margin: 0 auto;
-  padding: 0 20px 48px;
+  padding: 0 20px;
   display: grid;
-  grid-template-columns: 420px 1fr;
-  gap: 48px;
+  grid-template-columns: 380px 1fr; /* logo à esquerda | card à direita */
+  gap: 40px;
   align-items: center;
+}
+
+/* Inverte a ordem para o login (logo à esquerda, formulário à direita) */
+.kh-login .kh-page {
+  grid-template-columns: 380px 1fr;
+}
+
+.kh-login .kh-side {
+  order: 1; /* Logo primeiro */
+}
+
+.kh-login .kh-col {
+  order: 2; /* Formulário depois */
 }
 
 .kh-col {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 12px;
+  justify-content: center;
+  gap: 16px;
+  max-height: 100vh;
+  width: 100%;
 }
 
 .kh-logo-top {
@@ -51,43 +70,56 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
-  margin: 22px 0 6px;
+  margin: 8px 0 4px;
 }
+
 .kh-logo-top img {
-  height: 68px;
+  height: 50px;
   filter: drop-shadow(0 6px 22px rgba(122, 92, 255, 0.35));
 }
 
+/* ===== card ===== */
 .kh-card {
   width: 100%;
-  max-width: 520px;
+  max-width: 480px;
   background: var(--card);
-  border: 1px solid var(--stroke);
+  border: 3px solid var(--soft);
   border-radius: var(--radius);
-  padding: 36px;
+  padding: 32px 36px 36px;
   text-align: center;
+  margin: 0 auto;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
 }
 
+/* glow azul (Login) */
 .kh-login .glow {
   box-shadow:
     0 0 60px rgba(85, 246, 201, 0.45),
-    0 0 110px rgba(85, 246, 201, 0.25);
+    0 0 110px rgba(108, 111, 236, 0.25);
 }
 
+/* ===== título ===== */
 .kh-title {
   font-family: Geologica, sans-serif;
-  font-size: 28px;
-  margin: 0 0 18px;
+  font-size: 26px;
+  margin: 0;
 }
 
+/* ===== formulário ===== */
 .kh-form {
+  width: 100%;
+  margin: 0 auto;
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 16px;
   text-align: left;
-  width: 100%;
 }
 
+/* cada campo */
 .kh-field {
   display: flex;
   flex-direction: column;
@@ -101,13 +133,19 @@ body {
 
 .kh-field input {
   width: 100%;
-  min-height: 52px;
-  padding: 14px 16px;
-  border-radius: 12px;
-  background: #3b3b3f;
+  min-height: 48px;
+  padding: 12px 16px;
+  border-radius: 8px;
+  background: #4A4A4A;
   border: 1px solid var(--stroke);
   color: var(--text);
   outline: none;
+  box-sizing: border-box;
+  font-size: 14px;
+}
+
+.kh-field input::placeholder {
+  color: rgba(255, 255, 255, 0.4);
 }
 
 .kh-field input:focus {
@@ -116,106 +154,148 @@ body {
 }
 
 .req::after {
-  content: ' *';
-  color: #ff5a5a;
+  content: " *";
+  color: #FF0000;
 }
 
+/* link "esqueci minha senha" */
 .forgot {
-  color: #a8a0ff;
-  font-size: 13px;
-  text-align: center;
+  color: #5468FF;
   text-decoration: none;
+  font-size: 13px;
+  text-align: right;
+  display: block;
+  margin-top: -6px;
+  margin-bottom: 4px;
 }
+
 .forgot:hover {
   text-decoration: underline;
 }
 
+/* botão */
 .kh-btn {
-  width: 240px;
-  height: 48px;
+  width: 220px;
+  height: 46px;
   border: none;
   border-radius: 14px;
   background: linear-gradient(90deg, var(--g1) 50%, var(--g2) 100%);
-  color: #111;
+  color: #171717;
   font-family: Geologica, sans-serif;
   font-weight: 700;
+  font-size: 15px;
   letter-spacing: 0.5px;
   cursor: pointer;
-  margin: 6px auto 0;
+  margin: 12px auto 0;
   box-shadow:
     0 10px 30px rgba(108, 111, 236, 0.35),
     0 6px 18px rgba(85, 246, 201, 0.25);
+  transition: transform 0.2s ease;
 }
 
-.kh-btn:hover {
+.kh-btn:hover:not(:disabled) {
   transform: translateY(-1px);
 }
 
-.kh-btn:active {
+.kh-btn:active:not(:disabled) {
   transform: translateY(0);
 }
 
+.kh-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* logo lateral */
 .kh-side {
   display: flex;
   justify-content: center;
   align-items: center;
+  height: 100%;
 }
+
 .kh-side img {
-  max-width: 360px;
-  filter: drop-shadow(-18px 18px 0 rgba(0, 0, 0, 0.35))
+  max-width: 320px;
+  width: 100%;
+  height: auto;
+  filter:
+    drop-shadow(-18px 18px 0 rgba(0, 0, 0, 0.35))
     drop-shadow(0 0 70px rgba(108, 255, 211, 0.25));
 }
 
+/* SlideLogin dentro do card */
+.kh-card .slide-container {
+  width: 100%;
+  margin: 0 auto 12px;
+}
+
+/* ===== MENSAGENS DE ERRO ===== */
+
+.error {
+  color: #ff4444;
+  font-size: 12px;
+  margin-top: 4px;
+  display: block;
+  animation: fadeIn 0.3s ease;
+}
+
+.error-message {
+  background: rgba(255, 68, 68, 0.15);
+  border: 1px solid rgba(255, 68, 68, 0.4);
+  color: #ff4444;
+  padding: 12px 16px;
+  border-radius: 8px;
+  margin-bottom: 8px;
+  text-align: center;
+  font-size: 13px;
+  animation: fadeIn 0.3s ease;
+  width: 100%;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ===== RESPONSIVIDADE ===== */
+
 @media (max-width: 1050px) {
   .kh-page {
-    grid-template-columns: 1fr;
+    grid-template-columns: 1fr !important;
+    height: auto;
+    min-height: 100vh;
   }
+  
+  html, body, #root {
+    overflow-y: auto;
+  }
+  
+  .kh {
+    height: auto;
+  }
+  
   .kh-side {
     display: none;
   }
-}
-
-@media (max-height: 760px) {
-  html,
-  body {
-    overflow-y: auto;
+  
+  .kh-login .kh-side,
+  .kh-login .kh-col {
+    order: unset;
   }
 }
 
-.kh-card .slide-container {
-  width: 100%;
-  margin: 0 auto 18px;
-  background: #171717;
-  border-radius: 999px;
-  padding: 6px;
-  display: flex;
-  gap: 8px;
-}
-
-.slide-register,
-.slide-login {
-  flex: 1;
-  height: 42px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 999px;
-  background: #2a2a2a;
-  color: #fff;
-  font-family: Geologica, sans-serif;
-  font-size: 16px;
-  cursor: pointer;
-  transition: 0.2s;
-}
-
-.slide-register.active,
-.slide-login.active {
-  background: linear-gradient(90deg, var(--g1) 50%, var(--g2) 100%);
-  color: #111;
-  box-shadow: 0 0 20px rgba(85, 246, 201, 0.25);
-}
-
-.slide-register:hover,
-.slide-login:hover {
-  filter: brightness(1.06);
+@media (max-width: 720px) {
+  .kh-btn {
+    width: 100%;
+  }
+  
+  .kh-card {
+    padding: 24px 20px;
+  }
 }

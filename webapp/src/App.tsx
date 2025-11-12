@@ -3,6 +3,7 @@ import { Routes, Route, Navigate } from 'react-router-dom';
 import Login from './pages/Login';
 import Cadastro from './pages/Cadastro';
 import CriarPost from './pages/CriarPost';
+import CriarWorkshop from './pages/CriarWorkshop';
 import Perfil from './pages/Perfil';
 import Feed from './pages/Feed';
 import Ranking from './pages/Ranking';
@@ -12,10 +13,6 @@ function isAuth() {
   const basic = import.meta.env.VITE_API_USER;
   const token = localStorage.getItem('kh_token');
   return !!token || !!basic;
-}
-
-function Protected({ children }: { children: JSX.Element }) {
-  return isAuth() ? children : <Navigate to="/login" replace />;
 }
 
 function App() {

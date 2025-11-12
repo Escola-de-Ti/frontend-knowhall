@@ -1,32 +1,87 @@
-import React, { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
-import SlideLogin from '../components/SlideLogin'
-import '../styles/Login.css'
-import { login } from '../services/auth.service' // <--- ADICIONE ESTA LINHA
+import React, { useState, FormEvent, ChangeEvent, useEffect } from 'react';
+import SlideLogin from '../components/SlideLogin';
+import '../styles/Login.css';
+import { authService } from '../services/authService';
+
+interface FormData {
+  login: string;
+  senha: string;
+}
+
+interface FormErrors {
+  login?: string;
+  senha?: string;
+  geral?: string;
+}
 
 const Login: React.FC = () => {
-  const nav = useNavigate()
-  const [username, setUsername] = useState('')
-  const [password, setPassword] = useState('')
-  const hasBasic = !!import.meta.env.VITE_API_USER
+  const [formData, setFormData] = useState<FormData>({
+    login: '',
+    senha: '',
+  });
 
-  async function onSubmit(e: React.FormEvent) {
-    e.preventDefault()
-    try {
-      if (hasBasic) {
-        // modo desenvolvimento (sem JWT)
-        localStorage.setItem('kh_token', 'dev-basic')
-      } else {
-        // modo produção (com JWT real)
-        await login(username, password)
-      }
+  const [errors, setErrors] = useState<FormErrors>({});
+  const [loading, setLoading] = useState(false);
 
-      nav('/perfil')
-    } catch (err: any) {
-      console.error('Erro no login:', err?.response || err?.message || err)
-      alert('Falha no login: ' + (err?.response?.data?.message || 'verifique o console'))
+  useEffect(() => {
+    if (authService.isAuthenticated()) {
+      window.location.href = '/dashboard';
     }
-  }
+  }, []);
+
+  const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+
+    if (errors[name as keyof FormErrors]) {
+      setErrors((prev) => ({ ...prev, [name]: undefined }));
+    }
+  };
+
+  const validateForm = (): boolean => {
+    const newErrors: FormErrors = {};
+
+    if (!formData.login.trim()) {
+      newErrors.login = 'E-mail é obrigatório';
+    }
+
+    if (!formData.senha) {
+      newErrors.senha = 'Senha é obrigatória';
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    setErrors({});
+
+    if (!validateForm()) {
+      return;
+    }
+
+    setLoading(true);
+
+    try {
+      await authService.login(formData.login, formData.senha);
+
+      console.log('Login realizado com sucesso!');
+
+      window.location.href = '/dashboard';
+    } catch (error: any) {
+      console.error('Erro ao fazer login:', error);
+      setErrors({
+        geral: error.message || 'E-mail ou senha incorretos. Tente novamente.',
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <div className="kh kh-login">
@@ -43,41 +98,48 @@ const Login: React.FC = () => {
           <div className="kh-card glow">
             <h1 className="kh-title">Bem Vindo!</h1>
             <SlideLogin />
-            <form onSubmit={onSubmit} className="kh-form">
+
+            {errors.geral && <div className="error-message">{errors.geral}</div>}
+
+            <form onSubmit={handleSubmit} className="kh-form">
               <div className="kh-field">
-                <label htmlFor="username" className="req">
-                  Nome de Usuário | E-mail
+                <label htmlFor="login" className="req">
+                  E-mail
                 </label>
                 <input
                   type="text"
-                  id="username"
-                  placeholder="Usuário"
-                  required
-                  value={username}
-                  onChange={(e) => setUsername(e.target.value)}
+                  id="login"
+                  name="login"
+                  placeholder="seu@email.com"
+                  value={formData.login}
+                  onChange={handleChange}
+                  disabled={loading}
                 />
+                {errors.login && <span className="error">{errors.login}</span>}
               </div>
 
               <div className="kh-field">
-                <label htmlFor="password" className="req">
+                <label htmlFor="senha" className="req">
                   Senha
                 </label>
                 <input
                   type="password"
-                  id="password"
-                  placeholder="Senha"
-                  required
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
+                  id="senha"
+                  name="senha"
+                  placeholder="Sua senha"
+                  value={formData.senha}
+                  onChange={handleChange}
+                  disabled={loading}
                 />
+                {errors.senha && <span className="error">{errors.senha}</span>}
               </div>
 
               <a href="/recuperar-senha" className="forgot">
                 Esqueci minha Senha.
               </a>
 
-              <button type="submit" className="kh-btn">
-                ENTRAR
+              <button type="submit" className="kh-btn" disabled={loading}>
+                {loading ? 'ENTRANDO...' : 'ENTRAR'}
               </button>
             </form>
           </div>
@@ -87,4 +149,4 @@ const Login: React.FC = () => {
   )
 }
 
-export default Login
+export default Login;
