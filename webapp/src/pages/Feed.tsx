@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import '../styles/Feed.css';
 
 import NavBar from '../components/NavBar';
@@ -9,6 +9,7 @@ import PostDetailsModal, {
   PostDetails,
   PostCommentModel,
 } from '../components/feed/PostDetailsModal';
+import { listarWorkshops, WorkshopDTO } from '../services/workshop.service';
 
 export default function Feed() {
   const [posts] = useState<PostModel[]>([
@@ -44,24 +45,8 @@ export default function Feed() {
     },
   ]);
 
-  const workshops: WorkshopItem[] = [
-    {
-      id: 1,
-      titulo: 'Introdução ao React Hooks',
-      data: '15 Set 2025',
-      vagas: '12/20',
-      duracao: '2h',
-    },
-    {
-      id: 2,
-      titulo: 'Clean Architecture na Prática',
-      data: '15 Set 2025',
-      vagas: '12/20',
-      duracao: '2h',
-    },
-    { id: 3, titulo: 'Introdução ao MySQL', data: '15 Set 2025', vagas: '12/20', duracao: '2h' },
-    { id: 4, titulo: 'SpringBoot + React', data: '15 Set 2025', vagas: '12/20', duracao: '2h' },
-  ];
+  const [workshops, setWorkshops] = useState<WorkshopItem[]>([]);
+  const [wsLoading, setWsLoading] = useState(false);
 
   const ranking: RankUser[] = [
     { id: 1, nome: 'Matheus Rossini', iniciais: 'MR', nivel: 18, tokens: '5.650' },
@@ -79,6 +64,49 @@ export default function Feed() {
   const [open, setOpen] = useState(false);
   const [current, setCurrent] = useState<PostDetails | null>(null);
   const [comments, setComments] = useState<PostCommentModel[]>([]);
+
+  useEffect(() => {
+    async function loadWorkshops() {
+      try {
+        setWsLoading(true);
+        const data: WorkshopDTO[] = await listarWorkshops();
+
+        const mapped: WorkshopItem[] = data.map((w) => {
+          const inicio = new Date(w.dataInicio);
+          const termino = new Date(w.dataTermino);
+
+          const dataFormatada = inicio.toLocaleDateString('pt-BR', {
+            day: '2-digit',
+            month: 'short',
+            year: 'numeric',
+          });
+
+          const diffMs = termino.getTime() - inicio.getTime();
+          const diffHoras = Math.max(Math.round(diffMs / (1000 * 60 * 60)), 1);
+          const duracao = `${diffHoras}h`;
+
+          const vagasLabel =
+            w.status === 'ABERTO' ? 'Inscrições abertas' : w.status === 'FECHADO' ? 'Fechado' : 'Encerrado';
+
+          return {
+            id: w.id,
+            titulo: w.titulo,
+            data: dataFormatada,
+            vagas: vagasLabel,
+            duracao,
+          };
+        });
+
+        setWorkshops(mapped);
+      } catch (e) {
+        setWorkshops([]);
+      } finally {
+        setWsLoading(false);
+      }
+    }
+
+    loadWorkshops();
+  }, []);
 
   function openPost(id: number) {
     const base = posts.find((p) => p.id === id)!;
@@ -127,7 +155,19 @@ export default function Feed() {
             </button>
           </div>
 
-          <WorkshopList itens={workshops} onVerMais={() => {}} />
+          {wsLoading ? (
+            <aside className="ws-panel">
+              <header className="ws-head">
+                <span className="ws-ico" aria-hidden />
+                <div className="ws-txt">
+                  <h3>Workshops</h3>
+                  <p>Carregando workshops...</p>
+                </div>
+              </header>
+            </aside>
+          ) : (
+            <WorkshopList itens={workshops} onVerMais={() => {}} />
+          )}
         </aside>
 
         <section className="feed-center">

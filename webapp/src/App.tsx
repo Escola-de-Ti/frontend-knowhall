@@ -7,6 +7,10 @@ import CriarWorkshop from './pages/CriarWorkshop';
 import Perfil from './pages/Perfil';
 import Feed from './pages/Feed';
 import EditarPerfil from './pages/EditarPerfil';
+import NotFound from './components/NotFound';
+import Ranking from './pages/Ranking';
+import Workshops from './pages/Workshops';
+import HistoricoTransacoes from './pages/HistoricoTransacoes';
 
 function isAuth() {
   const basic = import.meta.env.VITE_API_USER;
@@ -26,6 +30,9 @@ function App() {
       <Route path="/perfil" element={<Perfil />} />
       <Route path="/feed" element={<Feed />} />
       <Route path="/perfil/editar-perfil" element={<EditarPerfil />} />
+      <Route path="/ranking" element={<Ranking />} />
+      <Route path="/workshops" element={<Workshops />} />
+      <Route path="/historico-transacoes" element={<HistoricoTransacoes />} />
       <Route path="/" element={home} />
       <Route path="*" element={<NotFound />} />
     </Routes>
