@@ -1,7 +1,10 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import '../../styles/feed/PostDetailsModal.css';
+import { postService, PostDetalhesDTO, ComentarioResponseDTO } from '../../services/postService';
+import { getInitials, getRelativeTime } from '../../utils/feedHelpers';
 
 export type PostUser = { id?: number; nome: string; iniciais: string; nivel: number };
+
 export type PostDetails = {
   id: number;
   titulo: string;
@@ -11,6 +14,7 @@ export type PostDetails = {
   metrica: { upvotes: number; supervotes: number; comentarios: number };
   tempo: string;
 };
+
 export type PostCommentModel = {
   id: number;
   autor: PostUser;
@@ -25,21 +29,63 @@ type Props = {
   open: boolean;
   onClose: () => void;
   post: PostDetails | null;
-  comments: PostCommentModel[];
 };
 
-export default function PostDetailsModal({ open, onClose, post, comments }: Props) {
+export default function PostDetailsModal({ open, onClose, post: initialPost }: Props) {
+  const [details, setDetails] = useState<PostDetails | null>(null);
   const [localComments, setLocalComments] = useState<PostCommentModel[]>([]);
+  const [loading, setLoading] = useState(false);
+
   const [replyTarget, setReplyTarget] = useState<null | 'post' | number>(null);
   const [replyText, setReplyText] = useState('');
 
   useEffect(() => {
-    if (!open) return;
-    setLocalComments(comments);
+    if (!open || !initialPost) return;
+
+    setLoading(true);
     setReplyTarget(null);
     setReplyText('');
-  }, [open, comments]);
+    setDetails(initialPost); 
+    setLocalComments([]);
 
+    const fetchDetails = async () => {
+      try {
+        const data = await postService.getPostDetails(initialPost.id);
+
+        const mappedPost: PostDetails = {
+          id: data.id,
+          titulo: data.titulo,
+          corpo: data.descricao,
+          autor: {
+            id: data.usuarioId,
+            nome: data.usuarioNome,
+            iniciais: getInitials(data.usuarioNome),
+            nivel: 10,
+          },
+          tags: data.tags.map(t => t.name),
+          metrica: {
+            upvotes: data.totalUpVotes,
+            supervotes: 0, 
+            comentarios: data.comentarios.length,
+          },
+          tempo: getRelativeTime(data.dataCriacao),
+        };
+
+        const tree = buildCommentTree(data.comentarios);
+        
+        setDetails(mappedPost);
+        setLocalComments(tree);
+      } catch (error) {
+        console.error("Erro ao carregar detalhes do post:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchDetails();
+  }, [open, initialPost]);
+
+  // Fecha com ESC e trava scroll do body
   useEffect(() => {
     if (!open) return;
     const onKey = (e: KeyboardEvent) => {
@@ -56,7 +102,10 @@ export default function PostDetailsModal({ open, onClose, post, comments }: Prop
 
   const CURRENT_USER: PostUser = useMemo(() => ({ nome: 'Você', iniciais: 'VC', nivel: 1 }), []);
 
-  if (!open || !post) return null;
+  if (!open) return null;
+  
+  const activePost = details || initialPost;
+  if (!activePost) return null;
 
   function openReplyForPost() {
     setReplyTarget('post');
@@ -88,7 +137,7 @@ export default function PostDetailsModal({ open, onClose, post, comments }: Prop
     if (replyTarget === 'post') {
       setLocalComments((prev) => [newItem, ...prev]);
     } else if (typeof replyTarget === 'number') {
-      setLocalComments((prev) => addReply(prev, replyTarget, newItem));
+      setLocalComments((prev) => addReplyToTree(prev, replyTarget, newItem));
     }
     setReplyTarget(null);
     setReplyText('');
@@ -107,19 +156,19 @@ export default function PostDetailsModal({ open, onClose, post, comments }: Prop
       <section className="kh-modal-panel" onClick={(e) => e.stopPropagation()}>
         <header className="kh-modal-header">
           <div className="post-avatar" aria-hidden>
-            {post.autor.iniciais}
+            {activePost.autor.iniciais}
           </div>
 
           <div className="head-col">
-            <h3 className="title">{post.titulo}</h3>
+            <h3 className="title">{activePost.titulo}</h3>
             <div className="meta">
-              <span className="autor">{post.autor.nome}</span>
+              <span className="autor">{activePost.autor.nome}</span>
               <span className="dot" />
               <span className="level-pill">
-                <span className="level-text">Nvl. {post.autor.nivel}</span>
+                <span className="level-text">Nvl. {activePost.autor.nivel}</span>
               </span>
               <span className="dot" />
-              <span className="tempo">{post.tempo}</span>
+              <span className="tempo">{activePost.tempo}</span>
             </div>
           </div>
 
@@ -127,10 +176,10 @@ export default function PostDetailsModal({ open, onClose, post, comments }: Prop
         </header>
 
         <article className="kh-modal-body">
-          <p className="descricao">{post.corpo}</p>
+          <p className="descricao">{activePost.corpo}</p>
 
           <div className="tags">
-            {post.tags.map((t) => (
+            {activePost.tags.map((t) => (
               <span key={t} className="tag">
                 #{t}
               </span>
@@ -138,22 +187,21 @@ export default function PostDetailsModal({ open, onClose, post, comments }: Prop
           </div>
 
           <div className="votes">
-            <button className="btn up" type="button" aria-label="Upvote">
+            <button className="btn up" type="button">
               <span className="ico-up" aria-hidden />
-              <span>{post.metrica.upvotes}</span>
+              <span>{activePost.metrica.upvotes}</span>
             </button>
-            <button className="btn super" type="button" aria-label="Superlike">
+            <button className="btn super" type="button">
               <span className="ico-star" aria-hidden />
-              <span>{post.metrica.supervotes}</span>
+              <span>{activePost.metrica.supervotes}</span>
             </button>
             <button
               className="btn com"
               type="button"
-              aria-label="Comentários"
               onClick={openReplyForPost}
             >
               <span className="ico-com" aria-hidden />
-              <span>{post.metrica.comentarios}</span>
+              <span>{activePost.metrica.comentarios}</span>
             </button>
           </div>
 
@@ -170,7 +218,8 @@ export default function PostDetailsModal({ open, onClose, post, comments }: Prop
 
           <div className="comments-sep">
             <span className="ico-com" aria-hidden />
-            <span className="lbl">Comentários</span>
+            <span className="lbl">Comentários ({localComments.length})</span>
+             {loading && <span style={{marginLeft: 10, fontSize: '0.8em'}}>Carregando...</span>}
           </div>
 
           <section className="comments">
@@ -195,7 +244,48 @@ export default function PostDetailsModal({ open, onClose, post, comments }: Prop
   );
 }
 
-function addReply(
+function buildCommentTree(flatComments: ComentarioResponseDTO[]): PostCommentModel[] {
+  const map = new Map<number, PostCommentModel>();
+  const roots: PostCommentModel[] = [];
+
+  flatComments.forEach(dto => {
+    map.set(dto.id, {
+      id: dto.id,
+      autor: {
+        id: dto.usuarioId,
+        nome: dto.usuarioNome,
+        iniciais: getInitials(dto.usuarioNome),
+        nivel: 1, 
+      },
+      texto: dto.texto,
+      tempo: getRelativeTime(dto.dataCriacao),
+      upvotes: dto.totalUpVotes,
+      supervotes: dto.totalSuperVotes,
+      respostas: [] 
+    });
+  });
+
+  flatComments.forEach(dto => {
+    const comment = map.get(dto.id);
+    if (!comment) return;
+
+    if (dto.comentarioPaiId) {
+      const parent = map.get(dto.comentarioPaiId);
+      if (parent) {
+        parent.respostas = parent.respostas || [];
+        parent.respostas.push(comment);
+      } else {
+        roots.push(comment);
+      }
+    } else {
+      roots.push(comment);
+    }
+  });
+
+  return roots;
+}
+
+function addReplyToTree(
   tree: PostCommentModel[],
   parentId: number,
   item: PostCommentModel
@@ -206,7 +296,7 @@ function addReply(
       return { ...n, respostas: [item, ...respostas] };
     }
     if (n.respostas?.length) {
-      return { ...n, respostas: addReply(n.respostas, parentId, item) };
+      return { ...n, respostas: addReplyToTree(n.respostas, parentId, item) };
     }
     return n;
   });

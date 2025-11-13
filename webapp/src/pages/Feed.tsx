@@ -1,4 +1,5 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState, useRef, useCallback } from 'react';
+import { useNavigate } from 'react-router-dom';
 import '../styles/Feed.css';
 
 import NavBar from '../components/NavBar';
@@ -11,42 +12,38 @@ import PostDetailsModal, {
 } from '../components/feed/PostDetailsModal';
 import { listarWorkshops, WorkshopDTO } from '../services/workshop.service';
 
+import { useFeed } from '../hooks/useFeed';
+import { PostFeedDTO } from '../services/postService';
+import { votoService } from '../services/votoService';
+import { getRelativeTime, getInitials } from '../utils/feedHelpers';
+
 export default function Feed() {
-  const [posts] = useState<PostModel[]>([
+  const navigate = useNavigate();
+  
+  const { posts, loading, error, hasMore, loadMore, refresh, updatePost } = useFeed(10);
+
+  // Ref para o elemento observador (scroll infinito)
+  const observerTarget = useRef<HTMLDivElement>(null);
+
+  // Workshops e ranking (mantidos estáticos por enquanto)
+  const workshops: WorkshopItem[] = [
     {
       id: 1,
-      autor: { nome: 'Andre Jacob', iniciais: 'AJ', nivel: 13 },
-      titulo: 'Como faço para integrar meu sistema com API de pagamento?',
-      corpo:
-        'Olá pessoal, tenho um sistema e preciso integrar com alguma API de pagamento, alguém já fez esse processo? é a minha primeira vez e estou um pouco perdido.',
-      tags: ['BackEnd', 'MySQL'],
-      metrica: { comentarios: 21, upvotes: 6 },
-      tempo: '23h atrás',
+      titulo: 'Introdução ao React Hooks',
+      data: '15 Set 2025',
+      vagas: '12/20',
+      duracao: '2h',
     },
     {
       id: 2,
-      autor: { nome: 'Willyan Tomaz', iniciais: 'WT', nivel: 11 },
-      titulo: 'Como faço para desenvolver um sistema de gestão de pessoas?',
-      corpo:
-        'Fui contratado por uma nova empresa e percebi um problema operacional, as coisas são muito manuais e eu queria tornar o processo mais ágil. Tenho certa experiência em...',
-      tags: ['BackEnd', 'MySQL'],
-      metrica: { comentarios: 21, upvotes: 6 },
-      tempo: '23h atrás',
+      titulo: 'Clean Architecture na Prática',
+      data: '15 Set 2025',
+      vagas: '12/20',
+      duracao: '2h',
     },
-    {
-      id: 3,
-      autor: { nome: 'Matheus Rossini', iniciais: 'MR', nivel: 12 },
-      titulo: 'Como integrar meu sistema com API de pagamento?',
-      corpo:
-        'Sou novo na área mas tenho interesse em aprender do zero como desenvolver sistemas e aplicativos, mas tenho dúvida sobre qual linguagem é melhor. Alguém tem dicas de como...',
-      tags: ['BackEnd', 'MySQL'],
-      metrica: { comentarios: 21, upvotes: 6 },
-      tempo: '23h atrás',
-    },
-  ]);
-
-  const [workshops, setWorkshops] = useState<WorkshopItem[]>([]);
-  const [wsLoading, setWsLoading] = useState(false);
+    { id: 3, titulo: 'Introdução ao MySQL', data: '15 Set 2025', vagas: '12/20', duracao: '2h' },
+    { id: 4, titulo: 'SpringBoot + React', data: '15 Set 2025', vagas: '12/20', duracao: '2h' },
+  ];
 
   const ranking: RankUser[] = [
     { id: 1, nome: 'Matheus Rossini', iniciais: 'MR', nivel: 18, tokens: '5.650' },
@@ -65,82 +62,110 @@ export default function Feed() {
   const [current, setCurrent] = useState<PostDetails | null>(null);
   const [comments, setComments] = useState<PostCommentModel[]>([]);
 
-  useEffect(() => {
-    async function loadWorkshops() {
-      try {
-        setWsLoading(true);
-        const data: WorkshopDTO[] = await listarWorkshops();
+  /**
+   * Transforma PostFeedDTO da API em PostModel para o componente
+   */
+  const transformPostToModel = (post: PostFeedDTO): PostModel => {
+    return {
+      id: parseInt(post.id), // Converte string para number para compatibilidade
+      autor: {
+        id: parseInt(post.usuarioId),
+        nome: post.nomeUsuario,
+        iniciais: getInitials(post.nomeUsuario),
+        nivel: 10, // Nível fixo por enquanto (pode vir de outro endpoint)
+      },
+      titulo: post.titulo,
+      corpo: post.descricao,
+      tags: post.tags.map((tag) => tag.name),
+      metrica: {
+        comentarios: 0, // Comentários virão de outro endpoint
+        upvotes: post.totalUpVotes,
+      },
+      tempo: getRelativeTime(post.dataCriacao),
+      jaVotou: post.jaVotou, // ← NOVO: Campo de voto
+    };
+  };
 
-        const mapped: WorkshopItem[] = data.map((w) => {
-          const inicio = new Date(w.dataInicio);
-          const termino = new Date(w.dataTermino);
+  /**
+   * Handler para votar em um post
+   */
+  const handleVote = async (postId: number) => {
+    try {
+      // Chama a API para votar (toggle)
+      const response = await votoService.votarEmPost(postId.toString());
 
-          const dataFormatada = inicio.toLocaleDateString('pt-BR', {
-            day: '2-digit',
-            month: 'short',
-            year: 'numeric',
-          });
-
-          const diffMs = termino.getTime() - inicio.getTime();
-          const diffHoras = Math.max(Math.round(diffMs / (1000 * 60 * 60)), 1);
-          const duracao = `${diffHoras}h`;
-
-          const vagasLabel =
-            w.status === 'ABERTO' ? 'Inscrições abertas' : w.status === 'FECHADO' ? 'Fechado' : 'Encerrado';
-
-          return {
-            id: w.id,
-            titulo: w.titulo,
-            data: dataFormatada,
-            vagas: vagasLabel,
-            duracao,
-          };
-        });
-
-        setWorkshops(mapped);
-      } catch (e) {
-        setWorkshops([]);
-      } finally {
-        setWsLoading(false);
-      }
+      // Atualiza o post localmente com os novos valores
+      updatePost(postId.toString(), {
+        jaVotou: response.votado,
+        totalUpVotes: response.totalUpVotes,
+      });
+    } catch (error: any) {
+      console.error('Erro ao votar:', error);
+      alert(error.message || 'Erro ao processar voto. Tente novamente.');
     }
-
-    loadWorkshops();
-  }, []);
+  };
 
   function openPost(id: number) {
-    const base = posts.find((p) => p.id === id)!;
+    const postApi = posts.find((p) => parseInt(p.id) === id);
+    if (!postApi) return;
+
     const post: PostDetails = {
       id,
-      titulo: base.titulo,
-      corpo: base.corpo,
-      autor: { nome: base.autor.nome, iniciais: base.autor.iniciais, nivel: base.autor.nivel },
-      tags: base.tags,
-      metrica: { upvotes: 37, supervotes: 5, comentarios: base.metrica.comentarios },
-      tempo: base.tempo,
+      titulo: postApi.titulo,
+      corpo: postApi.descricao,
+      autor: {
+        nome: postApi.nomeUsuario,
+        iniciais: getInitials(postApi.nomeUsuario),
+        nivel: 10,
+      },
+      tags: postApi.tags.map((tag) => tag.name),
+      metrica: {
+        upvotes: postApi.totalUpVotes,
+        supervotes: 0,
+        comentarios: 0,
+      },
+      tempo: getRelativeTime(postApi.dataCriacao),
     };
-    const cmts: PostCommentModel[] = [
-      {
-        id: 101,
-        autor: { nome: 'Kauan', iniciais: 'KB', nivel: 9 },
-        texto: 'Idempotência com chaves únicas por transação.',
-        tempo: 'há 2h',
-        upvotes: 12,
-        supervotes: 2,
-      },
-      {
-        id: 102,
-        autor: { nome: 'Maria', iniciais: 'MA', nivel: 7 },
-        texto: 'Armazene eventId do webhook e ignore duplicados.',
-        tempo: 'há 1h',
-        upvotes: 5,
-        supervotes: 1,
-      },
-    ];
+
+    const cmts: PostCommentModel[] = [];
+
     setCurrent(post);
     setComments(cmts);
     setOpen(true);
   }
+
+  const handleObserver = useCallback(
+    (entries: IntersectionObserverEntry[]) => {
+      const [target] = entries;
+      if (target.isIntersecting && hasMore && !loading) {
+        loadMore();
+      }
+    },
+    [hasMore, loading, loadMore]
+  );
+
+  React.useEffect(() => {
+    const element = observerTarget.current;
+    if (!element) return;
+
+    const option = {
+      root: null,
+      rootMargin: '200px',
+      threshold: 0,
+    };
+
+    const observer = new IntersectionObserver(handleObserver, option);
+    observer.observe(element);
+
+    return () => {
+      observer.unobserve(element);
+    };
+  }, [handleObserver]);
+
+
+  const handleCriarPost = () => {
+    navigate('/criar-post');
+  };
 
   return (
     <div className="feed-page">
@@ -149,25 +174,14 @@ export default function Feed() {
       <main className="feed-container">
         <aside className="feed-left">
           <div className="feed-left-head">
-            <button className="btn-create" type="button" onClick={() => {}}>
+            <button className="btn-create" type="button" onClick={handleCriarPost}>
               <span className="ico-plus" aria-hidden />
               <span className="lbl-grad">Criar Post</span>
             </button>
           </div>
 
-          {wsLoading ? (
-            <aside className="ws-panel">
-              <header className="ws-head">
-                <span className="ws-ico" aria-hidden />
-                <div className="ws-txt">
-                  <h3>Workshops</h3>
-                  <p>Carregando workshops...</p>
-                </div>
-              </header>
-            </aside>
-          ) : (
-            <WorkshopList itens={workshops} onVerMais={() => {}} />
-          )}
+        <WorkshopList itens={workshops} onVerMais={() => {}} />
+        
         </aside>
 
         <section className="feed-center">
@@ -178,11 +192,64 @@ export default function Feed() {
             </button>
           </div>
 
+          {/* Mensagem de erro */}
+          {error && (
+            <div className="error-message" style={{ margin: '20px 0', textAlign: 'center' }}>
+              {error}
+              <button
+                onClick={refresh}
+                style={{
+                  marginLeft: '10px',
+                  padding: '5px 10px',
+                  cursor: 'pointer',
+                }}
+              >
+                Tentar novamente
+              </button>
+            </div>
+          )}
+
+          {/* Lista de posts */}
           <div className="posts-stack">
             {posts.map((p) => (
-              <PostCard key={p.id} post={p} onMoreClick={() => openPost(p.id)} />
+              <PostCard
+                key={p.id}
+                post={transformPostToModel(p)}
+                onMoreClick={() => openPost(parseInt(p.id))}
+                onVote={handleVote}
+              />
             ))}
+
+            {/* Loading inicial */}
+            {loading && posts.length === 0 && (
+              <div style={{ textAlign: 'center', padding: '40px' }}>
+                <p>Carregando posts...</p>
+              </div>
+            )}
+
+            {/* Nenhum post encontrado */}
+            {!loading && posts.length === 0 && !error && (
+              <div style={{ textAlign: 'center', padding: '40px' }}>
+                <p>Nenhum post encontrado.</p>
+              </div>
+            )}
           </div>
+
+          {/* Elemento observador para scroll infinito */}
+          <div ref={observerTarget} style={{ height: '20px', margin: '20px 0' }}>
+            {loading && posts.length > 0 && (
+              <div style={{ textAlign: 'center' }}>
+                <p>Carregando mais posts...</p>
+              </div>
+            )}
+          </div>
+
+          {/* Fim dos posts */}
+          {!hasMore && posts.length > 0 && (
+            <div style={{ textAlign: 'center', padding: '20px', color: '#888' }}>
+              <p>Você chegou ao fim! 🎉</p>
+            </div>
+          )}
         </section>
 
         <aside className="feed-right">
@@ -194,7 +261,6 @@ export default function Feed() {
         open={open}
         onClose={() => setOpen(false)}
         post={current}
-        comments={comments}
       />
     </div>
   );
