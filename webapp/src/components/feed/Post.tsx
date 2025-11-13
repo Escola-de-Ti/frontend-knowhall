@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import '../../styles/feed/Post.css';
 
 export type PostModel = {
@@ -9,11 +9,36 @@ export type PostModel = {
   tags: string[];
   metrica: { comentarios: number; upvotes: number };
   tempo: string;
+  jaVotou: boolean; // ← NOVO: Indica se o usuário já votou neste post
 };
 
-type Props = { post: PostModel; onMoreClick?: (id: number) => void };
+type Props = {
+  post: PostModel;
+  onMoreClick?: (id: number) => void;
+  onVote?: (postId: number) => Promise<void>; // ← NOVO: Handler para votar
+};
 
-export default function Post({ post, onMoreClick }: Props) {
+export default function Post({ post, onMoreClick, onVote }: Props) {
+  const [isVoting, setIsVoting] = useState(false);
+
+  /**
+   * Handler do botão de upvote
+   */
+  const handleVote = async (e: React.MouseEvent) => {
+    e.stopPropagation();
+
+    if (isVoting || !onVote) return;
+
+    setIsVoting(true);
+    try {
+      await onVote(post.id);
+    } catch (error) {
+      console.error('Erro ao votar:', error);
+    } finally {
+      setIsVoting(false);
+    }
+  };
+
   return (
     <article
       className="post-card"
@@ -61,10 +86,11 @@ export default function Post({ post, onMoreClick }: Props) {
 
       <footer className="post-footer">
         <button
-          className="kpi kpi-up"
+          className={`kpi kpi-up ${post.jaVotou ? 'active' : ''} ${isVoting ? 'voting' : ''}`}
           type="button"
-          aria-label="Upvotes"
-          onClick={(e) => e.stopPropagation()}
+          aria-label={post.jaVotou ? 'Remover voto' : 'Votar'}
+          onClick={handleVote}
+          disabled={isVoting}
         >
           <span className="ico-up" aria-hidden />
           <span className="kpi-val">{post.metrica.upvotes}</span>
