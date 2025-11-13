@@ -17,6 +17,7 @@ export interface PostResponseDTO {
   totalUpVotes: number;
   tags: TagResponseDTO[];
   dataCriacao: string;
+  imagens?: any[];
 }
 
 export interface PostFormData {
@@ -83,6 +84,26 @@ export interface PostDetalhesDTO {
   hasMoreComentarios: boolean;
 }
 
+export interface PostUpdateDTO {
+  titulo?: string;
+  descricao?: string;
+  tagIds?: number[];
+}
+
+export interface PostSearchResponseDTO {
+  posts: PostResponseDTO[];
+  hasMore: boolean;
+  lastPostId: number;
+  lastValue: number;
+}
+
+export interface PostSearchParams {
+  termo: string;
+  pageSize?: number;
+  lastPostId?: number;
+  lastValue?: number;
+}
+
 class PostService {
   async criar(dados: PostCreateDTO): Promise<PostResponseDTO> {
     return apiService.post<PostResponseDTO>(
@@ -130,6 +151,115 @@ class PostService {
   async getPostDetails(id: number): Promise<PostDetalhesDTO> {
     const response = await apiService.get<PostDetalhesDTO>(`/posts/${id}/detalhes`);
     return response;
+  }
+
+  async listarTodos(): Promise<PostResponseDTO[]> {
+    try {
+      const response = await apiService.get<PostResponseDTO[]>(
+        API_CONFIG.ENDPOINTS.POSTS,
+        true
+      );
+      return response;
+    } catch (error: any) {
+      console.error('Erro ao listar posts:', error);
+      throw error;
+    }
+  }
+
+  async buscarPorId(id: string): Promise<PostResponseDTO> {
+    try {
+      const response = await apiService.get<PostResponseDTO>(
+        `${API_CONFIG.ENDPOINTS.POSTS}/${id}`,
+        true
+      );
+      return response;
+    } catch (error: any) {
+      console.error('Erro ao buscar post:', error);
+      throw error;
+    }
+  }
+
+  async buscarPorUsuario(usuarioId: string): Promise<PostResponseDTO[]> {
+    try {
+      const response = await apiService.get<PostResponseDTO[]>(
+        `${API_CONFIG.ENDPOINTS.POSTS}/usuario/${usuarioId}`,
+        true
+      );
+      return response;
+    } catch (error: any) {
+      console.error('Erro ao buscar posts do usuário:', error);
+      throw error;
+    }
+  }
+
+  async atualizar(id: string, dados: PostUpdateDTO): Promise<PostResponseDTO> {
+    try {
+      const response = await apiService.patch<PostResponseDTO>(
+        `${API_CONFIG.ENDPOINTS.POSTS}/${id}`,
+        dados,
+        true
+      );
+      return response;
+    } catch (error: any) {
+      console.error('Erro ao atualizar post:', error);
+      throw error;
+    }
+  }
+
+  async deletar(id: string): Promise<void> {
+    try {
+      await apiService.delete<void>(
+        `${API_CONFIG.ENDPOINTS.POSTS}/${id}`,
+        true
+      );
+    } catch (error: any) {
+      console.error('Erro ao deletar post:', error);
+      throw error;
+    }
+  }
+
+  async buscarPorTermo(params: PostSearchParams): Promise<PostSearchResponseDTO> {
+    try {
+      const { termo, pageSize = 10, lastPostId, lastValue } = params;
+
+      const queryParams = new URLSearchParams();
+      queryParams.append('termo', termo);
+      queryParams.append('pageSize', pageSize.toString());
+
+      if (lastPostId && lastValue !== undefined) {
+        queryParams.append('lastPostId', lastPostId.toString());
+        queryParams.append('lastValue', lastValue.toString());
+      }
+
+      const endpoint = `${API_CONFIG.ENDPOINTS.POSTS}/buscar?${queryParams.toString()}`;
+      const response = await apiService.get<PostSearchResponseDTO>(endpoint, true);
+      return response;
+    } catch (error: any) {
+      console.error('Erro ao buscar posts por termo:', error);
+      throw error;
+    }
+  }
+
+  async getPostDetailsComPaginacao(
+    id: number, 
+    pageSize: number = 10,
+    lastComentarioId?: number
+  ): Promise<PostDetalhesDTO> {
+    try {
+      const queryParams = new URLSearchParams();
+      queryParams.append('pageSize', pageSize.toString());
+
+      if (lastComentarioId) {
+        queryParams.append('lastComentarioId', lastComentarioId.toString());
+      }
+
+      const endpoint = `${API_CONFIG.ENDPOINTS.POSTS}/${id}/detalhes?${queryParams.toString()}`;
+      const response = await apiService.get<PostDetalhesDTO>(endpoint, true);
+      return response;
+    } catch (error: any) {
+      console.error('Erro ao buscar detalhes do post:', error);
+      throw error;
+    }
   }
 }
 
