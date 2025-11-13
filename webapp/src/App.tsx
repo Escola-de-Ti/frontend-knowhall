@@ -15,7 +15,7 @@ function isAuth() {
 }
 
 function App() {
-  const home = isAuth() ? <Navigate to="/perfil" replace /> : <Navigate to="/login" replace />;
+  const home = isAuth() ? <Navigate to="/feed" replace /> : <Navigate to="/feed" replace />;
 
   return (
     <Routes>
@@ -27,7 +27,7 @@ function App() {
       <Route path="/feed" element={<Feed />} />
       <Route path="/perfil/editar-perfil" element={<EditarPerfil />} />
       <Route path="/" element={home} />
-      <Route path="*" element={<div>Página não encontrada</div>} />
+      <Route path="*" element={<NotFound />} />
     </Routes>
   );
 }
