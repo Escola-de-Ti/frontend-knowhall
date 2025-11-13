@@ -1,22 +1,14 @@
 import React, { useMemo, useState } from 'react';
 import '../styles/CriarWorkshop.css';
 import NavBar from '../components/NavBar';
-import {
-  createWorkshop,
-  type CreateWorkshopPayload,
-  type CreateWorkshopResponse,
-} from '../services/criar.workshop.service';
+import { createWorkshop } from '../services/workshops.service';
 import Tags from '../components/Tags';
-
-type Props = {
-  apiUrl?: string;
-  onSuccess?: (data: CreateWorkshopResponse) => void;
-};
 
 function toIsoDay(date: string, end?: boolean) {
   if (!date) return date;
   return end ? `${date}T23:59:59` : `${date}T00:00:00`;
 }
+
 function isValidUrl(url: string) {
   try {
     new URL(url);
@@ -25,6 +17,7 @@ function isValidUrl(url: string) {
     return false;
   }
 }
+
 function calcDurationDays(start?: string, end?: string) {
   if (!start || !end) return null;
   const s = new Date(start + 'T00:00:00').getTime();
@@ -33,6 +26,7 @@ function calcDurationDays(start?: string, end?: string) {
   const days = Math.round((e - s) / 86_400_000) + 1;
   return days === 1 ? '1 dia' : `${days} dias`;
 }
+
 function fmtDate(d?: string) {
   if (!d) return '-';
   const dt = new Date(d + 'T00:00:00');
@@ -40,7 +34,7 @@ function fmtDate(d?: string) {
   return dt.toLocaleDateString('pt-BR');
 }
 
-export default function CriarWorkshop({ apiUrl = '/api/workshops', onSuccess }: Props) {
+export default function CriarWorkshop() {
   const [titulo, setTitulo] = useState('');
   const [tema, setTema] = useState('');
   const [descricaoTxt, setDescricaoTxt] = useState('');
@@ -78,6 +72,7 @@ export default function CriarWorkshop({ apiUrl = '/api/workshops', onSuccess }: 
         : '',
     linkMeet: !linkMeet ? 'Obrigatório' : !isValidUrl(linkMeet) ? 'URL inválida' : '',
   };
+
   const hasErrors = Object.values(fieldErrors).some(Boolean);
 
   function markTouched(name: keyof typeof touched) {
@@ -86,6 +81,7 @@ export default function CriarWorkshop({ apiUrl = '/api/workshops', onSuccess }: 
 
   async function onSubmit() {
     setErrorGlobal(null);
+
     if (hasErrors) {
       setTouched({
         titulo: true,
@@ -98,21 +94,25 @@ export default function CriarWorkshop({ apiUrl = '/api/workshops', onSuccess }: 
       return;
     }
 
-    const payload: CreateWorkshopPayload = {
-      titulo,
-      linkMeet,
-      dataInicio: toIsoDay(dataInicio, false),
-      dataTermino: toIsoDay(dataTermino, true),
-      descricao: { tema, descricao: descricaoTxt },
-    };
+    const inicioIso = toIsoDay(dataInicio, false);
+    const terminoIso = toIsoDay(dataTermino, true);
 
     try {
       setLoading(true);
-      const data = await createWorkshop(apiUrl, payload);
-      onSuccess?.(data);
+
+      await createWorkshop({
+        titulo,
+        tema,
+        descricao: descricaoTxt,
+        dataInicio: inicioIso,
+        dataTermino: terminoIso,
+        linkMeet,
+      });
+
       resetForm();
+      alert('Workshop criado com sucesso');
     } catch (e: any) {
-      setErrorGlobal(e?.message || 'Erro inesperado');
+      setErrorGlobal(e?.message || 'Erro inesperado ao criar workshop');
     } finally {
       setLoading(false);
     }
@@ -205,7 +205,7 @@ export default function CriarWorkshop({ apiUrl = '/api/workshops', onSuccess }: 
                   value={titulo}
                   onChange={(e) => setTitulo(e.target.value.slice(0, 100))}
                   onBlur={() => markTouched('titulo')}
-                  placeholder="Digite um título chamativo para seu post..."
+                  placeholder="Ex: Spring Boot Avançado: Performance e Escalabilidade"
                   maxLength={100}
                   aria-invalid={!!(touched.titulo && fieldErrors.titulo)}
                 />
@@ -224,7 +224,7 @@ export default function CriarWorkshop({ apiUrl = '/api/workshops', onSuccess }: 
                   value={tema}
                   onChange={(e) => setTema(e.target.value)}
                   onBlur={() => markTouched('tema')}
-                  placeholder="Qual o tema principal do seu workshop?"
+                  placeholder="Ex: Backend Java"
                   aria-invalid={!!(touched.tema && fieldErrors.tema)}
                 />
                 {touched.tema && fieldErrors.tema && (
@@ -233,7 +233,9 @@ export default function CriarWorkshop({ apiUrl = '/api/workshops', onSuccess }: 
               </div>
 
               <div
-                className={`ws-field ${touched.linkMeet && fieldErrors.linkMeet ? 'ws-invalid' : ''}`}
+                className={`ws-field ${
+                  touched.linkMeet && fieldErrors.linkMeet ? 'ws-invalid' : ''
+                }`}
               >
                 <label htmlFor="linkMeet">Link do Google Meet *</label>
                 <input
@@ -242,7 +244,7 @@ export default function CriarWorkshop({ apiUrl = '/api/workshops', onSuccess }: 
                   value={linkMeet}
                   onChange={(e) => setLinkMeet(e.target.value)}
                   onBlur={() => markTouched('linkMeet')}
-                  placeholder="https://meet.google.com/..."
+                  placeholder="https://meet.google.com/abc-defg-hij"
                   aria-invalid={!!(touched.linkMeet && fieldErrors.linkMeet)}
                 />
                 {touched.linkMeet && fieldErrors.linkMeet && (
@@ -253,7 +255,9 @@ export default function CriarWorkshop({ apiUrl = '/api/workshops', onSuccess }: 
 
             <div className="ws-row-2 ws-dates">
               <div
-                className={`ws-field ${touched.dataInicio && fieldErrors.dataInicio ? 'ws-invalid' : ''}`}
+                className={`ws-field ${
+                  touched.dataInicio && fieldErrors.dataInicio ? 'ws-invalid' : ''
+                }`}
               >
                 <label htmlFor="dataInicio">Data de início *</label>
                 <input
@@ -262,7 +266,6 @@ export default function CriarWorkshop({ apiUrl = '/api/workshops', onSuccess }: 
                   value={dataInicio}
                   onChange={(e) => setDataInicio(e.target.value)}
                   onBlur={() => markTouched('dataInicio')}
-                  placeholder="dd/mm/aaaa"
                   aria-invalid={!!(touched.dataInicio && fieldErrors.dataInicio)}
                 />
                 {touched.dataInicio && fieldErrors.dataInicio && (
@@ -271,7 +274,9 @@ export default function CriarWorkshop({ apiUrl = '/api/workshops', onSuccess }: 
               </div>
 
               <div
-                className={`ws-field ${touched.dataTermino && fieldErrors.dataTermino ? 'ws-invalid' : ''}`}
+                className={`ws-field ${
+                  touched.dataTermino && fieldErrors.dataTermino ? 'ws-invalid' : ''
+                }`}
               >
                 <label htmlFor="dataTermino">Data final *</label>
                 <input
@@ -281,7 +286,6 @@ export default function CriarWorkshop({ apiUrl = '/api/workshops', onSuccess }: 
                   min={dataInicio || undefined}
                   onChange={(e) => setDataTermino(e.target.value)}
                   onBlur={() => markTouched('dataTermino')}
-                  placeholder="dd/mm/aaaa"
                   aria-invalid={!!(touched.dataTermino && fieldErrors.dataTermino)}
                 />
                 {touched.dataTermino && fieldErrors.dataTermino && (
@@ -291,7 +295,9 @@ export default function CriarWorkshop({ apiUrl = '/api/workshops', onSuccess }: 
             </div>
 
             <div
-              className={`ws-field ${touched.descricao && fieldErrors.descricao ? 'ws-invalid' : ''}`}
+              className={`ws-field ${
+                touched.descricao && fieldErrors.descricao ? 'ws-invalid' : ''
+              }`}
             >
               <label htmlFor="descricao">Descrição *</label>
               <div className="ws-input-wrap">
@@ -300,7 +306,7 @@ export default function CriarWorkshop({ apiUrl = '/api/workshops', onSuccess }: 
                   value={descricaoTxt}
                   onChange={(e) => setDescricaoTxt(e.target.value.slice(0, 1000))}
                   onBlur={() => markTouched('descricao')}
-                  placeholder="Compartilhe seu conhecimento, experiência ou dicas..."
+                  placeholder="Descreva o foco do workshop, pré-requisitos, público-alvo..."
                   rows={6}
                   maxLength={1000}
                   aria-invalid={!!(touched.descricao && fieldErrors.descricao)}
@@ -320,7 +326,7 @@ export default function CriarWorkshop({ apiUrl = '/api/workshops', onSuccess }: 
               <h2 className="ws-title-gradient">Dicas para bons Workshops:</h2>
               <ul className="ws-tips-list">
                 <li>Use um título claro e descritivo</li>
-                <li>Adicione tags relevantes para facilitar a descoberta</li>
+                <li>Defina bem o tema e o público-alvo</li>
                 <li>Inclua exemplos práticos ou código quando possível</li>
               </ul>
             </section>

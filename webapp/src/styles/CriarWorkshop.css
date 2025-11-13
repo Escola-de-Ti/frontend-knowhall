@@ -59,12 +59,12 @@ label {
 }
 
 .ws-container {
+  background-color: var(--bg);
   max-width: 1200px;
   margin: 0 auto;
   padding: 24px 20px 72px;
 }
 
-/* header centralizado */
 .ws-header {
   padding-left: 0;
   padding-right: 0;

@@ -1,3 +1,6 @@
+import { apiService } from './apiService';
+import API_CONFIG from '../config/api.config';
+
 export type ApiWorkshop = {
   id: number;
   titulo: string;
@@ -32,12 +35,6 @@ export type UiWorkshop = {
   tokens?: number;
 };
 
-const BASE_URL = import.meta.env.VITE_API_BASE_URL ?? 'http://localhost:8080';
-const TOKEN =
-  import.meta.env.VITE_API_TOKEN ??
-  localStorage.getItem('auth_token') ??
-  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJhcGkta25vdy1oYWxsIiwiaWF0IjoxNzYyOTAwNjYwLCJleHAiOjE3NjI5MDQyNjAsInN1YiI6ImdhYnJpZWwubWFyYXNzaUBlbWFpbC5jb20iLCJ0eXAiOiJhY2Nlc3MifQ.-FcRyBA4Fh7iwsHzb9sp5vawGRgokiUUixTzRepSnJY';
-
 const MONTH_PT = [
   'Jan',
   'Fev',
@@ -52,14 +49,17 @@ const MONTH_PT = [
   'Nov',
   'Dez',
 ];
+
 function formatDate(iso: string) {
   const d = new Date(iso);
   return `${String(d.getDate()).padStart(2, '0')} ${MONTH_PT[d.getMonth()]} ${d.getFullYear()}`;
 }
+
 function formatTime(iso: string) {
   const d = new Date(iso);
   return `${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')}`;
 }
+
 function diffHours(a: string, b: string) {
   return Math.round(((new Date(b).getTime() - new Date(a).getTime()) / 36e5) * 10) / 10;
 }
@@ -69,6 +69,7 @@ function mapToUi(w: ApiWorkshop, currentInstructorId?: number): UiWorkshop {
   const enrolled = statusNorm === 'INSCRITO' || statusNorm === 'CONCLUIDO';
   const completed = statusNorm === 'CONCLUIDO';
   const mine = currentInstructorId != null ? w.instrutorId === currentInstructorId : undefined;
+
   return {
     id: String(w.id),
     title: w.titulo,
@@ -89,16 +90,26 @@ function mapToUi(w: ApiWorkshop, currentInstructorId?: number): UiWorkshop {
 export async function listWorkshops(opts?: {
   scope?: 'all' | 'enrolled' | 'mine';
   instructorId?: number;
+  status?: 'ABERTO' | 'CONCLUIDO' | 'INSCRITO';
 }): Promise<UiWorkshop[]> {
-  const { scope = 'all', instructorId } = opts ?? {};
-  const res = await fetch(`${BASE_URL}/api/workshops`, {
-    headers: { Authorization: `Bearer ${TOKEN}`, Accept: 'application/json' },
-  });
-  if (res.status === 401 || res.status === 403)
-    throw new Error('Não autorizado. Verifique o token.');
-  if (!res.ok) throw new Error(`Erro HTTP ${res.status}`);
-  const data: ApiWorkshop[] = await res.json();
+  const { scope = 'all', instructorId, status } = opts ?? {};
+
+  // monta a URL relativa igual o apiService espera
+  let url = API_CONFIG.ENDPOINTS.WORKSHOPS;
+  const params: string[] = [];
+
+  if (status) params.push(`status=${encodeURIComponent(status)}`);
+  if (instructorId != null) params.push(`instrutorId=${encodeURIComponent(String(instructorId))}`);
+
+  if (params.length) {
+    url += `?${params.join('&')}`;
+  }
+
+  // usa apiService igual UsuarioService
+  const data = await apiService.get<ApiWorkshop[]>(url);
+
   const ui = data.map((w) => mapToUi(w, instructorId));
+
   if (scope === 'enrolled') return ui.filter((w) => w.enrolled);
   if (scope === 'mine') return ui.filter((w) => w.mine);
   return ui;
@@ -106,18 +117,32 @@ export async function listWorkshops(opts?: {
 
 export async function createWorkshop(payload: {
   titulo: string;
+  tema: string;
   descricao: string;
-  instrutorId: number;
   dataInicio: string;
   dataTermino: string;
   linkMeet?: string;
+  instrutorId?: number;
 }): Promise<UiWorkshop> {
-  const res = await fetch(`${BASE_URL}/api/workshops`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${TOKEN}` },
-    body: JSON.stringify(payload),
-  });
-  if (!res.ok) throw new Error(`Erro ao criar workshop (${res.status})`);
-  const created: ApiWorkshop = await res.json();
+  const body: any = {
+    titulo: payload.titulo,
+    linkMeet: payload.linkMeet,
+    dataInicio: payload.dataInicio,
+    dataTermino: payload.dataTermino,
+    descricao: {
+      tema: payload.tema,
+      descricao: payload.descricao,
+    },
+  };
+
+  if (payload.instrutorId != null) {
+    body.instrutorId = payload.instrutorId;
+  }
+
+  const created = await apiService.post<ApiWorkshop>(
+    API_CONFIG.ENDPOINTS.WORKSHOPS,
+    body
+  );
+
   return mapToUi(created, payload.instrutorId);
 }

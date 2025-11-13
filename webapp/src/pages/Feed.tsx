@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import '../styles/Feed.css';
-
 import NavBar from '../components/NavBar';
 import PostCard, { PostModel } from '../components/feed/Post';
 import WorkshopList, { WorkshopItem } from '../components/feed/WorkshopList';
@@ -9,7 +8,7 @@ import PostDetailsModal, {
   PostDetails,
   PostCommentModel,
 } from '../components/feed/PostDetailsModal';
-import { listarWorkshops, WorkshopDTO } from '../services/workshop.service';
+import { listWorkshops, type UiWorkshop } from '../services/workshops.service';
 
 export default function Feed() {
   const [posts] = useState<PostModel[]>([
@@ -69,36 +68,19 @@ export default function Feed() {
     async function loadWorkshops() {
       try {
         setWsLoading(true);
-        const data: WorkshopDTO[] = await listarWorkshops();
 
-        const mapped: WorkshopItem[] = data.map((w) => {
-          const inicio = new Date(w.dataInicio);
-          const termino = new Date(w.dataTermino);
+        const data: UiWorkshop[] = await listWorkshops({ status: 'ABERTO' });
 
-          const dataFormatada = inicio.toLocaleDateString('pt-BR', {
-            day: '2-digit',
-            month: 'short',
-            year: 'numeric',
-          });
-
-          const diffMs = termino.getTime() - inicio.getTime();
-          const diffHoras = Math.max(Math.round(diffMs / (1000 * 60 * 60)), 1);
-          const duracao = `${diffHoras}h`;
-
-          const vagasLabel =
-            w.status === 'ABERTO' ? 'Inscrições abertas' : w.status === 'FECHADO' ? 'Fechado' : 'Encerrado';
-
-          return {
-            id: w.id,
-            titulo: w.titulo,
-            data: dataFormatada,
-            vagas: vagasLabel,
-            duracao,
-          };
-        });
+        const mapped: WorkshopItem[] = data.slice(0, 4).map((w) => ({
+          id: Number(w.id),
+          titulo: w.title,
+          data: w.date,
+          vagas: w.status === 'ABERTO' ? 'Inscrições abertas' : (w.status ?? ''),
+          duracao: `${w.durationHours}h`,
+        }));
 
         setWorkshops(mapped);
-      } catch (e) {
+      } catch {
         setWorkshops([]);
       } finally {
         setWsLoading(false);
@@ -109,16 +91,23 @@ export default function Feed() {
   }, []);
 
   function openPost(id: number) {
-    const base = posts.find((p) => p.id === id)!;
+    const base = posts.find((p) => p.id === id);
+    if (!base) return;
+
     const post: PostDetails = {
       id,
       titulo: base.titulo,
       corpo: base.corpo,
-      autor: { nome: base.autor.nome, iniciais: base.autor.iniciais, nivel: base.autor.nivel },
+      autor: {
+        nome: base.autor.nome,
+        iniciais: base.autor.iniciais,
+        nivel: base.autor.nivel,
+      },
       tags: base.tags,
       metrica: { upvotes: 37, supervotes: 5, comentarios: base.metrica.comentarios },
       tempo: base.tempo,
     };
+
     const cmts: PostCommentModel[] = [
       {
         id: 101,
@@ -137,6 +126,7 @@ export default function Feed() {
         supervotes: 1,
       },
     ];
+
     setCurrent(post);
     setComments(cmts);
     setOpen(true);
@@ -166,7 +156,7 @@ export default function Feed() {
               </header>
             </aside>
           ) : (
-            <WorkshopList itens={workshops} onVerMais={() => {}} />
+            <WorkshopList itens={workshops} />
           )}
         </aside>
 

@@ -1,5 +1,5 @@
 // Configuração centralizada da API
-const REACT_APP_API_BASE_URL = 'http://localhost:8080'
+const REACT_APP_API_BASE_URL = 'http://localhost:8080';
 
 const API_CONFIG = {
   BASE_URL: REACT_APP_API_BASE_URL || 'http://localhost:8080',
@@ -9,6 +9,7 @@ const API_CONFIG = {
     USUARIOS_USER: '/usuarios/user',
     LOGIN: '/usuarios/login',
     REFRESH: '/usuarios/refresh',
+    WORKSHOPS: '/workshops',
   },
   TIMEOUT: 30000,
 };
