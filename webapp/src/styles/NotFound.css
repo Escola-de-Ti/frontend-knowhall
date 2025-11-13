@@ -1,0 +1,114 @@
+@import url('https://fonts.googleapis.com/css2?family=Geologica:wght@100..900&family=Manrope:wght@200..800&family=Press+Start+2P&display=swap');
+
+:root{
+  --bg:#171717;
+  --card:#1f1f20;
+  --stroke:#373737;
+  --text:#fff;
+  --muted:#656565;
+  --cta-grad:linear-gradient(90deg,#55F6C9 0%,#8476D9 100%);
+  --accent:#F985CD;
+}
+
+.nf-wrap{
+  min-height:calc(100dvh - 64px);
+  background:var(--bg);
+  display:grid;
+  place-items:center;
+  padding:28px 20px 40px;
+}
+
+.nf-card{
+  position:relative;
+  width:min(720px,92vw);
+  background:var(--card);
+  border:1px solid var(--stroke);
+  border-radius:22px;
+  padding:40px 28px;
+  text-align:center;
+  color:var(--text);
+  box-shadow:0 2px 0 #00000040 inset, 0 0 0 1px #00000010;
+  overflow:hidden;
+}
+
+.nf-glow{
+  position:absolute;
+  inset:auto -20% -30% -20%;
+  height:240px;
+  background:radial-gradient(70% 60% at 50% 50%, #55F6C94d 0%, #7F68FD33 45%, transparent 70%);
+  filter:blur(28px);
+  pointer-events:none;
+}
+
+.nf-404{
+  font-family:"Press Start 2P", monospace;
+  font-size:84px;
+  line-height:1;
+  margin:4px 0 14px;
+  letter-spacing:2px;
+  background:linear-gradient(180deg,#fff 0%, #cfc9ff 100%);
+  -webkit-background-clip:text;
+  background-clip:text;
+  color:transparent;
+  text-shadow:0 6px 0 #00000033;
+}
+
+.nf-title{
+  font-family:"Manrope", sans-serif;
+  font-weight:800;
+  font-size:22px;
+}
+
+.nf-sub{
+  margin-top:6px;
+  color:#cfcfcf;
+  font-family:"Geologica", sans-serif;
+}
+
+.nf-actions{
+  margin-top:22px;
+  display:flex;
+  gap:12px;
+  justify-content:center;
+  flex-wrap:wrap;
+}
+
+.nf-btn{
+  height:44px;
+  padding:0 18px;
+  border-radius:14px;
+  border:0;
+  cursor:pointer;
+  font-weight:900;
+  display:inline-flex;
+  align-items:center;
+  gap:10px;
+  background:var(--cta-grad);
+  color:#0e0e0e;
+  box-shadow:0 12px 30px #55f6c91f, 0 2px 0 #0000002b inset;
+}
+.nf-btn.ghost{
+  background:#232324;
+  color:#fff;
+  border:1px solid var(--stroke);
+  box-shadow:none;
+}
+
+.ico-back,.ico-home{
+  width:18px;height:18px;background:#0e0e0e;display:inline-block
+}
+.nf-btn.ghost .ico-back{background:#fff}
+
+.ico-back{
+  -webkit-mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M15 18 9 12l6-6' fill='white'/%3E%3C/svg%3E") center/contain no-repeat;
+          mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M15 18 9 12l6-6' fill='white'/%3E%3C/svg%3E") center/contain no-repeat;
+}
+.ico-home{
+  -webkit-mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M3 10.5 12 3l9 7.5V21a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1v-10.5Z' fill='white'/%3E%3C/svg%3E") center/contain no-repeat;
+          mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M3 10.5 12 3l9 7.5V21a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1v-10.5Z' fill='white'/%3E%3C/svg%3E") center/contain no-repeat;
+}
+
+@media (max-width:560px){
+  .nf-404{font-size:64px}
+  .nf-card{padding:32px 20px}
+}
