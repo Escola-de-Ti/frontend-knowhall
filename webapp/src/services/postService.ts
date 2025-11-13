@@ -58,6 +58,31 @@ interface ValidationErrors {
   tags?: string;
 }
 
+export interface ComentarioResponseDTO {
+  id: number;
+  postId: number;
+  usuarioId: number;
+  usuarioNome: string;
+  texto: string;
+  totalUpVotes: number;
+  totalSuperVotes: number;
+  comentarioPaiId: number | null;
+  dataCriacao: string;
+}
+
+export interface PostDetalhesDTO {
+  id: number;
+  usuarioId: number;
+  usuarioNome: string;
+  titulo: string;
+  descricao: string;
+  totalUpVotes: number;
+  tags: TagResponseDTO[];
+  dataCriacao: string;
+  comentarios: ComentarioResponseDTO[];
+  hasMoreComentarios: boolean;
+}
+
 class PostService {
   async criar(dados: PostCreateDTO): Promise<PostResponseDTO> {
     return apiService.post<PostResponseDTO>(
@@ -100,6 +125,11 @@ class PostService {
 
     const endpoint = `${API_CONFIG.ENDPOINTS.POSTS}/feed?${queryParams.toString()}`;
     return apiService.get<FeedResponseDTO>(endpoint, true);
+  }
+
+  async getPostDetails(id: number): Promise<PostDetalhesDTO> {
+    const response = await apiService.get<PostDetalhesDTO>(`/posts/${id}/detalhes`);
+    return response;
   }
 }
 

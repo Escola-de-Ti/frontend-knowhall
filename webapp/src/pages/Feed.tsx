@@ -259,7 +259,6 @@ export default function Feed() {
         open={open}
         onClose={() => setOpen(false)}
         post={current}
-        comments={comments}
       />
     </div>
   );
