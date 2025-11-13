@@ -92,7 +92,6 @@ export default function Feed() {
     try {
       // Chama a API para votar (toggle)
       const response = await votoService.votarEmPost(postId.toString());
-      console.log(response)
 
       // Atualiza o post localmente com os novos valores
       updatePost(postId.toString(), {
