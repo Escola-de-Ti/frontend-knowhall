@@ -18,39 +18,45 @@ const Perfil: React.FC = () => {
       <NavBar />
       <div className="perfil-wrap">
         <div className="perfil-grid">
-          <PerfilDetalhes
-            id_usuario={idUsuario}
-            email="kauan.hb2004@gmail.com"
-            nome="Kauan Henrique Bertalha"
-            biografia="Desenvolvedor Full Stack com 8 anos de experiência..."
-            id_imagem_perfil=""
-            status_usuario="ATIVO"
-            tipo_usuario="PADRAO"
-            interesses={['MySQL', 'JavaScript']}
-            onEditar={() => {}}
-            onInteresseClick={() => {}}
-          />
+          <div className="perfil-card perfil-detalhes-card">
+            <PerfilDetalhes
+              id_usuario={idUsuario}
+              email="kauan.hb2004@gmail.com"
+              nome="Kauan Henrique Bertalha"
+              biografia="Desenvolvedor Full Stack com 8 anos de experiência..."
+              id_imagem_perfil=""
+              status_usuario="ATIVO"
+              tipo_usuario="PADRAO"
+              interesses={['MySQL', 'JavaScript']}
+              onEditar={() => {}}
+              onInteresseClick={() => {}}
+            />
+          </div>
 
-          <PerfilHistorico
-            nivel={15}
-            tokens={5680}
-            ranking={3}
-            xpAtual={27131}
-            xpNecessario={30637}
-            progresso={72}
-            posts={15}
-            upvotes={240}
-            comentarios={47}
-            workshops={8}
-            medalSrc="/medalhaHistorico.png"
-          />
+          <div className="perfil-card perfil-historico-card">
+            <PerfilHistorico
+              nivel={15}
+              tokens={5680}
+              ranking={3}
+              xpAtual={27131}
+              xpNecessario={30637}
+              progresso={72}
+              posts={15}
+              upvotes={240}
+              comentarios={47}
+              workshops={8}
+              medalSrc="/medalhaHistorico.png"
+            />
+          </div>
         </div>
 
-        <PerfilSlide
-          tabs={['Conquistas', 'Atividades', 'Certificados', 'Estatísticas']}
-          value={aba}
-          onChange={setAba}
-        />
+        <div className="perfil-slide">
+          <PerfilSlide
+            tabs={['Conquistas', 'Atividades', 'Certificados', 'Estatísticas']}
+            value={aba}
+            onChange={setAba}
+          />
+        </div>
 
         {aba === 'Conquistas' && <PerfilConquistas />}
         {aba === 'Atividades' && <PerfilAtividades />}
