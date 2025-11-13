@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import '../../styles/perfil/PerfilAtividades.css';
-import { getComentariosDoUsuario, type ComentarioDTO } from '../../services/comentarios.service';
+import { comentarioService, type ComentarioUsuarioDTO } from '../../services/comentarioService';
 
 type Atividade = {
   id: number;
@@ -30,7 +30,7 @@ export default function PerfilAtividades({ idUsuario = 1 }: Props) {
       
       try {
         setLoading(true);
-        const comentarios = await getComentariosDoUsuario(idUsuario);
+        const comentarios = await comentarioService.listarPorUsuario(idUsuario);
         
         // Converter comentários da API para o formato de Atividade
         const atividadesComentarios: Atividade[] = comentarios.map((comentario) => ({

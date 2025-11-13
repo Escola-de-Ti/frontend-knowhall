@@ -10,7 +10,7 @@ import PostDetailsModal, {
   PostDetails,
   PostCommentModel,
 } from '../components/feed/PostDetailsModal';
-import { listarWorkshops, WorkshopDTO } from '../services/workshop.service';
+import { workshopService, WorkshopResponseDTO } from '../services/workshopService';
 
 import { useFeed } from '../hooks/useFeed';
 import { PostFeedDTO } from '../services/postService';
