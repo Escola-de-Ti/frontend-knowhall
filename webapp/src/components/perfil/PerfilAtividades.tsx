@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import '../../styles/perfil/PerfilAtividades.css';
+import { getComentariosDoUsuario, type ComentarioDTO } from '../../services/comentarios.service';
 
 type Atividade = {
   id: number;
@@ -20,40 +21,36 @@ const labelTipo: Record<Atividade['tipo'], string> = {
 export default function PerfilAtividades({ idUsuario = 1 }: Props) {
   const [itens, setItens] = useState<Atividade[]>([]);
   const [openMenu, setOpenMenu] = useState<number | null>(null);
+  const [loading, setLoading] = useState(true);
   const menuRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    const mock: Atividade[] = [
-      {
-        id: 101,
-        tipo: 'COMENTARIO',
-        data: '2025-09-13',
-        snippet:
-          'Vi que muita gente está com dúvida na instalação. O segredo é rodar o comando npm install com a flag --legacy-peer-deps. A nova versão do NPM...',
-      },
-      {
-        id: 100,
-        tipo: 'COMENTARIO',
-        data: '2025-09-12',
-        snippet:
-          "Já passei por isso. Tente desativar a 'minimização do mapa de código' (code minimap) e outras extensões que analisam o arquiv...",
-      },
-      {
-        id: 99,
-        tipo: 'COMENTARIO',
-        data: '2025-09-10',
-        snippet:
-          'Isso geralmente é problema no driver da placa de rede. Vá ao site da fabricante do seu notebook, procure pelo seu modelo exato e baixe a versão mais rec...',
-      },
-      {
-        id: 98,
-        tipo: 'COMENTARIO',
-        data: '2025-09-10',
-        snippet:
-          "De forma simples: com REST, você tem vários 'endereços' (endpoints) e cada um te entrega um pacote fechado de dados. Com GraphQL, voc...",
-      },
-    ];
-    setItens(mock);
+    const carregarComentarios = async () => {
+      if (!idUsuario) return;
+      
+      try {
+        setLoading(true);
+        const comentarios = await getComentariosDoUsuario(idUsuario);
+        
+        // Converter comentários da API para o formato de Atividade
+        const atividadesComentarios: Atividade[] = comentarios.map((comentario) => ({
+          id: comentario.comentarioId,
+          tipo: 'COMENTARIO' as const,
+          data: new Date().toISOString(), // API não retorna data, usando data atual
+          snippet: comentario.texto,
+        }));
+        
+        setItens(atividadesComentarios);
+      } catch (err) {
+        console.error('Erro ao carregar comentários:', err);
+        // Mantém array vazio em caso de erro
+        setItens([]);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    carregarComentarios();
   }, [idUsuario]);
 
   useEffect(() => {
@@ -88,43 +85,49 @@ export default function PerfilAtividades({ idUsuario = 1 }: Props) {
         <h3 id="atividades-title">Atividades</h3>
       </header>
 
-      <div className="atividades-list">
-        {itens.map((a) => (
-          <article key={a.id} className="atividade-card">
-            <div className="atividade-left">
-              <span className="dot" aria-hidden />
-              <div className="atividade-meta">
-                <strong className="atividade-tipo">{labelTipo[a.tipo]}</strong>
-                <span className="atividade-data">{formatarData(a.data)}</span>
-              </div>
-            </div>
-
-            <p className="atividade-snippet">{a.snippet}</p>
-
-            <div className="atividade-actions" ref={menuRef}>
-              <button
-                className="kebab-btn"
-                aria-label="Mais opções"
-                aria-expanded={openMenu === a.id}
-                onClick={() => setOpenMenu((cur) => (cur === a.id ? null : a.id))}
-              >
-                ⋮
-              </button>
-
-              {openMenu === a.id && (
-                <div role="menu" className="kebab-menu">
-                  <button role="menuitem" className="kebab-item">
-                    Excluir
-                  </button>
-                  <button role="menuitem" className="kebab-item">
-                    Editar
-                  </button>
+      {loading ? (
+        <p className="atividades-loading">Carregando atividades...</p>
+      ) : itens.length === 0 ? (
+        <p className="atividades-empty">Nenhuma atividade encontrada.</p>
+      ) : (
+        <div className="atividades-list">
+          {itens.map((a) => (
+            <article key={a.id} className="atividade-card">
+              <div className="atividade-left">
+                <span className="dot" aria-hidden />
+                <div className="atividade-meta">
+                  <strong className="atividade-tipo">{labelTipo[a.tipo]}</strong>
+                  <span className="atividade-data">{formatarData(a.data)}</span>
                 </div>
-              )}
-            </div>
-          </article>
-        ))}
-      </div>
+              </div>
+
+              <p className="atividade-snippet">{a.snippet}</p>
+
+              <div className="atividade-actions" ref={menuRef}>
+                <button
+                  className="kebab-btn"
+                  aria-label="Mais opções"
+                  aria-expanded={openMenu === a.id}
+                  onClick={() => setOpenMenu((cur) => (cur === a.id ? null : a.id))}
+                >
+                  ⋮
+                </button>
+
+                {openMenu === a.id && (
+                  <div role="menu" className="kebab-menu">
+                    <button role="menuitem" className="kebab-item">
+                      Excluir
+                    </button>
+                    <button role="menuitem" className="kebab-item">
+                      Editar
+                    </button>
+                  </div>
+                )}
+              </div>
+            </article>
+          ))}
+        </div>
+      )}
     </section>
   );
 }
