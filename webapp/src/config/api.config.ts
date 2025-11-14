@@ -1,9 +1,5 @@
 const REACT_APP_API_BASE_URL = 'http://localhost:8080';
 
-// src/config/api.config.ts
-
-// src/config/api.config.ts
-
 const API_CONFIG = {
   BASE_URL: REACT_APP_API_BASE_URL || 'http://localhost:8080',
   API_PREFIX: '/api',

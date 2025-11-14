@@ -1,7 +1,8 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useMemo, useState } from 'react';
 import '../styles/CriarWorkshop.css';
 import NavBar from '../components/NavBar';
-import { createWorkshop } from '../services/workshops.service';
+import { workshopService } from '../services/workshopService';
 import Tags from '../components/Tags';
 
 function toIsoDay(date: string, end?: boolean) {
@@ -43,6 +44,7 @@ export default function CriarWorkshop() {
   const [linkMeet, setLinkMeet] = useState('');
   const [custo, setCusto] = useState('');
   const [capacidade, setCapacidade] = useState('');
+  const [tags, setTags] = useState<string[]>([]);
 
   const [loading, setLoading] = useState(false);
   const [errorGlobal, setErrorGlobal] = useState<string | null>(null);
@@ -116,15 +118,17 @@ export default function CriarWorkshop() {
     try {
       setLoading(true);
 
-      await createWorkshop({
+      await workshopService.criar({
         titulo,
-        tema,
-        descricao: descricaoTxt,
+        linkMeet,
         dataInicio: inicioIso,
         dataTermino: terminoIso,
-        linkMeet,
         custo: custoNum,
         capacidade: capacidadeNum,
+        descricao: {
+          tema,
+          descricao: descricaoTxt,
+        },
       });
 
       resetForm();
@@ -145,6 +149,7 @@ export default function CriarWorkshop() {
     setLinkMeet('');
     setCusto('');
     setCapacidade('');
+    setTags([]);
     setTouched({
       titulo: false,
       tema: false,
@@ -401,7 +406,7 @@ export default function CriarWorkshop() {
           </aside>
 
           <section className="ws-card ws-tags">
-            <Tags />
+            <Tags value={tags} onChange={setTags} maxTags={10} />
           </section>
         </div>
       </div>

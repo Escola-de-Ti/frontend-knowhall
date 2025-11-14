@@ -1,16 +1,13 @@
-import React, { useState, useRef, useCallback } from 'react';
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import React, { useState, useRef, useCallback, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import '../styles/Feed.css';
 import NavBar from '../components/NavBar';
 import PostCard, { PostModel } from '../components/feed/Post';
 import WorkshopList, { WorkshopItem } from '../components/feed/WorkshopList';
 import RankingList, { RankUser } from '../components/feed/RankingList';
-import PostDetailsModal, {
-  PostDetails,
-  PostCommentModel,
-} from '../components/feed/PostDetailsModal';
+import PostDetailsModal, { PostDetails } from '../components/feed/PostDetailsModal';
 import { workshopService, WorkshopResponseDTO } from '../services/workshopService';
-
 import { useFeed } from '../hooks/useFeed';
 import { PostFeedDTO } from '../services/postService';
 import { votoService } from '../services/votoService';
@@ -18,29 +15,12 @@ import { getRelativeTime, getInitials } from '../utils/feedHelpers';
 
 export default function Feed() {
   const navigate = useNavigate();
-  
-  const { posts, loading, error, hasMore, loadMore, refresh, updatePost } = useFeed(10);
 
+  const { posts, loading, error, hasMore, loadMore, refresh, updatePost } = useFeed(10);
   const observerTarget = useRef<HTMLDivElement>(null);
 
-  const workshops: WorkshopItem[] = [
-    {
-      id: 1,
-      titulo: 'Introdução ao React Hooks',
-      data: '15 Set 2025',
-      vagas: '12/20',
-      duracao: '2h',
-    },
-    {
-      id: 2,
-      titulo: 'Clean Architecture na Prática',
-      data: '15 Set 2025',
-      vagas: '12/20',
-      duracao: '2h',
-    },
-    { id: 3, titulo: 'Introdução ao MySQL', data: '15 Set 2025', vagas: '12/20', duracao: '2h' },
-    { id: 4, titulo: 'SpringBoot + React', data: '15 Set 2025', vagas: '12/20', duracao: '2h' },
-  ];
+  const [workshops, setWorkshops] = useState<WorkshopItem[]>([]);
+  const [wsLoading, setWsLoading] = useState(false);
 
   const ranking: RankUser[] = [
     { id: 1, nome: 'Matheus Rossini', iniciais: 'MR', nivel: 18, tokens: '5.650' },
@@ -57,7 +37,6 @@ export default function Feed() {
 
   const [open, setOpen] = useState(false);
   const [current, setCurrent] = useState<PostDetails | null>(null);
-  const [comments, setComments] = useState<PostCommentModel[]>([]);
 
   const handleCloseModal = () => {
     setOpen(false);
@@ -124,11 +103,7 @@ export default function Feed() {
       jaVotou: postApi.jaVotou,
     };
 
-    const cmts: PostCommentModel[] = [];
-
-
     setCurrent(post);
-    setComments(cmts);
     setOpen(true);
   }
 
@@ -142,7 +117,7 @@ export default function Feed() {
     [hasMore, loading, loadMore]
   );
 
-  React.useEffect(() => {
+  useEffect(() => {
     const element = observerTarget.current;
     if (!element) return;
 
@@ -160,6 +135,44 @@ export default function Feed() {
     };
   }, [handleObserver]);
 
+  useEffect(() => {
+    async function loadWorkshops() {
+      try {
+        setWsLoading(true);
+
+        const data: WorkshopResponseDTO[] = await workshopService.listar({
+          status: 'ABERTO',
+        });
+
+        const mapped: WorkshopItem[] = data.slice(0, 4).map((w) => {
+          let vagas = 'Encerrado';
+
+          if (w.status === 'ABERTO') {
+            vagas = 'Inscrições abertas';
+          } else if (w.status === 'EM_ANDAMENTO') {
+            vagas = 'Em andamento';
+          }
+
+          return {
+            id: w.id,
+            titulo: w.titulo,
+            data: workshopService.formatarData(w.dataInicio),
+            vagas,
+            duracao: `${workshopService.calcularDuracao(w.dataInicio, w.dataTermino)}h`,
+          };
+        });
+
+        setWorkshops(mapped);
+      } catch (e) {
+        console.error('Erro ao carregar workshops', e);
+        setWorkshops([]);
+      } finally {
+        setWsLoading(false);
+      }
+    }
+
+    loadWorkshops();
+  }, []);
 
   const handleCriarPost = () => {
     navigate('/criar-post');
@@ -178,8 +191,19 @@ export default function Feed() {
             </button>
           </div>
 
-        <WorkshopList itens={workshops} onVerMais={() => {}} />
-        
+          {wsLoading ? (
+            <aside className="ws-panel">
+              <header className="ws-head">
+                <span className="ws-ico" aria-hidden />
+                <div className="ws-txt">
+                  <h3>Workshops</h3>
+                  <p>Carregando workshops...</p>
+                </div>
+              </header>
+            </aside>
+          ) : (
+            <WorkshopList itens={workshops} onVerMais={() => navigate('/workshops')} />
+          )}
         </aside>
 
         <section className="feed-center">
@@ -190,7 +214,6 @@ export default function Feed() {
             </button>
           </div>
 
-          {/* Mensagem de erro */}
           {error && (
             <div className="error-message" style={{ margin: '20px 0', textAlign: 'center' }}>
               {error}
@@ -207,7 +230,6 @@ export default function Feed() {
             </div>
           )}
 
-          {/* Lista de posts */}
           <div className="posts-stack">
             {posts.map((p) => (
               <PostCard
@@ -218,14 +240,12 @@ export default function Feed() {
               />
             ))}
 
-            {/* Loading inicial */}
             {loading && posts.length === 0 && (
               <div style={{ textAlign: 'center', padding: '40px' }}>
                 <p>Carregando posts...</p>
               </div>
             )}
 
-            {/* Nenhum post encontrado */}
             {!loading && posts.length === 0 && !error && (
               <div style={{ textAlign: 'center', padding: '40px' }}>
                 <p>Nenhum post encontrado.</p>
@@ -233,7 +253,6 @@ export default function Feed() {
             )}
           </div>
 
-          {/* Elemento observador para scroll infinito */}
           <div ref={observerTarget} style={{ height: '20px', margin: '20px 0' }}>
             {loading && posts.length > 0 && (
               <div style={{ textAlign: 'center' }}>
@@ -242,7 +261,6 @@ export default function Feed() {
             )}
           </div>
 
-          {/* Fim dos posts */}
           {!hasMore && posts.length > 0 && (
             <div style={{ textAlign: 'center', padding: '20px', color: '#888' }}>
               <p>Você chegou ao fim! 🎉</p>
@@ -255,11 +273,7 @@ export default function Feed() {
         </aside>
       </main>
 
-      <PostDetailsModal
-        open={open}
-        onClose={handleCloseModal}
-        post={current}
-      />
+      <PostDetailsModal open={open} onClose={handleCloseModal} post={current} />
     </div>
   );
 }
