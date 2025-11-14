@@ -1,4 +1,5 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import '../../styles/perfil/PerfilHistorico.css';
 
 type PerfilHistoricoProps = {
@@ -25,13 +26,19 @@ export default function PerfilHistorico({
   workshops,
   medalSrc = '/medalhaHistorico.png',
 }: PerfilHistoricoProps) {
+  const navigate = useNavigate();
   const fmt = (n: number) => n.toLocaleString('pt-BR');
   const rankStr = `#${String(ranking).padStart(2, '0')}`;
 
   return (
     <section className="history-container" aria-labelledby="history-title">
       <header className="history-header">
-        <button id="history-title" className="history-title" type="button">
+        <button 
+          id="history-title" 
+          className="history-title" 
+          type="button"
+          onClick={() => navigate('/historico-transacoes')}
+        >
           <span className="title-icon" aria-hidden />
           Histórico de transferências
         </button>
@@ -49,19 +56,19 @@ export default function PerfilHistorico({
       </div>
 
       <div className="kpis">
-        <div className="kpi">
+        <div className="kpi kpi-posts">
           <strong>{fmt(posts)}</strong>
           <span>Posts</span>
         </div>
-        <div className="kpi">
+        <div className="kpi kpi-upvotes">
           <strong>{fmt(upvotes)}</strong>
           <span>Upvotes</span>
         </div>
-        <div className="kpi">
+        <div className="kpi kpi-comments">
           <strong>{fmt(comentarios)}</strong>
-          <span>Comentários</span>
+          <span>Comentario</span>
         </div>
-        <div className="kpi">
+        <div className="kpi kpi-workshops">
           <strong>{fmt(workshops)}</strong>
           <span>Workshops</span>
         </div>

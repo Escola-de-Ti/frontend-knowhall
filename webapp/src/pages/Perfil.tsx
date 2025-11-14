@@ -5,15 +5,14 @@ import PerfilDetalhes from '../components/perfil/PerfilDetalhes';
 import PerfilAtividades from '../components/perfil/PerfilAtividades';
 import PerfilHistorico from '../components/perfil/PerfilHistorico';
 import PerfilSlide from '../components/perfil/PerfilSlide';
-import PerfilConquistas from '../components/perfil/PerfilConquistas';
-import PerfilCertificados from '../components/perfil/PerfilCertificados';
 import PerfilEstatisticas from '../components/perfil/PerfilEstatisticas';
+import PerfilPosts from '../components/perfil/PerfilPosts';
 import NavBar from '../components/NavBar';
 import { getUsuario, getUsuarioDetalhes, getMyUser, type UsuarioDetalhesDTO, UsuarioDTO } from '../services/perfil.service';
 
 const Perfil: React.FC = () => {
   const navigate = useNavigate();
-  const [aba, setAba] = useState('Conquistas');
+  const [aba, setAba] = useState('Posts');
   const [usuarioDetalhes, setUsuarioDetalhes] = useState<UsuarioDetalhesDTO | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -101,16 +100,15 @@ const Perfil: React.FC = () => {
 
         <div className="perfil-slide">
           <PerfilSlide
-            tabs={['Conquistas', 'Atividades', 'Certificados', 'Estatísticas']}
+            tabs={['Posts', 'Atividades', 'Estatísticas']}
             value={aba}
             onChange={setAba}
           />
         </div>
 
-        {aba === 'Conquistas' && <PerfilConquistas />}
+        {aba === 'Posts' && <PerfilPosts idUsuario={user?.id!} />}
         {aba === 'Atividades' && <PerfilAtividades idUsuario={user?.id!} />}
-        {aba === 'Certificados' && <PerfilCertificados />}
-        {aba === 'Estatísticas' && <PerfilEstatisticas />}
+        {aba === 'Estatísticas' && <PerfilEstatisticas idUsuario={user?.id!} />}
       </div>
     </div>
   );

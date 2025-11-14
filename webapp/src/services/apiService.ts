@@ -68,6 +68,11 @@ class ApiService {
       throw new Error(errorData.message || `Erro na requisição: ${response.status}`);
     }
 
+    // Status 204 (No Content) não retorna corpo
+    if (response.status === 204) {
+      return undefined as T;
+    }
+
     return response.json();
   }
 
