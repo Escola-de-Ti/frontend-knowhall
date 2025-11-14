@@ -14,7 +14,7 @@ http.interceptors.request.use(cfg => {
     const token = btoa(`${basicUser}:${basicPass ?? ''}`)
     cfg.headers.Authorization = `Basic ${token}`
   } else {
-    const t = localStorage.getItem('kh_token')
+    const t = localStorage.getItem('kh_access_token') || localStorage.getItem('kh_token')
     if (t) cfg.headers.Authorization = `Bearer ${t}`
   }
   return cfg

@@ -34,3 +34,5 @@ docker-compose.dev.yml
 
 # outras configs locais
 *.local
+
+package-lock.json

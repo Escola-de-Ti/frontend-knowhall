@@ -205,3 +205,205 @@
     height: 46px;
   }
 }
+/* ========================================
+   ESTILOS PARA BOTÃO DE VOTO (UPVOTE)
+   ======================================== */
+
+/* 
+ * Adicione este CSS ao arquivo: src/styles/feed/Post.css
+ * Ou crie um arquivo separado e importe no componente Post
+ */
+
+/* Estado normal do botão de upvote */
+.kpi-up {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border: none;
+  border-radius: 6px;
+  background: transparent;
+  color: #666;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.kpi-up:hover {
+  background: rgba(147, 255, 107, 0.1);
+  color: #7fff6b;
+}
+
+/* Estado VOTADO (quando jaVotou = true) */
+.kpi-up.active {
+  background: rgba(147, 255, 107, 0.1);
+  color: #7fff6b;
+  font-weight: 600;
+}
+
+.kpi-up.active .ico-up {
+  transform: scale(1.1);
+}
+
+.kpi-up.active:hover {
+  background: rgba(147, 255, 107, 0.1);
+}
+
+/* Estado VOTANDO (durante requisição) */
+.kpi-up.voting {
+  opacity: 0.6;
+  cursor: wait;
+  pointer-events: none;
+}
+
+.kpi-up.voting .ico-up {
+  animation: pulse 0.8s ease-in-out infinite;
+}
+
+/* Animação de pulse durante voto */
+@keyframes pulse {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.15);
+  }
+}
+
+/* Desabilitado */
+.kpi-up:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+/* Ícone do upvote */
+.ico-up {
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  transition: transform 0.2s ease;
+}
+
+/* Se você usa ícones SVG inline, adicione: */
+.ico-up svg {
+  width: 100%;
+  height: 100%;
+  fill: currentColor;
+}
+
+/* Valor do contador */
+.kpi-val {
+  font-variant-numeric: tabular-nums;
+  min-width: 20px;
+  text-align: center;
+}
+
+/* ========================================
+   ESTILOS OPCIONAIS - FEEDBACK VISUAL
+   ======================================== */
+
+/* Efeito de "pop" ao votar */
+.kpi-up.active .kpi-val {
+  animation: pop 0.3s ease-out;
+}
+
+@keyframes pop {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.2);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+/* Ripple effect ao clicar (opcional) */
+.kpi-up {
+  position: relative;
+  overflow: hidden;
+}
+
+.kpi-up::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  border-radius: 50%;
+  background: rgba(147, 255, 107, 0.1);
+  transform: translate(-50%, -50%);
+  transition: width 0.6s, height 0.6s;
+}
+
+.kpi-up:active::after {
+  width: 100px;
+  height: 100px;
+}
+
+/* ========================================
+   RESPONSIVO
+   ======================================== */
+
+/* Mobile */
+@media (max-width: 768px) {
+  .kpi-up {
+    padding: 8px 10px;
+    font-size: 13px;
+  }
+  
+  .ico-up {
+    width: 14px;
+    height: 14px;
+  }
+}
+
+/* Tablet */
+@media (min-width: 769px) and (max-width: 1024px) {
+  .kpi-up {
+    padding: 6px 11px;
+  }
+}
+
+/* ========================================
+   DARK MODE (OPCIONAL)
+   ======================================== */
+
+@media (prefers-color-scheme: dark) {
+  .kpi-up {
+    color: #aaa;
+  }
+  
+  .kpi-up:hover {
+  background: rgba(147, 255, 107, 0.1);
+  color: #7fff6b;
+  }
+  
+  .kpi-up.active {
+  background: rgba(147, 255, 107, 0.1);
+  color: #7fff6b;
+  }
+}
+
+/* ========================================
+   ACESSIBILIDADE
+   ======================================== */
+
+/* Foco para navegação por teclado */
+.kpi-up:focus-visible {
+  outline: 2px solid #7fff6b;
+  outline-offset: 2px;
+}
+
+/* Reduzir animações se usuário preferir */
+@media (prefers-reduced-motion: reduce) {
+  .kpi-up,
+  .ico-up,
+  .kpi-val {
+    animation: none !important;
+    transition: none !important;
+  }
+}

@@ -1,14 +1,14 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { listWorkshops, UiWorkshop } from '../services/workshops.service';
+import { workshopService, WorkshopResponseDTO } from '../services/workshopService';
 import NavBar from '../components/NavBar';
 import '../styles/Workshops.css';
 
-type EnrolledWorkshop = UiWorkshop & {
+type EnrolledWorkshop = WorkshopResponseDTO & {
   completed?: boolean;
   rating?: number;
   mine?: boolean;
-  tokens?: number;
+  enrolled?: boolean;
 };
 
 type Tab = 'disponiveis' | 'inscritos' | 'meus';
@@ -25,81 +25,28 @@ export default function Workshops() {
 
   useEffect(() => {
     let mounted = true;
-
-    async function load() {
+    
+    const carregarWorkshops = async () => {
       try {
-        setLoading(true);
-        setError(null);
-
-        const r = await listWorkshops();
-        if (mounted) setData(r as EnrolledWorkshop[]);
-      } catch (e: any) {
-        setError(e?.message || 'Erro ao carregar workshops');
+        const workshops = await workshopService.listar();
         if (mounted) {
-          setData([
-            {
-              id: '1',
-              title: 'Back-end com Node.js',
-              description:
-                'Crie APIs REST rápidas e escaláveis para a web utilizando Node.js e o framework Express.',
-              mentor: { name: 'Andre Jacob' },
-              date: '15 Set 2024',
-              durationHours: 2,
-              startTime: '19:00',
-              endTime: '21:00',
-              enrolled: false,
-              mine: true,
-              tokens: 500,
-            },
-            {
-              id: '2',
-              title: 'Python para Análise de Dados',
-              description:
-                'Aprenda a manipular, analisar e visualizar dados de forma prática utilizando Python e a biblioteca Pandas.',
-              mentor: { name: 'Andre Jacob' },
-              date: '15 Set 2024',
-              durationHours: 2,
-              startTime: '19:00',
-              endTime: '21:00',
-              enrolled: false,
-              mine: true,
-              tokens: 650,
-            },
-            {
-              id: '3',
-              title: 'Cloud com AWS',
-              description:
-                'Domine os conceitos e serviços essenciais da computação em nuvem com a Amazon Web Services (AWS).',
-              mentor: { name: 'Andre Jacob' },
-              date: '15 Set 2024',
-              durationHours: 2,
-              startTime: '19:00',
-              endTime: '21:00',
-              enrolled: false,
-              mine: true,
-              tokens: 700,
-            },
-            {
-              id: '4',
-              title: 'TypeScript Avançado',
-              description: 'Workshop sobre funcionalidades avançadas do TypeScript.',
-              mentor: { name: 'Gabriel Marassi' },
-              date: '21 Nov 2025',
-              durationHours: 1.5,
-              startTime: '20:00',
-              endTime: '21:30',
-              enrolled: true,
-              rating: 4.7,
-            },
-          ]);
+          // TODO: Buscar informações de inscrição e ownership do backend
+          const workshopsComStatus: EnrolledWorkshop[] = workshops.map(w => ({
+            ...w,
+            enrolled: false, // Verificar se usuário está inscrito
+            mine: false, // Verificar se workshop é do usuário logado
+            completed: w.status === 'CONCLUIDO' || w.status === 'ENCERRADO',
+          }));
+          setData(workshopsComStatus);
         }
-      } finally {
-        if (mounted) setLoading(false);
+      } catch (error) {
+        console.error('Erro ao carregar workshops:', error);
+        if (mounted) setData([]);
       }
-    }
+    };
 
-    load();
-
+    carregarWorkshops();
+    
     return () => {
       mounted = false;
     };
@@ -185,62 +132,59 @@ export default function Workshops() {
         {!loading && filtered.length === 0 ? (
           <div className="wk-empty">Nada por aqui.</div>
         ) : (
-          <>
-            <div className={`wk-grid ${isInscritos ? 'is-enrolled' : ''}`}>
-              {paginated.map((w) => {
-                const statusLabel = w.completed ? 'Concluído' : 'Inscrito';
-                return (
-                  <article
-                    key={w.id}
-                    className={`wk-card ${isInscritos ? 'enrolled' : ''} ${
-                      w.completed ? 'done' : ''
-                    }`}
-                  >
-                    <header className="wk-row">
-                      <h2 className="wk-card-title">{w.title}</h2>
-                      {typeof w.tokens === 'number' && !isInscritos && (
-                        <span className="wk-chip-tokens">{w.tokens} tokens</span>
-                      )}
-                      {isInscritos && (
-                        <span className={`wk-chip-status ${w.completed ? 'ok' : 'info'}`}>
-                          {statusLabel}
-                        </span>
-                      )}
-                    </header>
+          <div className={`wk-grid ${isInscritos ? 'is-enrolled' : ''}`}>
+            {filtered.map((w) => {
+              const statusLabel = w.completed ? 'Concluído' : 'Inscrito';
+              return (
+                <article
+                  key={w.id}
+                  className={`wk-card ${isInscritos ? 'enrolled' : ''} ${w.completed ? 'done' : ''}`}
+                >
+                  <header className="wk-row">
+                    <h2 className="wk-card-title">{w.titulo}</h2>
+                    {typeof w.custo === 'number' && !isInscritos && (
+                      <span className="wk-chip-tokens">{w.custo} tokens</span>
+                    )}
+                    {isInscritos && (
+                      <span className={`wk-chip-status ${w.completed ? 'ok' : 'info'}`}>
+                        {statusLabel}
+                      </span>
+                    )}
+                  </header>
 
-                    <p className="wk-desc">{w.description}</p>
+                  <p className="wk-desc">{w.descricao.descricao}</p>
 
-                    {!isInscritos && (
-                      <>
-                        <div className="wk-mentor">
-                          <div className="wk-avatar">
-                            {w.mentor.name
-                              .split(' ')
-                              .map((s) => s[0])
-                              .slice(0, 2)
-                              .join('')}
-                          </div>
-                          <div className="wk-mentor-info">
-                            <div className="wk-mentor-name">{w.mentor.name}</div>
-                          </div>
+                  {!isInscritos && (
+                    <>
+                      <div className="wk-mentor">
+                        <div className="wk-avatar">
+                          {w.instrutorNome
+                            .split(' ')
+                            .map((s) => s[0])
+                            .slice(0, 2)
+                            .join('')}
                         </div>
-
-                        <div className="wk-meta">
-                          <div className="wk-meta-item">
-                            <span className="wk-ico wk-cal" />
-                            <span>{w.date}</span>
-                          </div>
-                          <div className="wk-meta-item">
-                            <span className="wk-ico wk-time" />
-                            <span>{w.durationHours}h</span>
-                          </div>
-                          <div className="wk-meta-item">
-                            <span className="wk-ico wk-clock" />
-                            <span>
-                              {w.startTime} - {w.endTime}
-                            </span>
-                          </div>
+                        <div className="wk-mentor-info">
+                          <div className="wk-mentor-name">{w.instrutorNome}</div>
                         </div>
+                      </div>
+
+                      <div className="wk-meta">
+                        <div className="wk-meta-item">
+                          <span className="wk-ico wk-cal" />
+                          <span>{workshopService.formatarData(w.dataInicio)}</span>
+                        </div>
+                        <div className="wk-meta-item">
+                          <span className="wk-ico wk-time" />
+                          <span>{workshopService.calcularDuracao(w.dataInicio, w.dataTermino)}h</span>
+                        </div>
+                        <div className="wk-meta-item">
+                          <span className="wk-ico wk-clock" />
+                          <span>
+                            {workshopService.formatarHora(w.dataInicio)} - {workshopService.formatarHora(w.dataTermino)}
+                          </span>
+                        </div>
+                      </div>
 
                         {!isMeus ? (
                           <div className="wk-cta-row">
@@ -266,9 +210,14 @@ export default function Workshops() {
                       </>
                     )}
 
-                    {isInscritos && (
-                      <div className="wk-enroll-footer">
-                        <div className="wk-enroll-meta">
+                  {isInscritos && (
+                    <div className="wk-enroll-footer">
+                      <div className="wk-enroll-meta">
+                        <div className="wk-inline">
+                          <span className="wk-ico wk-cal" />
+                          <span className="wk-inline-text">{workshopService.formatarData(w.dataInicio)}</span>
+                        </div>
+                        {typeof w.rating === 'number' && (
                           <div className="wk-inline">
                             <span className="wk-ico wk-cal" />
                             <span className="wk-inline-text">{w.date}</span>

@@ -1,17 +1,89 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
 import '../styles/Perfil.css';
 import PerfilDetalhes from '../components/perfil/PerfilDetalhes';
 import PerfilAtividades from '../components/perfil/PerfilAtividades';
 import PerfilHistorico from '../components/perfil/PerfilHistorico';
 import PerfilSlide from '../components/perfil/PerfilSlide';
-import PerfilConquistas from '../components/perfil/PerfilConquistas';
-import PerfilCertificados from '../components/perfil/PerfilCertificados';
 import PerfilEstatisticas from '../components/perfil/PerfilEstatisticas';
+import PerfilPosts from '../components/perfil/PerfilPosts';
 import NavBar from '../components/NavBar';
+import { getUsuario, getUsuarioDetalhes, getMyUser, type UsuarioDetalhesDTO, UsuarioDTO } from '../services/perfil.service';
 
 const Perfil: React.FC = () => {
-  const [aba, setAba] = useState('Conquistas');
-  const idUsuario = 1;
+  const navigate = useNavigate();
+  const { id } = useParams<{ id: string }>();
+  const [aba, setAba] = useState('Posts');
+  const [usuarioDetalhes, setUsuarioDetalhes] = useState<UsuarioDetalhesDTO | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [user, setUser] = useState<UsuarioDTO | null>(null);
+  const [isOwnProfile, setIsOwnProfile] = useState(false);
+
+  useEffect(() => {
+    const carregarDadosUsuario = async () => {
+      try {
+        setLoading(true);
+        setError(null);
+        
+        // Se tiver ID na URL, busca o usuário específico
+        if (id) {
+          const userId = parseInt(id);
+          
+          const userData = await getUsuario(userId);
+          setUser(userData);
+          
+          // Verificar se é o próprio perfil
+          try {
+            const myUserData = await getMyUser();
+            setIsOwnProfile(myUserData.id === userId);
+          } catch (err) {
+            setIsOwnProfile(false);
+          }
+          
+          const dados = await getUsuarioDetalhes(userId);
+          setUsuarioDetalhes(dados);
+        } else {
+          // Se não tiver ID, busca o usuário logado
+          const userData = await getMyUser();
+          setUser(userData);
+          setIsOwnProfile(true);
+          
+          const dados = await getUsuarioDetalhes(userData.id);
+          setUsuarioDetalhes(dados);
+        }
+      } catch (err: any) {
+        console.error('Erro ao carregar detalhes do usuário:', err);
+        setError(err?.message || 'Não foi possível carregar os dados do perfil.');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    carregarDadosUsuario();
+  }, [id]);
+
+  if (loading) {
+    return (
+      <div className="perfil-page-container">
+        <NavBar />
+        <div className="perfil-wrap">
+          <p>Carregando perfil...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (error || !usuarioDetalhes) {
+    return (
+      <div className="perfil-page-container">
+        <NavBar />
+        <div className="perfil-wrap">
+          <p>{error || 'Erro ao carregar perfil.'}</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="perfil-page-container">
@@ -20,48 +92,48 @@ const Perfil: React.FC = () => {
         <div className="perfil-grid">
           <div className="perfil-card perfil-detalhes-card">
             <PerfilDetalhes
-              id_usuario={idUsuario}
-              email="kauan.hb2004@gmail.com"
-              nome="Kauan Henrique Bertalha"
-              biografia="Desenvolvedor Full Stack com 8 anos de experiência..."
-              id_imagem_perfil=""
+              id_usuario={user?.id!}
+              email={user?.email || ''}
+              nome={usuarioDetalhes.nome}
+              biografia={usuarioDetalhes.biografia}
+              id_imagem_perfil={usuarioDetalhes.imagemUrl}
               status_usuario="ATIVO"
               tipo_usuario="PADRAO"
-              interesses={['MySQL', 'JavaScript']}
-              onEditar={() => {}}
+              interesses={usuarioDetalhes.tags.map(tag => tag.name)}
+              onEditar={isOwnProfile ? () => navigate('/perfil/editar-perfil') : undefined}
               onInteresseClick={() => {}}
             />
           </div>
 
           <div className="perfil-card perfil-historico-card">
             <PerfilHistorico
-              nivel={15}
-              tokens={5680}
-              ranking={3}
-              xpAtual={27131}
-              xpNecessario={30637}
-              progresso={72}
-              posts={15}
-              upvotes={240}
-              comentarios={47}
-              workshops={8}
+              nivel={usuarioDetalhes.nivel}
+              tokens={usuarioDetalhes.tokens}
+              ranking={1} // Ranking não vem na API ainda
+              xpAtual={usuarioDetalhes.xp}
+              xpNecessario={1000} // XP necessário precisa ser calculado
+              progresso={Math.round((usuarioDetalhes.xp / 1000) * 100)}
+              posts={usuarioDetalhes.qtdPosts}
+              upvotes={usuarioDetalhes.qtdUpVotes + usuarioDetalhes.qtdSuperVotes}
+              comentarios={usuarioDetalhes.qtdComentarios}
+              workshops={usuarioDetalhes.qtdWorkshops}
               medalSrc="/medalhaHistorico.png"
+              isOwnProfile={isOwnProfile}
             />
           </div>
         </div>
 
         <div className="perfil-slide">
           <PerfilSlide
-            tabs={['Conquistas', 'Atividades', 'Certificados', 'Estatísticas']}
+            tabs={['Posts', 'Atividades', 'Estatísticas']}
             value={aba}
             onChange={setAba}
           />
         </div>
 
-        {aba === 'Conquistas' && <PerfilConquistas />}
-        {aba === 'Atividades' && <PerfilAtividades />}
-        {aba === 'Certificados' && <PerfilCertificados />}
-        {aba === 'Estatísticas' && <PerfilEstatisticas />}
+        {aba === 'Posts' && <PerfilPosts idUsuario={user?.id!} />}
+        {aba === 'Atividades' && <PerfilAtividades idUsuario={user?.id!} isOwnProfile={isOwnProfile} />}
+        {aba === 'Estatísticas' && <PerfilEstatisticas idUsuario={user?.id!} />}
       </div>
     </div>
   );
