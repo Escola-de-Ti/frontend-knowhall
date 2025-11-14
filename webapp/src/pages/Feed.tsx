@@ -17,7 +17,7 @@ import { PostFeedDTO } from '../services/postService';
 import { votoService } from '../services/votoService';
 import { getRelativeTime, getInitials } from '../utils/feedHelpers';
 
-import { usuarioService, RankingUsuarioDTO } from '../services/usuarioService'; // Ajuste o caminho se necessário
+import { usuarioService, RankingUsuarioDTO } from '../services/usuarioService';
 
 export default function Feed() {
   const navigate = useNavigate();
@@ -26,24 +26,9 @@ export default function Feed() {
 
   const observerTarget = useRef<HTMLDivElement>(null);
 
-  const workshops: WorkshopItem[] = [
-    {
-      id: 1,
-      titulo: 'Introdução ao React Hooks',
-      data: '15 Set 2025',
-      vagas: '12/20',
-      duracao: '2h',
-    },
-    {
-      id: 2,
-      titulo: 'Clean Architecture na Prática',
-      data: '15 Set 2025',
-      vagas: '12/20',
-      duracao: '2h',
-    },
-    { id: 3, titulo: 'Introdução ao MySQL', data: '15 Set 2025', vagas: '12/20', duracao: '2h' },
-    { id: 4, titulo: 'SpringBoot + React', data: '15 Set 2025', vagas: '12/20', duracao: '2h' },
-  ];
+  const [workshops, setWorkshops] = useState<WorkshopItem[]>([]);
+  const [workshopsLoading, setWorkshopsLoading] = useState(true);
+  const [workshopsError, setWorkshopsError] = useState<string | null>(null);
 
   const [rankingList, setRankingList] = useState<RankingUsuarioDTO[]>([]);
   const [rankingLoading, setRankingLoading] = useState(true);
@@ -52,6 +37,54 @@ export default function Feed() {
   const [open, setOpen] = useState(false);
   const [current, setCurrent] = useState<PostDetails | null>(null);
   const [comments, setComments] = useState<PostCommentModel[]>([]);
+
+  const transformWorkshopToItem = (workshop: WorkshopResponseDTO): WorkshopItem => {
+    const duracao = workshopService.calcularDuracao(
+      workshop.dataInicio,
+      workshop.dataTermino
+    );
+
+    const dataFormatada = workshopService.formatarData(workshop.dataInicio);
+
+    const vagas = workshop.capacidade ? `${workshop.capacidade} vagas` : 'Ilimitado';
+
+    return {
+      id: workshop.id,
+      titulo: workshop.titulo,
+      data: dataFormatada,
+      vagas: vagas,
+      duracao: `${duracao}h`,
+    };
+  };
+
+  useEffect(() => {
+    async function carregarWorkshops() {
+      try {
+        setWorkshopsLoading(true);
+        setWorkshopsError(null);
+
+        const response = await workshopService.listarPorStatus('ABERTO');
+
+        const workshopsFuturos = response
+          .filter((w) => new Date(w.dataInicio) > new Date())
+          .sort((a, b) => 
+            new Date(a.dataInicio).getTime() - new Date(b.dataInicio).getTime()
+          )
+          .slice(0, 4);
+
+        const workshopsFormatados = workshopsFuturos.map(transformWorkshopToItem);
+
+        setWorkshops(workshopsFormatados);
+      } catch (err: any) {
+        console.error('Erro ao carregar workshops:', err);
+        setWorkshopsError('Não foi possível carregar os workshops.');
+      } finally {
+        setWorkshopsLoading(false);
+      }
+    }
+
+    carregarWorkshops();
+  }, []);
 
   useEffect(() => {
     async function carregarRanking() {
@@ -174,7 +207,6 @@ export default function Feed() {
     };
   }, [handleObserver]);
 
-  
   const handleCriarPost = () => {
     navigate('/criar-post');
   };
@@ -183,6 +215,9 @@ export default function Feed() {
     console.log("Clicou em 'Ver mais' no ranking");
   };
 
+  const handleVerMaisWorkshops = () => {
+    navigate('/workshops');
+  };
 
   return (
     <div className="feed-page">
@@ -197,8 +232,21 @@ export default function Feed() {
             </button>
           </div>
 
-          <WorkshopList itens={workshops} onVerMais={() => {}} />
-          
+          {workshopsLoading ? (
+            <div className="ws-panel" style={{ padding: '20px', textAlign: 'center' }}>
+              Carregando workshops...
+            </div>
+          ) : workshopsError ? (
+            <div className="ws-panel" style={{ padding: '20px', color: 'red', textAlign: 'center' }}>
+              {workshopsError}
+            </div>
+          ) : workshops.length > 0 ? (
+            <WorkshopList itens={workshops} onVerMais={handleVerMaisWorkshops} />
+          ) : (
+            <div className="ws-panel" style={{ padding: '20px', textAlign: 'center' }}>
+              Nenhum workshop disponível no momento.
+            </div>
+          )}
         </aside>
 
         <section className="feed-center">
@@ -264,7 +312,6 @@ export default function Feed() {
         </section>
 
         <aside className="feed-right">
-          
           {rankingLoading && (
             <div className="rk-panel" style={{ padding: '20px', textAlign: 'center' }}>
               Carregando ranking...
