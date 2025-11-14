@@ -40,7 +40,7 @@ export default function PerfilAtividades({ idUsuario = 1 }: Props) {
         const atividadesComentarios: Atividade[] = comentariosAPI.map((comentario) => ({
           id: comentario.comentarioId,
           tipo: 'COMENTARIO' as const,
-          data: new Date().toISOString(), // API não retorna data, usando data atual
+          data: comentario.dataCriacao,
           snippet: comentario.texto,
         }));
         

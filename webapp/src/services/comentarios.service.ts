@@ -38,6 +38,7 @@ export interface ComentarioUsuarioDTO {
   postId: number;
   texto: string;
   qtdComentarios: number; // Quantidade total de comentários no post
+  dataCriacao: string;
 }
 
 // ============================================================
