@@ -1,8 +1,8 @@
-import React from 'react';
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import SideMenu from './SideMenu';
 import NotificationMenu from '../components/NotificationMenu';
+import { authService } from '../services/authService';
 import '../styles/NavBar.css';
 
 export default function NavBar() {
@@ -15,6 +15,11 @@ export default function NavBar() {
     setMenuOpen(false);
     setNotifOpen(false);
   };
+
+  function handleLogout() {
+    authService.logout();
+    navigate('/login');
+  }
 
   return (
     <>
@@ -52,6 +57,10 @@ export default function NavBar() {
           <button className="profile" onClick={() => go('/perfil')}>
             <div className="avatar">AJ</div>
             <span className="profile-name">Andre Jacob</span>
+          </button>
+
+          <button className="nav-logout" onClick={handleLogout}>
+            Sair
           </button>
         </div>
       </header>
