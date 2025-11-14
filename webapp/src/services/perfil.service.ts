@@ -1,4 +1,5 @@
-import { http } from '../api/http';
+import { apiService } from './apiService';
+import API_CONFIG from '../config/api.config';
 
 export type TagDTO = {
   id: number;
@@ -36,26 +37,26 @@ export type UsuarioDetalhesDTO = {
 };
 
 export async function getUsuario(id: number) {
-  return (await http.get<UsuarioDTO>(`/api/usuarios/${id}`)).data;
+  return await apiService.get<UsuarioDTO>(`${API_CONFIG.ENDPOINTS.USUARIOS}/${id}`);
 }
 
 export async function getMyUser() {
-  return (await http.get<UsuarioDTO>(`/api/usuarios/user`)).data;
+  return await apiService.get<UsuarioDTO>(API_CONFIG.ENDPOINTS.USUARIOS_USER);
 }
 
 export async function getUsuarioDetalhes(id: number) {
-  return (await http.get<UsuarioDetalhesDTO>(`/api/usuarios/detalhes/${id}`)).data;
+  return await apiService.get<UsuarioDetalhesDTO>(`${API_CONFIG.ENDPOINTS.USUARIOS_DETALHES}/${id}`);
 }
 
 export async function updateUsuario(id: number, payload: Partial<UsuarioDTO>) {
-  return (await http.put<UsuarioDTO>(`/api/usuarios/${id}`, payload)).data;
+  return await apiService.put<UsuarioDTO>(`${API_CONFIG.ENDPOINTS.USUARIOS}/${id}`, payload);
 }
 
 export async function getConquistasDoUsuario(usuarioId: number) {
-  return (await http.get<Array<{
+  return await apiService.get<Array<{
     id: number;
     titulo: string;
     descricao?: string;
     tipo: string;
-  }>>(`/api/usuarios/${usuarioId}/conquistas`)).data;
+  }>>(`${API_CONFIG.ENDPOINTS.USUARIOS}/${usuarioId}/conquistas`);
 }

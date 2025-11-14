@@ -9,7 +9,10 @@ type Atividade = {
   snippet: string;
 };
 
-type Props = { idUsuario?: number };
+type Props = { 
+  idUsuario?: number;
+  isOwnProfile?: boolean;
+};
 
 const labelTipo: Record<Atividade['tipo'], string> = {
   COMENTARIO: 'Comentário',
@@ -18,7 +21,7 @@ const labelTipo: Record<Atividade['tipo'], string> = {
   VOTO: 'Voto',
 };
 
-export default function PerfilAtividades({ idUsuario = 1 }: Props) {
+export default function PerfilAtividades({ idUsuario = 1, isOwnProfile = false }: Props) {
   const [itens, setItens] = useState<Atividade[]>([]);
   const [openMenu, setOpenMenu] = useState<number | null>(null);
   const [loading, setLoading] = useState(true);
@@ -199,35 +202,37 @@ export default function PerfilAtividades({ idUsuario = 1 }: Props) {
                     <p className="atividade-snippet">{a.snippet}</p>
                   )}
 
-                  <div className="atividade-actions">
-                    <button
-                      className="kebab-btn"
-                      aria-label="Mais opções"
-                      aria-expanded={openMenu === a.id}
-                      onClick={() => setOpenMenu((cur) => (cur === a.id ? null : a.id))}
-                    >
-                      ⋮
-                    </button>
+                  {isOwnProfile && (
+                    <div className="atividade-actions">
+                      <button
+                        className="kebab-btn"
+                        aria-label="Mais opções"
+                        aria-expanded={openMenu === a.id}
+                        onClick={() => setOpenMenu((cur) => (cur === a.id ? null : a.id))}
+                      >
+                        ⋮
+                      </button>
 
-                    {openMenu === a.id && (
-                      <div role="menu" className="kebab-menu">
-                        <button 
-                          role="menuitem" 
-                          className="kebab-item"
-                          onClick={() => handleExcluir(a.id)}
-                        >
-                          Excluir
-                        </button>
-                        <button 
-                          role="menuitem" 
-                          className="kebab-item"
-                          onClick={() => handleEditar(a.id)}
-                        >
-                          Editar
-                        </button>
-                      </div>
-                    )}
-                  </div>
+                      {openMenu === a.id && (
+                        <div role="menu" className="kebab-menu">
+                          <button 
+                            role="menuitem" 
+                            className="kebab-item"
+                            onClick={() => handleExcluir(a.id)}
+                          >
+                            Excluir
+                          </button>
+                          <button 
+                            role="menuitem" 
+                            className="kebab-item"
+                            onClick={() => handleEditar(a.id)}
+                          >
+                            Editar
+                          </button>
+                        </div>
+                      )}
+                    </div>
+                  )}
                 </article>
               );
             })}

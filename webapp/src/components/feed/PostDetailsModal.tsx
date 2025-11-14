@@ -1,4 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import '../../styles/feed/PostDetailsModal.css';
 import { postService, PostDetalhesDTO } from '../../services/postService';
 import { comentarioService, ComentarioResponseDTO } from '../../services/comentarioService';
@@ -40,6 +41,7 @@ type Props = {
 };
 
 export default function PostDetailsModal({ open, onClose, post: initialPost }: Props) {
+  const navigate = useNavigate();
   const [details, setDetails] = useState<PostDetails | null>(null);
   const [localComments, setLocalComments] = useState<PostCommentModel[]>([]);
   const [loading, setLoading] = useState(false);
@@ -314,6 +316,16 @@ export default function PostDetailsModal({ open, onClose, post: initialPost }: P
     }
   }
 
+  /**
+   * Navega para o perfil do autor do post
+   */
+  function handleAutorClick(e: React.MouseEvent) {
+    e.stopPropagation();
+    if (activePost?.autor?.id) {
+      navigate(`/perfil/${activePost.autor.id}`);
+    }
+  }
+
   return (
     <div className="kh-modal" role="dialog" aria-modal="true" onClick={onClose}>
       <div className="kh-modal-backdrop" />
@@ -326,7 +338,13 @@ export default function PostDetailsModal({ open, onClose, post: initialPost }: P
           <div className="head-col">
             <h3 className="title">{activePost.titulo}</h3>
             <div className="meta">
-              <span className="autor">{activePost.autor.nome}</span>
+              <span 
+                className="autor" 
+                onClick={handleAutorClick}
+                style={{ cursor: 'pointer' }}
+              >
+                {activePost.autor.nome}
+              </span>
               <span className="dot" />
               <span className="level-pill">
                 <span className="level-text">Nvl. {activePost.autor.nivel}</span>
@@ -410,6 +428,7 @@ export default function PostDetailsModal({ open, onClose, post: initialPost }: P
                 submittingComment={submittingComment}
                 isVoting={votingComments.has(c.id)}
                 isSuperVoting={superVotingComments.has(c.id)}
+                onAutorClick={(autorId) => navigate(`/perfil/${autorId}`)}
               />
             ))}
           </section>
@@ -575,6 +594,7 @@ function CommentNode({
   submittingComment,
   isVoting,
   isSuperVoting,
+  onAutorClick,
 }: {
   c: PostCommentModel;
   depth: number;
@@ -592,6 +612,7 @@ function CommentNode({
   submittingComment: boolean;
   isVoting: boolean;
   isSuperVoting: boolean;
+  onAutorClick: (autorId: number) => void;
 }) {
   const isReplyingHere = replyTarget === c.id;
   const hasReplies = c.respostas && c.respostas.length > 0;
@@ -604,7 +625,18 @@ function CommentNode({
           {c.autor.iniciais}
         </div>
         <div className="author">
-          <span className="nome">{c.autor.nome}</span>
+          <span 
+            className="nome"
+            onClick={(e) => {
+              e.stopPropagation();
+              if (c.autor.id) {
+                onAutorClick(c.autor.id);
+              }
+            }}
+            style={{ cursor: c.autor.id ? 'pointer' : 'default' }}
+          >
+            {c.autor.nome}
+          </span>
         </div>
       </div>
 
@@ -690,6 +722,7 @@ function CommentNode({
               submittingComment={submittingComment}
               isVoting={isVoting}
               isSuperVoting={isSuperVoting}
+              onAutorClick={onAutorClick}
             />
           ))}
         </div>
