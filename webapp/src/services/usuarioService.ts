@@ -40,6 +40,52 @@ interface UsuarioResponseDTO {
   tags: string[];
 }
 
+interface RankingUsuarioDTO {
+  posicao: number;
+  nome: string;
+  qntdXp: number;
+  nivel: number;
+}
+
+interface RankingResponseDTO {
+  rankingList: RankingUsuarioDTO[];
+  usuarioLogado: {
+    posicao: number;
+    xpRecebidoUltimos30Dias: number;
+  };
+}
+
+interface TagDTO {
+  id: number;
+  name: string;
+}
+
+interface UsuarioDetalhesDTO {
+  nome: string;
+  tags: TagDTO[];
+  biografia: string;
+  nivel: number;
+  xp: number;
+  tokens: number;
+  qtdPosts: number;
+  qtdComentarios: number;
+  qtdUpVotes: number;
+  qtdSuperVotes: number;
+  qtdWorkshops: number;
+  imagemUrl: string | null;
+}
+
+interface RefreshTokenDTO {
+  refresh_token: string;
+}
+
+interface TokenResponseDTO {
+  access_token: string;
+  token_type: string;
+  expires_in: number;
+  refresh_token: string;
+}
+
 class UsuarioService {
 
   async criar(dados: UsuarioCreateDTO): Promise<UsuarioResponseDTO> {
@@ -103,7 +149,55 @@ class UsuarioService {
       throw error;
     }
   }
+
+  async refreshToken(refreshToken: string): Promise<TokenResponseDTO> {
+    try {
+      const response = await apiService.post<TokenResponseDTO>(
+        API_CONFIG.ENDPOINTS.REFRESH,
+        { refresh_token: refreshToken },
+        false
+      );
+      return response;
+    } catch (error: any) {
+      console.error('Erro ao fazer refresh do token:', error);
+      throw error;
+    }
+  }
+
+  async buscarRanking(): Promise<RankingResponseDTO> {
+    try {
+      const response = await apiService.get<RankingResponseDTO>(
+        `${API_CONFIG.ENDPOINTS.USUARIOS}/ranking`
+      );
+      return response;
+    } catch (error: any) {
+      console.error('Erro ao buscar ranking:', error);
+      throw error;
+    }
+  }
+
+  async buscarDetalhesUsuario(id: string): Promise<UsuarioDetalhesDTO> {
+    try {
+      const response = await apiService.get<UsuarioDetalhesDTO>(
+        `${API_CONFIG.ENDPOINTS.USUARIOS}/detalhes/${id}`
+      );
+      return response;
+    } catch (error: any) {
+      console.error('Erro ao buscar detalhes do usuário:', error);
+      throw error;
+    }
+  }
 }
 
 export const usuarioService = new UsuarioService();
-export type { UsuarioCreateDTO, UsuarioUpdateDTO, UsuarioResponseDTO };
+export type { 
+  UsuarioCreateDTO, 
+  UsuarioUpdateDTO, 
+  UsuarioResponseDTO,
+  RankingUsuarioDTO,
+  RankingResponseDTO,
+  TagDTO,
+  UsuarioDetalhesDTO,
+  RefreshTokenDTO,
+  TokenResponseDTO
+};

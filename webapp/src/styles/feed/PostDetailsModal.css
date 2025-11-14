@@ -351,3 +351,1138 @@
   box-shadow: none;
   filter: none;
 }
+
+/* ========================================
+   ESTILOS PARA SISTEMA DE VOTAÇÃO
+   PostDetailsModal - Estilo Feed Verde
+   ======================================== */
+/*
+ * Adicione este CSS ao arquivo: src/styles/feed/PostDetailsModal.css
+ * Ou importe no componente PostDetailsModal
+ */
+
+/* ========================================
+   BOTÃO DE UPVOTE DO POST (PRINCIPAL)
+   ======================================== */
+
+/* Estado normal */
+.votes .btn.up {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border: none;
+  border-radius: 6px;
+  background: transparent;
+  color: #666;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-size: 14px;
+  font-weight: 500;
+  position: relative;
+  overflow: hidden;
+}
+
+.votes .btn.up:hover {
+  background: rgba(147, 255, 107, 0.1);
+  color: #7fff6b;
+}
+
+/* Estado VOTADO (quando jaVotou = true) */
+.votes .btn.up.active {
+  background: rgba(147, 255, 107, 0.15);
+  color: #7fff6b;
+  font-weight: 600;
+}
+
+.votes .btn.up.active .ico-up {
+  transform: scale(1.1);
+}
+
+.votes .btn.up.active:hover {
+  background: rgba(147, 255, 107, 0.2);
+}
+
+/* Estado VOTANDO (durante requisição) */
+.votes .btn.up.voting {
+  opacity: 0.6;
+  cursor: wait;
+  pointer-events: none;
+}
+
+.votes .btn.up.voting .ico-up {
+  animation: pulse 0.8s ease-in-out infinite;
+}
+
+/* Desabilitado */
+.votes .btn.up:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+/* ========================================
+   BOTÃO DE UPVOTE DOS COMENTÁRIOS
+   ======================================== */
+
+/* Estado normal */
+.comment-actions .btn.sm.up {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 8px;
+  border: none;
+  border-radius: 4px;
+  background: transparent;
+  color: #666;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-size: 13px;
+  font-weight: 500;
+  position: relative;
+  overflow: hidden;
+}
+
+.comment-actions .btn.sm.up:hover {
+  background: rgba(147, 255, 107, 0.1);
+  color: #7fff6b;
+}
+
+/* Estado VOTADO */
+.comment-actions .btn.sm.up.active {
+  background: rgba(147, 255, 107, 0.15);
+  color: #7fff6b;
+  font-weight: 600;
+}
+
+.comment-actions .btn.sm.up.active .ico-up {
+  transform: scale(1.1);
+}
+
+.comment-actions .btn.sm.up.active:hover {
+  background: rgba(147, 255, 107, 0.2);
+}
+
+/* Estado VOTANDO */
+.comment-actions .btn.sm.up.voting {
+  opacity: 0.6;
+  cursor: wait;
+  pointer-events: none;
+}
+
+.comment-actions .btn.sm.up.voting .ico-up {
+  animation: pulse 0.8s ease-in-out infinite;
+}
+
+/* Desabilitado */
+.comment-actions .btn.sm.up:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+/* ========================================
+   ÍCONES E VALORES
+   ======================================== */
+
+/* Ícone do upvote */
+.ico-up {
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  transition: transform 0.2s ease;
+}
+
+.btn.sm .ico-up {
+  width: 14px;
+  height: 14px;
+}
+
+/* Se você usa ícones SVG inline */
+.ico-up svg {
+  width: 100%;
+  height: 100%;
+  fill: currentColor;
+}
+
+/* Valor do contador */
+.btn.up span:not(.ico-up),
+.btn.sm.up span:not(.ico-up) {
+  font-variant-numeric: tabular-nums;
+  min-width: 20px;
+  text-align: center;
+}
+
+/* ========================================
+   ANIMAÇÕES
+   ======================================== */
+
+/* Animação de pulse durante voto */
+@keyframes pulse {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.15);
+    opacity: 0.8;
+  }
+}
+
+/* Efeito de "pop" ao votar - aplicado ao contador */
+.btn.up.active span:not(.ico-up),
+.btn.sm.up.active span:not(.ico-up) {
+  animation: pop 0.3s ease-out;
+}
+
+@keyframes pop {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.2);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+/* Ripple effect ao clicar */
+.votes .btn.up::after,
+.comment-actions .btn.sm.up::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  border-radius: 50%;
+  background: rgba(147, 255, 107, 0.2);
+  transform: translate(-50%, -50%);
+  transition: width 0.6s, height 0.6s;
+  pointer-events: none;
+}
+
+.votes .btn.up:active::after,
+.comment-actions .btn.sm.up:active::after {
+  width: 100px;
+  height: 100px;
+}
+
+/* ========================================
+   OUTROS BOTÕES (SUPER, COMENTAR)
+   ======================================== */
+
+/* Mantém estilo consistente para outros botões */
+.votes .btn.super,
+.votes .btn.com,
+.comment-actions .btn.sm.super,
+.comment-actions .btn.sm.link {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border: none;
+  border-radius: 6px;
+  background: transparent;
+  color: #666;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.comment-actions .btn.sm.super,
+.comment-actions .btn.sm.link {
+  padding: 4px 8px;
+  font-size: 13px;
+}
+
+.votes .btn.super:hover,
+.votes .btn.com:hover,
+.comment-actions .btn.sm.super:hover,
+.comment-actions .btn.sm.link:hover {
+  background: rgba(0, 0, 0, 0.05);
+  color: #333;
+}
+
+/* ========================================
+   RESPONSIVO
+   ======================================== */
+
+/* Mobile */
+@media (max-width: 768px) {
+  .votes .btn.up {
+    padding: 8px 10px;
+    font-size: 13px;
+  }
+
+  .comment-actions .btn.sm.up {
+    padding: 6px 8px;
+    font-size: 12px;
+  }
+
+  .ico-up {
+    width: 14px;
+    height: 14px;
+  }
+
+  .btn.sm .ico-up {
+    width: 12px;
+    height: 12px;
+  }
+}
+
+/* Tablet */
+@media (min-width: 769px) and (max-width: 1024px) {
+  .votes .btn.up {
+    padding: 6px 11px;
+  }
+
+  .comment-actions .btn.sm.up {
+    padding: 4px 8px;
+  }
+}
+
+/* ========================================
+   DARK MODE
+   ======================================== */
+
+@media (prefers-color-scheme: dark) {
+  .votes .btn.up,
+  .comment-actions .btn.sm.up {
+    color: #aaa;
+  }
+
+  .votes .btn.up:hover,
+  .comment-actions .btn.sm.up:hover {
+    background: rgba(147, 255, 107, 0.1);
+    color: #7fff6b;
+  }
+
+  .votes .btn.up.active,
+  .comment-actions .btn.sm.up.active {
+    background: rgba(147, 255, 107, 0.15);
+    color: #7fff6b;
+  }
+
+  .votes .btn.up.active:hover,
+  .comment-actions .btn.sm.up.active:hover {
+    background: rgba(147, 255, 107, 0.2);
+  }
+
+  /* Outros botões em dark mode */
+  .votes .btn.super,
+  .votes .btn.com,
+  .comment-actions .btn.sm.super,
+  .comment-actions .btn.sm.link {
+    color: #aaa;
+  }
+
+  .votes .btn.super:hover,
+  .votes .btn.com:hover,
+  .comment-actions .btn.sm.super:hover,
+  .comment-actions .btn.sm.link:hover {
+    background: rgba(255, 255, 255, 0.05);
+    color: #e5e7eb;
+  }
+}
+
+/* ========================================
+   ACESSIBILIDADE
+   ======================================== */
+
+/* Foco para navegação por teclado */
+.votes .btn.up:focus-visible,
+.comment-actions .btn.sm.up:focus-visible {
+  outline: 2px solid #7fff6b;
+  outline-offset: 2px;
+}
+
+/* Reduzir animações se usuário preferir */
+@media (prefers-reduced-motion: reduce) {
+  .votes .btn.up,
+  .comment-actions .btn.sm.up,
+  .ico-up,
+  .btn.up span,
+  .btn.sm.up span {
+    animation: none !important;
+    transition: none !important;
+  }
+
+  .votes .btn.up::after,
+  .comment-actions .btn.sm.up::after {
+    display: none;
+  }
+}
+
+/* ========================================
+   ESTADOS ESPECIAIS
+   ======================================== */
+
+/* Loading state alternativo (opcional) */
+.votes .btn.up.voting::before,
+.comment-actions .btn.sm.up.voting::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(147, 255, 107, 0.1),
+    transparent
+  );
+  animation: shimmer 1.5s infinite;
+}
+
+@keyframes shimmer {
+  100% {
+    left: 100%;
+  }
+}
+
+/* Feedback de sucesso ao votar */
+.votes .btn.up.success,
+.comment-actions .btn.sm.up.success {
+  animation: success-flash 0.5s ease;
+}
+
+@keyframes success-flash {
+  0% {
+    box-shadow: 0 0 0 0 rgba(127, 255, 107, 0.7);
+  }
+  100% {
+    box-shadow: 0 0 0 20px rgba(127, 255, 107, 0);
+  }
+}
+
+/* ========================================
+   INTEGRAÇÃO COM LAYOUT DO MODAL
+   ======================================== */
+
+/* Espaçamento entre botões no post */
+.votes {
+  display: flex;
+  gap: 8px;
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px solid rgba(0, 0, 0, 0.06);
+}
+
+/* Espaçamento entre botões nos comentários */
+.comment-actions {
+  display: flex;
+  gap: 4px;
+  margin-top: 8px;
+  flex-wrap: wrap;
+}
+
+/* ========================================
+   TOOLTIPS (OPCIONAL)
+   ======================================== */
+
+/* Tooltip ao fazer hover */
+.votes .btn.up[aria-label]:hover::before,
+.comment-actions .btn.sm.up[aria-label]:hover::before {
+  content: attr(aria-label);
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 4px 8px;
+  background: rgba(0, 0, 0, 0.8);
+  color: white;
+  font-size: 12px;
+  border-radius: 4px;
+  white-space: nowrap;
+  margin-bottom: 4px;
+  pointer-events: none;
+  z-index: 10;
+  animation: tooltip-fade-in 0.2s ease;
+}
+
+@keyframes tooltip-fade-in {
+  from {
+    opacity: 0;
+    transform: translateX(-50%) translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+}
+
+/* ========================================
+   CUSTOMIZAÇÃO DE CORES (VARIÁVEIS CSS)
+   ======================================== */
+
+:root {
+  /* Cor principal do upvote */
+  --upvote-color: #7fff6b;
+  --upvote-bg-hover: rgba(147, 255, 107, 0.1);
+  --upvote-bg-active: rgba(147, 255, 107, 0.15);
+  --upvote-bg-active-hover: rgba(147, 255, 107, 0.2);
+
+  /* Cores neutras */
+  --btn-color: #666;
+  --btn-color-hover: #333;
+  --btn-bg-hover: rgba(0, 0, 0, 0.05);
+}
+
+/* Aplicar variáveis */
+.votes .btn.up,
+.comment-actions .btn.sm.up {
+  color: var(--btn-color);
+}
+
+.votes .btn.up:hover,
+.comment-actions .btn.sm.up:hover {
+  background: var(--upvote-bg-hover);
+  color: var(--upvote-color);
+}
+
+.votes .btn.up.active,
+.comment-actions .btn.sm.up.active {
+  background: var(--upvote-bg-active);
+  color: var(--upvote-color);
+}
+
+.votes .btn.up.active:hover,
+.comment-actions .btn.sm.up.active:hover {
+  background: var(--upvote-bg-active-hover);
+}
+
+/* ========================================
+   ESTILOS PARA SISTEMA DE VOTAÇÃO
+   PostDetailsModal - Estilo Feed Verde
+   ======================================== */
+/*
+ * Adicione este CSS ao arquivo: src/styles/feed/PostDetailsModal.css
+ * Ou importe no componente PostDetailsModal
+ */
+
+/* ========================================
+   BOTÃO DE UPVOTE DO POST (PRINCIPAL)
+   ======================================== */
+
+/* Estado normal */
+.votes .btn.up {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border: none;
+  border-radius: 6px;
+  background: transparent;
+  color: #666;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-size: 14px;
+  font-weight: 500;
+  position: relative;
+  overflow: hidden;
+}
+
+.votes .btn.up:hover {
+  background: rgba(147, 255, 107, 0.1);
+  color: #7fff6b;
+}
+
+/* Estado VOTADO (quando jaVotou = true) */
+.votes .btn.up.active {
+  background: rgba(147, 255, 107, 0.15);
+  color: #7fff6b;
+  font-weight: 600;
+}
+
+.votes .btn.up.active .ico-up {
+  transform: scale(1.1);
+}
+
+.votes .btn.up.active:hover {
+  background: rgba(147, 255, 107, 0.2);
+}
+
+/* Estado VOTANDO (durante requisição) */
+.votes .btn.up.voting {
+  opacity: 0.6;
+  cursor: wait;
+  pointer-events: none;
+}
+
+.votes .btn.up.voting .ico-up {
+  animation: pulse 0.8s ease-in-out infinite;
+}
+
+/* Desabilitado */
+.votes .btn.up:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+/* ========================================
+   BOTÃO DE UPVOTE DOS COMENTÁRIOS
+   ======================================== */
+
+/* Estado normal */
+.comment-actions .btn.sm.up {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 8px;
+  border: none;
+  border-radius: 4px;
+  background: transparent;
+  color: #666;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-size: 13px;
+  font-weight: 500;
+  position: relative;
+  overflow: hidden;
+}
+
+.comment-actions .btn.sm.up:hover {
+  background: rgba(147, 255, 107, 0.1);
+  color: #7fff6b;
+}
+
+/* Estado VOTADO */
+.comment-actions .btn.sm.up.active {
+  background: rgba(147, 255, 107, 0.15);
+  color: #7fff6b;
+  font-weight: 600;
+}
+
+.comment-actions .btn.sm.up.active .ico-up {
+  transform: scale(1.1);
+}
+
+.comment-actions .btn.sm.up.active:hover {
+  background: rgba(147, 255, 107, 0.2);
+}
+
+/* Estado VOTANDO */
+.comment-actions .btn.sm.up.voting {
+  opacity: 0.6;
+  cursor: wait;
+  pointer-events: none;
+}
+
+.comment-actions .btn.sm.up.voting .ico-up {
+  animation: pulse 0.8s ease-in-out infinite;
+}
+
+/* Desabilitado */
+.comment-actions .btn.sm.up:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+/* ========================================
+   BOTÃO DE SUPER VOTE DOS COMENTÁRIOS
+   ======================================== */
+
+/* Estado normal */
+.comment-actions .btn.sm.super {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 8px;
+  border: none;
+  border-radius: 4px;
+  background: transparent;
+  color: #666;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-size: 13px;
+  font-weight: 500;
+  position: relative;
+  overflow: hidden;
+}
+
+.comment-actions .btn.sm.super:hover {
+  background: rgba(255, 193, 7, 0.1);
+  color: #ffc107;
+}
+
+/* Estado SUPER VOTADO (active) */
+.comment-actions .btn.sm.super.active {
+  background: rgba(255, 193, 7, 0.15);
+  color: #ffc107;
+  font-weight: 600;
+}
+
+.comment-actions .btn.sm.super.active .ico-star {
+  transform: scale(1.1);
+  animation: star-shine 2s ease-in-out infinite;
+}
+
+@keyframes star-shine {
+  0%, 100% {
+    filter: brightness(1);
+  }
+  50% {
+    filter: brightness(1.3);
+  }
+}
+
+.comment-actions .btn.sm.super.active:hover {
+  background: rgba(255, 193, 7, 0.2);
+}
+
+/* Estado SUPER VOTANDO (loading) */
+.comment-actions .btn.sm.super.voting {
+  opacity: 0.6;
+  cursor: wait;
+  pointer-events: none;
+}
+
+.comment-actions .btn.sm.super.voting .ico-star {
+  animation: pulse 0.8s ease-in-out infinite;
+}
+
+/* Desabilitado */
+.comment-actions .btn.sm.super:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+/* ========================================
+   ÍCONES E VALORES
+   ======================================== */
+
+/* Ícone do upvote */
+.ico-up {
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  transition: transform 0.2s ease;
+}
+
+.btn.sm .ico-up {
+  width: 14px;
+  height: 14px;
+}
+
+/* Ícone da estrela (super vote) */
+.ico-star {
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  transition: transform 0.2s ease, filter 0.2s ease;
+}
+
+.btn.sm .ico-star {
+  width: 14px;
+  height: 14px;
+}
+
+/* Se você usa ícones SVG inline */
+.ico-up svg,
+.ico-star svg {
+  width: 100%;
+  height: 100%;
+  fill: currentColor;
+}
+
+/* Valor do contador */
+.btn.up span:not(.ico-up),
+.btn.sm.up span:not(.ico-up) {
+  font-variant-numeric: tabular-nums;
+  min-width: 20px;
+  text-align: center;
+}
+
+/* ========================================
+   ANIMAÇÕES
+   ======================================== */
+
+/* Animação de pulse durante voto */
+@keyframes pulse {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.15);
+    opacity: 0.8;
+  }
+}
+
+/* Efeito de "pop" ao votar - aplicado ao contador */
+.btn.up.active span:not(.ico-up),
+.btn.sm.up.active span:not(.ico-up) {
+  animation: pop 0.3s ease-out;
+}
+
+@keyframes pop {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.2);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+/* Ripple effect ao clicar */
+.votes .btn.up::after,
+.comment-actions .btn.sm.up::after,
+.comment-actions .btn.sm.super::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  transition: width 0.6s, height 0.6s;
+  pointer-events: none;
+}
+
+.votes .btn.up::after,
+.comment-actions .btn.sm.up::after {
+  background: rgba(147, 255, 107, 0.2);
+}
+
+.comment-actions .btn.sm.super::after {
+  background: rgba(255, 193, 7, 0.2);
+}
+
+.votes .btn.up:active::after,
+.comment-actions .btn.sm.up:active::after,
+.comment-actions .btn.sm.super:active::after {
+  width: 100px;
+  height: 100px;
+}
+
+/* ========================================
+   OUTROS BOTÕES (COMENTAR, RESPONDER)
+   ======================================== */
+
+/* Mantém estilo consistente para outros botões */
+.votes .btn.com,
+.comment-actions .btn.sm.link {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border: none;
+  border-radius: 6px;
+  background: transparent;
+  color: #666;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.comment-actions .btn.sm.link {
+  padding: 4px 8px;
+  font-size: 13px;
+}
+
+.votes .btn.com:hover,
+.comment-actions .btn.sm.link:hover {
+  background: rgba(0, 0, 0, 0.05);
+  color: #333;
+}
+
+/* ========================================
+   RESPONSIVO
+   ======================================== */
+
+/* Mobile */
+@media (max-width: 768px) {
+  .votes .btn.up {
+    padding: 8px 10px;
+    font-size: 13px;
+  }
+
+  .comment-actions .btn.sm.up {
+    padding: 6px 8px;
+    font-size: 12px;
+  }
+
+  .ico-up {
+    width: 14px;
+    height: 14px;
+  }
+
+  .btn.sm .ico-up {
+    width: 12px;
+    height: 12px;
+  }
+}
+
+/* Tablet */
+@media (min-width: 769px) and (max-width: 1024px) {
+  .votes .btn.up {
+    padding: 6px 11px;
+  }
+
+  .comment-actions .btn.sm.up {
+    padding: 4px 8px;
+  }
+}
+
+/* ========================================
+   DARK MODE
+   ======================================== */
+
+@media (prefers-color-scheme: dark) {
+  .votes .btn.up,
+  .comment-actions .btn.sm.up,
+  .comment-actions .btn.sm.super {
+    color: #aaa;
+  }
+
+  .votes .btn.up:hover,
+  .comment-actions .btn.sm.up:hover {
+    background: rgba(147, 255, 107, 0.1);
+    color: #7fff6b;
+  }
+
+  .comment-actions .btn.sm.super:hover {
+    background: rgba(255, 193, 7, 0.1);
+    color: #ffc107;
+  }
+
+  .votes .btn.up.active,
+  .comment-actions .btn.sm.up.active {
+    background: rgba(147, 255, 107, 0.15);
+    color: #7fff6b;
+  }
+
+  .comment-actions .btn.sm.super.active {
+    background: rgba(255, 193, 7, 0.15);
+    color: #ffc107;
+  }
+
+  .votes .btn.up.active:hover,
+  .comment-actions .btn.sm.up.active:hover {
+    background: rgba(147, 255, 107, 0.2);
+  }
+
+  .comment-actions .btn.sm.super.active:hover {
+    background: rgba(255, 193, 7, 0.2);
+  }
+
+  /* Outros botões em dark mode */
+  .votes .btn.com,
+  .comment-actions .btn.sm.link {
+    color: #aaa;
+  }
+
+  .votes .btn.com:hover,
+  .comment-actions .btn.sm.link:hover {
+    background: rgba(255, 255, 255, 0.05);
+    color: #e5e7eb;
+  }
+}
+
+/* ========================================
+   ACESSIBILIDADE
+   ======================================== */
+
+/* Foco para navegação por teclado */
+.votes .btn.up:focus-visible,
+.comment-actions .btn.sm.up:focus-visible {
+  outline: 2px solid #7fff6b;
+  outline-offset: 2px;
+}
+
+.comment-actions .btn.sm.super:focus-visible {
+  outline: 2px solid #ffc107;
+  outline-offset: 2px;
+}
+
+/* Reduzir animações se usuário preferir */
+@media (prefers-reduced-motion: reduce) {
+  .votes .btn.up,
+  .comment-actions .btn.sm.up,
+  .comment-actions .btn.sm.super,
+  .ico-up,
+  .ico-star,
+  .btn.up span,
+  .btn.sm.up span,
+  .btn.sm.super span {
+    animation: none !important;
+    transition: none !important;
+  }
+
+  .votes .btn.up::after,
+  .comment-actions .btn.sm.up::after,
+  .comment-actions .btn.sm.super::after {
+    display: none;
+  }
+}
+
+/* ========================================
+   ESTADOS ESPECIAIS
+   ======================================== */
+
+/* Loading state alternativo (opcional) */
+.votes .btn.up.voting::before,
+.comment-actions .btn.sm.up.voting::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(147, 255, 107, 0.1),
+    transparent
+  );
+  animation: shimmer 1.5s infinite;
+}
+
+@keyframes shimmer {
+  100% {
+    left: 100%;
+  }
+}
+
+/* Feedback de sucesso ao votar */
+.votes .btn.up.success,
+.comment-actions .btn.sm.up.success {
+  animation: success-flash 0.5s ease;
+}
+
+@keyframes success-flash {
+  0% {
+    box-shadow: 0 0 0 0 rgba(127, 255, 107, 0.7);
+  }
+  100% {
+    box-shadow: 0 0 0 20px rgba(127, 255, 107, 0);
+  }
+}
+
+/* ========================================
+   INTEGRAÇÃO COM LAYOUT DO MODAL
+   ======================================== */
+
+/* Espaçamento entre botões no post */
+.votes {
+  display: flex;
+  gap: 8px;
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px solid rgba(0, 0, 0, 0.06);
+}
+
+/* Espaçamento entre botões nos comentários */
+.comment-actions {
+  display: flex;
+  gap: 4px;
+  margin-top: 8px;
+  flex-wrap: wrap;
+}
+
+/* ========================================
+   TOOLTIPS (OPCIONAL)
+   ======================================== */
+
+/* Tooltip ao fazer hover */
+.votes .btn.up[aria-label]:hover::before,
+.comment-actions .btn.sm.up[aria-label]:hover::before {
+  content: attr(aria-label);
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 4px 8px;
+  background: rgba(0, 0, 0, 0.8);
+  color: white;
+  font-size: 12px;
+  border-radius: 4px;
+  white-space: nowrap;
+  margin-bottom: 4px;
+  pointer-events: none;
+  z-index: 10;
+  animation: tooltip-fade-in 0.2s ease;
+}
+
+@keyframes tooltip-fade-in {
+  from {
+    opacity: 0;
+    transform: translateX(-50%) translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+}
+
+/* ========================================
+   CUSTOMIZAÇÃO DE CORES (VARIÁVEIS CSS)
+   ======================================== */
+
+:root {
+  /* Cor principal do upvote */
+  --upvote-color: #7fff6b;
+  --upvote-bg-hover: rgba(147, 255, 107, 0.1);
+  --upvote-bg-active: rgba(147, 255, 107, 0.15);
+  --upvote-bg-active-hover: rgba(147, 255, 107, 0.2);
+
+  /* Cor principal do super vote */
+  --supervote-color: #ffc107;
+  --supervote-bg-hover: rgba(255, 193, 7, 0.1);
+  --supervote-bg-active: rgba(255, 193, 7, 0.15);
+  --supervote-bg-active-hover: rgba(255, 193, 7, 0.2);
+
+  /* Cores neutras */
+  --btn-color: #666;
+  --btn-color-hover: #333;
+  --btn-bg-hover: rgba(0, 0, 0, 0.05);
+}
+
+/* Aplicar variáveis - Upvote */
+.votes .btn.up,
+.comment-actions .btn.sm.up {
+  color: var(--btn-color);
+}
+
+.votes .btn.up:hover,
+.comment-actions .btn.sm.up:hover {
+  background: var(--upvote-bg-hover);
+  color: var(--upvote-color);
+}
+
+.votes .btn.up.active,
+.comment-actions .btn.sm.up.active {
+  background: var(--upvote-bg-active);
+  color: var(--upvote-color);
+}
+
+.votes .btn.up.active:hover,
+.comment-actions .btn.sm.up.active:hover {
+  background: var(--upvote-bg-active-hover);
+}
+
+/* Aplicar variáveis - Super Vote */
+.comment-actions .btn.sm.super {
+  color: var(--btn-color);
+}
+
+.comment-actions .btn.sm.super:hover {
+  background: var(--supervote-bg-hover);
+  color: var(--supervote-color);
+}
+
+.comment-actions .btn.sm.super.active {
+  background: var(--supervote-bg-active);
+  color: var(--supervote-color);
+}
+
+.comment-actions .btn.sm.super.active:hover {
+  background: var(--supervote-bg-active-hover);
+}

@@ -1,22 +1,46 @@
-import axios from "axios";
+import { http } from '../api/http';
 
-const API_BASE_URL =
-  import.meta.env.VITE_API_URL || "http://localhost:8080/api";
+export type TransacaoDTO = {
+  id: number;
+  quantidade: number;
+  motivo: string;
+  motivoDescricao: string;
+  descricao: string;
+  dataTransacao: string;
+};
 
-export async function buscarHistoricoTransacoes(page = 0, size = 20) {
-  try {
-    const token = localStorage.getItem("kh_token");
+export type HistoricoTransacoesResponseDTO = {
+  transacoes: TransacaoDTO[];
+  totalRecebido: number;
+  totalGasto: number;
+  saldoAtual: number;
+  hasMore: boolean;
+  totalPages: number;
+  totalElements: number;
+};
 
-    const response = await axios.get(`${API_BASE_URL}/historico-transacoes`, {
-      params: { page, size },
-      headers: {
-        Authorization: token ? `Bearer ${token}` : "",
-      },
-    });
+export type ResumoTransacoesDTO = {
+  totalRecebido: number;
+  totalGasto: number;
+  saldoAtual: number;
+  totalTransacoes: number;
+};
 
-    return response.data;
-  } catch (error) {
-    console.error("Erro ao buscar histórico:", error);
-    throw error;
-  }
+export async function buscarHistoricoTransacoes(
+  page = 0,
+  size = 20
+): Promise<HistoricoTransacoesResponseDTO> {
+  const params = new URLSearchParams();
+  params.append('page', page.toString());
+  params.append('size', size.toString());
+
+  return (
+    await http.get<HistoricoTransacoesResponseDTO>(
+      `/api/historico-transacoes?${params.toString()}`
+    )
+  ).data;
+}
+
+export async function buscarResumoTransacoes(): Promise<ResumoTransacoesDTO> {
+  return (await http.get<ResumoTransacoesDTO>('/api/historico-transacoes/resumo')).data;
 }

@@ -57,11 +57,13 @@ export default function PerfilDetalhes({
 
       {biografia && <p className="perfil-bio">{biografia}</p>}
 
-      <div className="perfil-actions">
-        <button className="perfil-edit-btn" onClick={onEditar}>
-          Editar Perfil
-        </button>
-      </div>
+      {onEditar && (
+        <div className="perfil-actions">
+          <button className="perfil-edit-btn" onClick={onEditar}>
+            Editar Perfil
+          </button>
+        </div>
+      )}
 
       <div className="perfil-interests">
         <h3>Áreas de Interesse:</h3>

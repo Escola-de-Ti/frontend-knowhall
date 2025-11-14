@@ -1,5 +1,3 @@
-export type TagItem = { name: string };
-
 export type EditarPerfilPayload = {
   email?: string;
   cpf?: string;
@@ -8,8 +6,9 @@ export type EditarPerfilPayload = {
   nome?: string;
   biografia?: string;
   senha?: string;
-  tipoUsuario?: 'ALUNO' | 'PROFESSOR' | string;
-  tags?: TagItem[];
+  tipoUsuario?: 'ALUNO' | 'PROFESSOR' | 'INSTRUTOR' | string;
+  tags?: number[]; // Array de IDs das tags (números)
+  nivel?: number;
 };
 
 const BASE_URL = import.meta.env.VITE_API_BASE_URL?.replace(/\/$/, '') || 'http://localhost:8080';

@@ -1,4 +1,5 @@
-import React from 'react';
+import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import '../../styles/feed/Post.css';
 
 export type PostModel = {
@@ -9,11 +10,47 @@ export type PostModel = {
   tags: string[];
   metrica: { comentarios: number; upvotes: number };
   tempo: string;
+  jaVotou: boolean; // ← NOVO: Indica se o usuário já votou neste post
 };
 
-type Props = { post: PostModel; onMoreClick?: (id: number) => void };
+type Props = {
+  post: PostModel;
+  onMoreClick?: (id: number) => void;
+  onVote?: (postId: number) => Promise<void>; // ← NOVO: Handler para votar
+};
 
-export default function Post({ post, onMoreClick }: Props) {
+export default function Post({ post, onMoreClick, onVote }: Props) {
+  const navigate = useNavigate();
+  const [isVoting, setIsVoting] = useState(false);
+
+  /**
+   * Handler do botão de upvote
+   */
+  const handleVote = async (e: React.MouseEvent) => {
+    e.stopPropagation();
+
+    if (isVoting || !onVote) return;
+
+    setIsVoting(true);
+    try {
+      await onVote(post.id);
+    } catch (error) {
+      console.error('Erro ao votar:', error);
+    } finally {
+      setIsVoting(false);
+    }
+  };
+
+  /**
+   * Handler para navegar ao perfil do autor
+   */
+  const handleAutorClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (post.autor.id) {
+      navigate(`/perfil/${post.autor.id}`);
+    }
+  };
+
   return (
     <article
       className="post-card"
@@ -26,26 +63,18 @@ export default function Post({ post, onMoreClick }: Props) {
         </div>
 
         <div className="post-meta">
-          <strong className="post-autor">{post.autor.nome}</strong>
+          <strong 
+            className="post-autor" 
+            onClick={handleAutorClick}
+            style={{ cursor: 'pointer' }}
+          >
+            {post.autor.nome}
+          </strong>
           <div className="post-sub">
             <span className="post-time">{post.tempo}</span>
             <span className="dot" />
-            <span className="level-pill">
-              <span className="level-text">Nvl. {post.autor.nivel}</span>
-            </span>
           </div>
         </div>
-
-        <button
-          className="post-more"
-          aria-label="Mais opções"
-          onClick={(e) => {
-            e.stopPropagation();
-            onMoreClick?.(post.id);
-          }}
-        >
-          …
-        </button>
       </header>
 
       <h3 className="post-title">{post.titulo}</h3>
@@ -61,26 +90,14 @@ export default function Post({ post, onMoreClick }: Props) {
 
       <footer className="post-footer">
         <button
-          className="kpi kpi-up"
+          className={`kpi kpi-up ${post.jaVotou ? 'active' : ''} ${isVoting ? 'voting' : ''}`}
           type="button"
-          aria-label="Upvotes"
-          onClick={(e) => e.stopPropagation()}
+          aria-label={post.jaVotou ? 'Remover voto' : 'Votar'}
+          onClick={handleVote}
+          disabled={isVoting}
         >
           <span className="ico-up" aria-hidden />
           <span className="kpi-val">{post.metrica.upvotes}</span>
-        </button>
-
-        <button
-          className="kpi kpi-com"
-          type="button"
-          aria-label="Comentários"
-          onClick={(e) => {
-            e.stopPropagation();
-            onMoreClick?.(post.id);
-          }}
-        >
-          <span className="ico-com" aria-hidden />
-          <span className="kpi-val">{post.metrica.comentarios}</span>
         </button>
       </footer>
     </article>
