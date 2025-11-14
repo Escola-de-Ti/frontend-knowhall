@@ -4,11 +4,11 @@
   --panel-bg: #373737;
   --panel-bd: #545454;
   --text: #fff;
-  --muted: #cfcfcf;
+  --muted: #e8e8e8;
 
-  --green: #55f6c9;
-  --red: #ff6e6e;
-  --pink: #f985cd;
+  --green: #5fffd4;
+  --red: #ff8585;
+  --pink: #ff9de0;
 }
 
 .stats-wrap {
@@ -51,7 +51,7 @@
 }
 
 .stats-list span {
-  color: var(--muted);
+  color: #ffffff;
   font-family:
     Manrope,
     system-ui,
@@ -60,6 +60,7 @@
     Roboto,
     sans-serif;
   font-size: 14px;
+  font-weight: 600;
 }
 
 .stats-list strong {

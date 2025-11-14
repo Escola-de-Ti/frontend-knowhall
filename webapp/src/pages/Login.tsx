@@ -25,7 +25,7 @@ const Login: React.FC = () => {
 
   useEffect(() => {
     if (authService.isAuthenticated()) {
-      window.location.href = '/dashboard';
+      window.location.href = '/feed';
     }
   }, []);
 
@@ -72,7 +72,7 @@ const Login: React.FC = () => {
 
       console.log('Login realizado com sucesso!');
 
-      window.location.href = '/dashboard';
+      window.location.href = '/feed';
     } catch (error: any) {
       console.error('Erro ao fazer login:', error);
       setErrors({

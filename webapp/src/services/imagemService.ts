@@ -25,32 +25,30 @@ class ImagemService {
    * @param params - Parâmetros do upload (type e id_type)
    * @returns Dados da imagem uploadada
    */
-  async upload(file: File, params: ImagemUploadParams): Promise<ImagemResponseDTO> {
+  async upload(file: File, params: ImagemUploadParams): Promise<ImagemResponseDTO | null> {
     try {
-      const formData = new FormData();
-      formData.append('file', file);
-
       const queryParams = new URLSearchParams();
       queryParams.append('type', params.type);
       queryParams.append('id_type', params.id_type.toString());
 
       const url = `${API_CONFIG.ENDPOINTS.IMAGEM_UPLOAD}?${queryParams.toString()}`;
 
-      // Para upload de arquivo, precisamos fazer uma requisição customizada
       const token = localStorage.getItem('kh_access_token');
       const response = await fetch(`${API_CONFIG.BASE_URL}${API_CONFIG.API_PREFIX}${url}`, {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${token}`,
+          'Content-Type': file.type, // image/png, image/jpeg, etc.
         },
-        body: formData,
+        body: file, // Envia o arquivo como binary
       });
 
       if (!response.ok) {
         throw new Error(`Erro no upload: ${response.status}`);
       }
 
-      return await response.json();
+      const text = await response.text();
+      return text ? JSON.parse(text) : null;
     } catch (error: any) {
       console.error('Erro ao fazer upload de imagem:', error);
       throw error;
@@ -79,11 +77,8 @@ class ImagemService {
    * @param file - Novo arquivo de imagem
    * @returns Dados da imagem atualizada
    */
-  async atualizar(id: number, file: File): Promise<ImagemResponseDTO> {
+  async atualizar(id: number, file: File): Promise<ImagemResponseDTO | null> {
     try {
-      const formData = new FormData();
-      formData.append('file', file);
-
       const token = localStorage.getItem('kh_access_token');
       const response = await fetch(
         `${API_CONFIG.BASE_URL}${API_CONFIG.API_PREFIX}${API_CONFIG.ENDPOINTS.IMAGEM_UPDATE}/${id}`,
@@ -91,8 +86,9 @@ class ImagemService {
           method: 'PUT',
           headers: {
             'Authorization': `Bearer ${token}`,
+            'Content-Type': file.type,
           },
-          body: formData,
+          body: file, 
         }
       );
 
@@ -100,7 +96,8 @@ class ImagemService {
         throw new Error(`Erro ao atualizar imagem: ${response.status}`);
       }
 
-      return await response.json();
+      const text = await response.text();
+      return text ? JSON.parse(text) : null;
     } catch (error: any) {
       console.error('Erro ao atualizar imagem:', error);
       throw error;

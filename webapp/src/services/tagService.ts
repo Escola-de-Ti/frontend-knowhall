@@ -2,7 +2,7 @@ import { apiService } from './apiService';
 import API_CONFIG from '../config/api.config';
 
 export interface TagResponseDTO {
-  id: string;
+  id: number;
   name: string;
 }
 
@@ -22,7 +22,7 @@ class TagService {
     return apiService.get<TagResponseDTO[]>(endpoint, true);
   }
 
-  async processMultipleTags(tagNames: string[]): Promise<string[]> {
+  async processMultipleTags(tagNames: string[]): Promise<number[]> {
     const uniqueNames = [...new Set(tagNames.map(name => name.trim()).filter(Boolean))];
     
     const promises = uniqueNames.map(name => this.createOrGet(name));

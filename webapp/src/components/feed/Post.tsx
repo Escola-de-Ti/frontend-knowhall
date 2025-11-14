@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import '../../styles/feed/Post.css';
 
 export type PostModel = {
@@ -19,6 +20,7 @@ type Props = {
 };
 
 export default function Post({ post, onMoreClick, onVote }: Props) {
+  const navigate = useNavigate();
   const [isVoting, setIsVoting] = useState(false);
 
   /**
@@ -39,6 +41,16 @@ export default function Post({ post, onMoreClick, onVote }: Props) {
     }
   };
 
+  /**
+   * Handler para navegar ao perfil do autor
+   */
+  const handleAutorClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (post.autor.id) {
+      navigate(`/perfil/${post.autor.id}`);
+    }
+  };
+
   return (
     <article
       className="post-card"
@@ -51,7 +63,13 @@ export default function Post({ post, onMoreClick, onVote }: Props) {
         </div>
 
         <div className="post-meta">
-          <strong className="post-autor">{post.autor.nome}</strong>
+          <strong 
+            className="post-autor" 
+            onClick={handleAutorClick}
+            style={{ cursor: 'pointer' }}
+          >
+            {post.autor.nome}
+          </strong>
           <div className="post-sub">
             <span className="post-time">{post.tempo}</span>
             <span className="dot" />

@@ -124,6 +124,7 @@ export default function Feed() {
       titulo: postApi.titulo,
       corpo: postApi.descricao,
       autor: {
+        id: parseInt(postApi.usuarioId),
         nome: postApi.nomeUsuario,
         iniciais: getInitials(postApi.nomeUsuario),
         nivel: 10,

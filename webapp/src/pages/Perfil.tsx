@@ -1,22 +1,24 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
 import '../styles/Perfil.css';
 import PerfilDetalhes from '../components/perfil/PerfilDetalhes';
 import PerfilAtividades from '../components/perfil/PerfilAtividades';
 import PerfilHistorico from '../components/perfil/PerfilHistorico';
 import PerfilSlide from '../components/perfil/PerfilSlide';
-import PerfilConquistas from '../components/perfil/PerfilConquistas';
-import PerfilCertificados from '../components/perfil/PerfilCertificados';
 import PerfilEstatisticas from '../components/perfil/PerfilEstatisticas';
+import PerfilPosts from '../components/perfil/PerfilPosts';
 import NavBar from '../components/NavBar';
-import { getUsuarioDetalhes, type UsuarioDetalhesDTO } from '../services/perfil.service';
+import { getUsuario, getUsuarioDetalhes, getMyUser, type UsuarioDetalhesDTO, UsuarioDTO } from '../services/perfil.service';
 
 const Perfil: React.FC = () => {
-  const [aba, setAba] = useState('Conquistas');
+  const navigate = useNavigate();
+  const { id } = useParams<{ id: string }>();
+  const [aba, setAba] = useState('Posts');
   const [usuarioDetalhes, setUsuarioDetalhes] = useState<UsuarioDetalhesDTO | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  
-  const idUsuario = 3;
+  const [user, setUser] = useState<UsuarioDTO | null>(null);
+  const [isOwnProfile, setIsOwnProfile] = useState(false);
 
   useEffect(() => {
     const carregarDadosUsuario = async () => {
@@ -24,23 +26,42 @@ const Perfil: React.FC = () => {
         setLoading(true);
         setError(null);
         
-        const tokenFixo = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJhcGkta25vdy1oYWxsIiwiaWF0IjoxNzYzMDAzMzcyLCJleHAiOjE3NjMwMDY5NzIsInN1YiI6ImdhYnJpZWwubWFyYXNzaUBlbWFpbC5jb20iLCJ0eXAiOiJhY2Nlc3MifQ.ts3zTdJ1OQheTrG4NiFGZVkKFhCS1kcjPwrZtcV8_zA';
-        localStorage.setItem('kh_token', tokenFixo);
-        
-        const dados = await getUsuarioDetalhes(idUsuario);
-        console.log('Dados do usuário:', dados);
-        console.log('URL da imagem:', dados.imagemUrl);
-        setUsuarioDetalhes(dados);
-      } catch (err) {
+        // Se tiver ID na URL, busca o usuário específico
+        if (id) {
+          const userId = parseInt(id);
+          
+          const userData = await getUsuario(userId);
+          setUser(userData);
+          
+          // Verificar se é o próprio perfil
+          try {
+            const myUserData = await getMyUser();
+            setIsOwnProfile(myUserData.id === userId);
+          } catch (err) {
+            setIsOwnProfile(false);
+          }
+          
+          const dados = await getUsuarioDetalhes(userId);
+          setUsuarioDetalhes(dados);
+        } else {
+          // Se não tiver ID, busca o usuário logado
+          const userData = await getMyUser();
+          setUser(userData);
+          setIsOwnProfile(true);
+          
+          const dados = await getUsuarioDetalhes(userData.id);
+          setUsuarioDetalhes(dados);
+        }
+      } catch (err: any) {
         console.error('Erro ao carregar detalhes do usuário:', err);
-        setError('Não foi possível carregar os dados do perfil.');
+        setError(err?.message || 'Não foi possível carregar os dados do perfil.');
       } finally {
         setLoading(false);
       }
     };
 
     carregarDadosUsuario();
-  }, [idUsuario]);
+  }, [id]);
 
   if (loading) {
     return (
@@ -71,15 +92,15 @@ const Perfil: React.FC = () => {
         <div className="perfil-grid">
           <div className="perfil-card perfil-detalhes-card">
             <PerfilDetalhes
-              id_usuario={idUsuario}
-              email="" // Email não vem na rota de detalhes
+              id_usuario={user?.id!}
+              email={user?.email || ''}
               nome={usuarioDetalhes.nome}
               biografia={usuarioDetalhes.biografia}
               id_imagem_perfil={usuarioDetalhes.imagemUrl}
               status_usuario="ATIVO"
               tipo_usuario="PADRAO"
               interesses={usuarioDetalhes.tags.map(tag => tag.name)}
-              onEditar={() => {}}
+              onEditar={isOwnProfile ? () => navigate('/perfil/editar-perfil') : undefined}
               onInteresseClick={() => {}}
             />
           </div>
@@ -97,22 +118,22 @@ const Perfil: React.FC = () => {
               comentarios={usuarioDetalhes.qtdComentarios}
               workshops={usuarioDetalhes.qtdWorkshops}
               medalSrc="/medalhaHistorico.png"
+              isOwnProfile={isOwnProfile}
             />
           </div>
         </div>
 
         <div className="perfil-slide">
           <PerfilSlide
-            tabs={['Conquistas', 'Atividades', 'Certificados', 'Estatísticas']}
+            tabs={['Posts', 'Atividades', 'Estatísticas']}
             value={aba}
             onChange={setAba}
           />
         </div>
 
-        {aba === 'Conquistas' && <PerfilConquistas />}
-        {aba === 'Atividades' && <PerfilAtividades idUsuario={idUsuario} />}
-        {aba === 'Certificados' && <PerfilCertificados />}
-        {aba === 'Estatísticas' && <PerfilEstatisticas />}
+        {aba === 'Posts' && <PerfilPosts idUsuario={user?.id!} />}
+        {aba === 'Atividades' && <PerfilAtividades idUsuario={user?.id!} isOwnProfile={isOwnProfile} />}
+        {aba === 'Estatísticas' && <PerfilEstatisticas idUsuario={user?.id!} />}
       </div>
     </div>
   );

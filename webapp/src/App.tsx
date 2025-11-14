@@ -47,6 +47,7 @@ function App() {
         <Route path="/criar-post" element={<CriarPost/>} />
         <Route path="/criar-workshop" element={<CriarWorkshop />} />
         <Route path="/perfil" element={<Perfil />} />
+        <Route path="/perfil/:id" element={<Perfil />} />
         <Route path="/feed" element={<Feed />} />
         <Route path="/perfil/editar-perfil" element={<EditarPerfil />} />
         <Route path="/ranking" element={<Ranking />} />

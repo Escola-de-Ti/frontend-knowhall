@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import '../../styles/perfil/PerfilEstatisticas.css';
+import { getUsuarioDetalhes, type UsuarioDetalhesDTO } from '../../services/perfil.service';
+import { buscarResumoTransacoes, type ResumoTransacoesDTO } from '../../services/historicoService';
 
 type ContribuicaoStats = {
   posts: number;
   comentarios: number;
-  upvotes: number;
+  upvotesDados: number;
   workshops: number;
 };
 
@@ -12,17 +14,50 @@ type TokenStats = {
   ganhos_total: number;
   gastos_total: number;
   saldo_atual: number;
-  media_mensal: number;
+  total_transacoes: number;
 };
 
-export default function PerfilEstatisticas() {
+type PerfilEstatisticasProps = {
+  idUsuario: number;
+};
+
+export default function PerfilEstatisticas({ idUsuario }: PerfilEstatisticasProps) {
   const [contrib, setContrib] = useState<ContribuicaoStats | null>(null);
   const [tokens, setTokens] = useState<TokenStats | null>(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    setContrib({ posts: 47, comentarios: 238, upvotes: 1205, workshops: 12 });
-    setTokens({ ganhos_total: 27131, gastos_total: 2740, saldo_atual: 5680, media_mensal: 420 });
-  }, []);
+    const carregarEstatisticas = async () => {
+      try {
+        setLoading(true);
+        const detalhes = await getUsuarioDetalhes(idUsuario);
+        
+        setContrib({
+          posts: detalhes.qtdPosts,
+          comentarios: detalhes.qtdComentarios,
+          upvotesDados: detalhes.qtdUpVotes + detalhes.qtdSuperVotes,
+          workshops: detalhes.qtdWorkshops,
+        });
+        
+        // Buscar resumo de transações
+        const resumo = await buscarResumoTransacoes();
+        setTokens({
+          ganhos_total: resumo.totalRecebido,
+          gastos_total: resumo.totalGasto,
+          saldo_atual: resumo.saldoAtual,
+          total_transacoes: resumo.totalTransacoes,
+        });
+      } catch (error) {
+        console.error('Erro ao carregar estatísticas:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    if (idUsuario) {
+      carregarEstatisticas();
+    }
+  }, [idUsuario]);
 
   const n = (v: number) => v.toLocaleString('pt-BR');
 
@@ -40,8 +75,8 @@ export default function PerfilEstatisticas() {
             <strong className="c-green">{contrib ? n(contrib.comentarios) : '--'}</strong>
           </li>
           <li>
-            <span>Upvotes Recebidos</span>
-            <strong className="c-green">{contrib ? n(contrib.upvotes) : '--'}</strong>
+            <span>Upvotes Enviados</span>
+            <strong className="c-green">{contrib ? n(contrib.upvotesDados) : '--'}</strong>
           </li>
           <li>
             <span>Workshops Ministrados</span>
@@ -66,8 +101,8 @@ export default function PerfilEstatisticas() {
             <strong className="c-pink">{tokens ? n(tokens.saldo_atual) : '--'}</strong>
           </li>
           <li>
-            <span>Média Mensal</span>
-            <strong className="c-green">+{tokens ? n(tokens.media_mensal) : '--'}</strong>
+            <span>Total de Transações</span>
+            <strong className="c-green">{tokens ? n(tokens.total_transacoes) : '--'}</strong>
           </li>
         </ul>
       </div>

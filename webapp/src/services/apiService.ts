@@ -67,19 +67,23 @@ class ApiService {
         
         toast.error(errorMessage);
 
+      // Status 204 (No Content) não retorna corpo
+      if (response.status === 204) {
+        return undefined as T;
+      }
         throw new Error(errorMessage);
       }
 
-      return response.json();
+        return response.json();
 
-    } catch (error: any) {
-      if (error instanceof TypeError && error.message === 'Failed to fetch') {
-        const networkMsg = 'Sem conexão com o servidor. Verifique sua internet.';
-        toast.error(networkMsg);
-        throw new Error(networkMsg);
-      }
+      } catch (error: any) {
+        if (error instanceof TypeError && error.message === 'Failed to fetch') {
+          const networkMsg = 'Sem conexão com o servidor. Verifique sua internet.';
+          toast.error(networkMsg);
+          throw new Error(networkMsg);
+        }
 
-      throw error;
+        throw error;
     }
   }
 
