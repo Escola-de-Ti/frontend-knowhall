@@ -41,6 +41,8 @@ export default function CriarWorkshop() {
   const [dataInicio, setDataInicio] = useState('');
   const [dataTermino, setDataTermino] = useState('');
   const [linkMeet, setLinkMeet] = useState('');
+  const [custo, setCusto] = useState('');
+  const [capacidade, setCapacidade] = useState('');
 
   const [loading, setLoading] = useState(false);
   const [errorGlobal, setErrorGlobal] = useState<string | null>(null);
@@ -51,6 +53,8 @@ export default function CriarWorkshop() {
     dataInicio: false,
     dataTermino: false,
     linkMeet: false,
+    custo: false,
+    capacidade: false,
   });
 
   const titleCount = useMemo(() => `${titulo.length}/100 Caracteres`, [titulo]);
@@ -71,6 +75,8 @@ export default function CriarWorkshop() {
         ? 'dataFinal deve ser igual ou após dataInicio'
         : '',
     linkMeet: !linkMeet ? 'Obrigatório' : !isValidUrl(linkMeet) ? 'URL inválida' : '',
+    custo: custo === '' ? 'Obrigatório' : Number(custo) < 0 ? 'Não pode ser negativo' : '',
+    capacidade: capacidade === '' ? 'Obrigatório' : '',
   };
 
   const hasErrors = Object.values(fieldErrors).some(Boolean);
@@ -90,12 +96,22 @@ export default function CriarWorkshop() {
         dataInicio: true,
         dataTermino: true,
         linkMeet: true,
+        custo: true,
+        capacidade: true,
       });
       return;
     }
 
     const inicioIso = toIsoDay(dataInicio, false);
     const terminoIso = toIsoDay(dataTermino, true);
+
+    const custoNum = Number(custo);
+    const capacidadeNum = Number(capacidade);
+
+    if (Number.isNaN(custoNum) || Number.isNaN(capacidadeNum)) {
+      setErrorGlobal('Custo e capacidade devem ser numéricos');
+      return;
+    }
 
     try {
       setLoading(true);
@@ -107,6 +123,8 @@ export default function CriarWorkshop() {
         dataInicio: inicioIso,
         dataTermino: terminoIso,
         linkMeet,
+        custo: custoNum,
+        capacidade: capacidadeNum,
       });
 
       resetForm();
@@ -125,6 +143,8 @@ export default function CriarWorkshop() {
     setDataInicio('');
     setDataTermino('');
     setLinkMeet('');
+    setCusto('');
+    setCapacidade('');
     setTouched({
       titulo: false,
       tema: false,
@@ -132,6 +152,8 @@ export default function CriarWorkshop() {
       dataInicio: false,
       dataTermino: false,
       linkMeet: false,
+      custo: false,
+      capacidade: false,
     });
     setErrorGlobal(null);
   }
@@ -185,6 +207,14 @@ export default function CriarWorkshop() {
                 <li className="ws-summary-row">
                   <span className="ws-summary-label">Duração</span>
                   <span className="ws-chip ws-green-chip">{duracao ?? '-'}</span>
+                </li>
+                <li className="ws-summary-row">
+                  <span className="ws-summary-label">Custo</span>
+                  <span className="ws-chip">{custo !== '' ? `${custo} tokens` : '-'}</span>
+                </li>
+                <li className="ws-summary-row">
+                  <span className="ws-summary-label">Capacidade</span>
+                  <span className="ws-chip">{capacidade !== '' ? capacidade : '-'}</span>
                 </li>
                 <li className="ws-summary-row">
                   <span className="ws-summary-label">Link Meet</span>
@@ -290,6 +320,44 @@ export default function CriarWorkshop() {
                 />
                 {touched.dataTermino && fieldErrors.dataTermino && (
                   <span className="ws-field-error">{fieldErrors.dataTermino}</span>
+                )}
+              </div>
+            </div>
+
+            <div className="ws-row-2">
+              <div className={`ws-field ${touched.custo && fieldErrors.custo ? 'ws-invalid' : ''}`}>
+                <label htmlFor="custo">Custo (tokens) *</label>
+                <input
+                  id="custo"
+                  type="number"
+                  min={0}
+                  value={custo}
+                  onChange={(e) => setCusto(e.target.value)}
+                  onBlur={() => markTouched('custo')}
+                  aria-invalid={!!(touched.custo && fieldErrors.custo)}
+                />
+                {touched.custo && fieldErrors.custo && (
+                  <span className="ws-field-error">{fieldErrors.custo}</span>
+                )}
+              </div>
+
+              <div
+                className={`ws-field ${
+                  touched.capacidade && fieldErrors.capacidade ? 'ws-invalid' : ''
+                }`}
+              >
+                <label htmlFor="capacidade">Capacidade *</label>
+                <input
+                  id="capacidade"
+                  type="number"
+                  min={1}
+                  value={capacidade}
+                  onChange={(e) => setCapacidade(e.target.value)}
+                  onBlur={() => markTouched('capacidade')}
+                  aria-invalid={!!(touched.capacidade && fieldErrors.capacidade)}
+                />
+                {touched.capacidade && fieldErrors.capacidade && (
+                  <span className="ws-field-error">{fieldErrors.capacidade}</span>
                 )}
               </div>
             </div>
