@@ -22,10 +22,8 @@ export default function Feed() {
   
   const { posts, loading, error, hasMore, loadMore, refresh, updatePost } = useFeed(10);
 
-  // Ref para o elemento observador (scroll infinito)
   const observerTarget = useRef<HTMLDivElement>(null);
 
-  // Workshops e ranking (mantidos estáticos por enquanto)
   const workshops: WorkshopItem[] = [
     {
       id: 1,
@@ -62,39 +60,37 @@ export default function Feed() {
   const [current, setCurrent] = useState<PostDetails | null>(null);
   const [comments, setComments] = useState<PostCommentModel[]>([]);
 
-  /**
-   * Transforma PostFeedDTO da API em PostModel para o componente
-   */
+  const handleCloseModal = () => {
+    setOpen(false);
+    setCurrent(null);
+    refresh();
+  };
+
   const transformPostToModel = (post: PostFeedDTO): PostModel => {
     return {
-      id: parseInt(post.id), // Converte string para number para compatibilidade
+      id: parseInt(post.id),
       autor: {
         id: parseInt(post.usuarioId),
         nome: post.nomeUsuario,
         iniciais: getInitials(post.nomeUsuario),
-        nivel: 10, // Nível fixo por enquanto (pode vir de outro endpoint)
+        nivel: 10,
       },
       titulo: post.titulo,
       corpo: post.descricao,
       tags: post.tags.map((tag) => tag.name),
       metrica: {
-        comentarios: 0, // Comentários virão de outro endpoint
+        comentarios: 0,
         upvotes: post.totalUpVotes,
       },
       tempo: getRelativeTime(post.dataCriacao),
-      jaVotou: post.jaVotou, // ← NOVO: Campo de voto
+      jaVotou: post.jaVotou,
     };
   };
 
-  /**
-   * Handler para votar em um post
-   */
   const handleVote = async (postId: number) => {
     try {
-      // Chama a API para votar (toggle)
       const response = await votoService.votarEmPost(postId.toString());
 
-      // Atualiza o post localmente com os novos valores
       updatePost(postId.toString(), {
         jaVotou: response.votado,
         totalUpVotes: response.totalUpVotes,
@@ -125,6 +121,7 @@ export default function Feed() {
         comentarios: 0,
       },
       tempo: getRelativeTime(postApi.dataCriacao),
+      jaVotou: postApi.jaVotou,
     };
 
     const cmts: PostCommentModel[] = [];
@@ -259,7 +256,7 @@ export default function Feed() {
 
       <PostDetailsModal
         open={open}
-        onClose={() => setOpen(false)}
+        onClose={handleCloseModal}
         post={current}
       />
     </div>

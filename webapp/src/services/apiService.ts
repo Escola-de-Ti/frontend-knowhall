@@ -1,17 +1,14 @@
-// Serviço centralizado para requisições à API com autenticação
-
 import { authService } from './authService';
 import { buildApiUrl } from '../config/api.config';
+import toast from 'react-hot-toast';
 
 interface RequestOptions extends RequestInit {
   requiresAuth?: boolean;
-  isRetry?: boolean; // Flag para evitar loop infinito
+  isRetry?: boolean;
 }
 
 class ApiService {
-  /**
-   * Faz uma requisição autenticada com retry automático em caso de token expirado
-   */
+
   async request<T>(
     endpoint: string,
     options: RequestOptions = {}
@@ -26,57 +23,71 @@ class ApiService {
       },
     };
 
-    // Adiciona o token de autenticação se necessário
     if (requiresAuth) {
       const token = authService.getAccessToken();
 
       if (!token) {
         authService.logout();
-        throw new Error('Token não encontrado. Faça login novamente.');
+        const msg = 'Sessão inválida. Faça login novamente.';
+        toast.error(msg);
+        throw new Error(msg);
       }
 
-      // Adiciona o token no header Authorization
       (config.headers as Record<string, string>)['Authorization'] = `Bearer ${token}`;
     }
 
     const url = buildApiUrl(endpoint);
-    const response = await fetch(url, config);
 
-    // Se retornar 401 (Unauthorized) e não for uma retry
-    if (response.status === 401 && requiresAuth && !isRetry) {
-      try {
-        // Tenta renovar o token
-        await authService.refreshAccessToken();
+    try {
+      const response = await fetch(url, config);
 
-        // Tenta a requisição novamente com o novo token
-        return this.request<T>(endpoint, { ...options, isRetry: true });
-      } catch (error) {
-        // Se falhar ao renovar, faz logout
-        authService.logout();
-        throw new Error('Sessão expirada. Faça login novamente.');
+      if (response.status === 401 && requiresAuth && !isRetry) {
+        try {
+          await authService.refreshAccessToken();
+          return this.request<T>(endpoint, { ...options, isRetry: true });
+        } catch (error) {
+          authService.logout();
+          const msg = 'Sessão expirada. Faça login novamente.';
+          toast.error(msg);
+          throw new Error(msg);
+        }
       }
-    }
 
-    // Se retornar 401 após retry, faz logout
-    if (response.status === 401 && isRetry) {
-      authService.logout();
-      throw new Error('Não autorizado. Faça login novamente.');
-    }
+      if (response.status === 401) {
+        authService.logout();
+        const msg = 'Não autorizado. Verifique suas credenciais.';
+        toast.error(msg);
+        throw new Error(msg);
+      }
 
-    if (!response.ok) {
-      const errorData = await response.json().catch(() => ({}));
-      throw new Error(errorData.message || `Erro na requisição: ${response.status}`);
-    }
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        
+        const errorMessage = errorData.message || `Erro na requisição: ${response.status}`;
+        
+        toast.error(errorMessage);
 
-    // Status 204 (No Content) não retorna corpo
-    if (response.status === 204) {
-      return undefined as T;
-    }
+      // Status 204 (No Content) não retorna corpo
+      if (response.status === 204) {
+        return undefined as T;
+      }
+        throw new Error(errorMessage);
+      }
 
-    return response.json();
+        return response.json();
+
+      } catch (error: any) {
+        if (error instanceof TypeError && error.message === 'Failed to fetch') {
+          const networkMsg = 'Sem conexão com o servidor. Verifique sua internet.';
+          toast.error(networkMsg);
+          throw new Error(networkMsg);
+        }
+
+        throw error;
+    }
   }
 
-  // Métodos auxiliares
+
   get<T>(endpoint: string, requiresAuth = true): Promise<T> {
     return this.request<T>(endpoint, { method: 'GET', requiresAuth });
   }

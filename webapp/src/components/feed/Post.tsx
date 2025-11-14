@@ -55,22 +55,8 @@ export default function Post({ post, onMoreClick, onVote }: Props) {
           <div className="post-sub">
             <span className="post-time">{post.tempo}</span>
             <span className="dot" />
-            <span className="level-pill">
-              <span className="level-text">Nvl. {post.autor.nivel}</span>
-            </span>
           </div>
         </div>
-
-        <button
-          className="post-more"
-          aria-label="Mais opções"
-          onClick={(e) => {
-            e.stopPropagation();
-            onMoreClick?.(post.id);
-          }}
-        >
-          …
-        </button>
       </header>
 
       <h3 className="post-title">{post.titulo}</h3>
@@ -94,19 +80,6 @@ export default function Post({ post, onMoreClick, onVote }: Props) {
         >
           <span className="ico-up" aria-hidden />
           <span className="kpi-val">{post.metrica.upvotes}</span>
-        </button>
-
-        <button
-          className="kpi kpi-com"
-          type="button"
-          aria-label="Comentários"
-          onClick={(e) => {
-            e.stopPropagation();
-            onMoreClick?.(post.id);
-          }}
-        >
-          <span className="ico-com" aria-hidden />
-          <span className="kpi-val">{post.metrica.comentarios}</span>
         </button>
       </footer>
     </article>
