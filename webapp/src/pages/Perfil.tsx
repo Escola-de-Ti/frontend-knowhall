@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import '../styles/Perfil.css';
 import PerfilDetalhes from '../components/perfil/PerfilDetalhes';
 import PerfilAtividades from '../components/perfil/PerfilAtividades';
@@ -8,28 +9,25 @@ import PerfilConquistas from '../components/perfil/PerfilConquistas';
 import PerfilCertificados from '../components/perfil/PerfilCertificados';
 import PerfilEstatisticas from '../components/perfil/PerfilEstatisticas';
 import NavBar from '../components/NavBar';
-import { getUsuarioDetalhes, type UsuarioDetalhesDTO } from '../services/perfil.service';
+import { getUsuario, getUsuarioDetalhes, getMyUser, type UsuarioDetalhesDTO, UsuarioDTO } from '../services/perfil.service';
 
 const Perfil: React.FC = () => {
+  const navigate = useNavigate();
   const [aba, setAba] = useState('Conquistas');
   const [usuarioDetalhes, setUsuarioDetalhes] = useState<UsuarioDetalhesDTO | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  
-  const idUsuario = 3;
+  const [user, setUser] = useState<UsuarioDTO | null>(null);
 
   useEffect(() => {
     const carregarDadosUsuario = async () => {
       try {
         setLoading(true);
         setError(null);
-        
-        const tokenFixo = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJhcGkta25vdy1oYWxsIiwiaWF0IjoxNzYzMDAzMzcyLCJleHAiOjE3NjMwMDY5NzIsInN1YiI6ImdhYnJpZWwubWFyYXNzaUBlbWFpbC5jb20iLCJ0eXAiOiJhY2Nlc3MifQ.ts3zTdJ1OQheTrG4NiFGZVkKFhCS1kcjPwrZtcV8_zA';
-        localStorage.setItem('kh_token', tokenFixo);
-        
-        const dados = await getUsuarioDetalhes(idUsuario);
-        console.log('Dados do usuário:', dados);
-        console.log('URL da imagem:', dados.imagemUrl);
+        const userData = await getMyUser();
+        setUser(userData);
+        const dados = await getUsuarioDetalhes(userData.id);
+
         setUsuarioDetalhes(dados);
       } catch (err) {
         console.error('Erro ao carregar detalhes do usuário:', err);
@@ -40,7 +38,7 @@ const Perfil: React.FC = () => {
     };
 
     carregarDadosUsuario();
-  }, [idUsuario]);
+  }, []);
 
   if (loading) {
     return (
@@ -71,15 +69,15 @@ const Perfil: React.FC = () => {
         <div className="perfil-grid">
           <div className="perfil-card perfil-detalhes-card">
             <PerfilDetalhes
-              id_usuario={idUsuario}
-              email="" // Email não vem na rota de detalhes
+              id_usuario={user?.id!}
+              email={user?.email || ''}
               nome={usuarioDetalhes.nome}
               biografia={usuarioDetalhes.biografia}
               id_imagem_perfil={usuarioDetalhes.imagemUrl}
               status_usuario="ATIVO"
               tipo_usuario="PADRAO"
               interesses={usuarioDetalhes.tags.map(tag => tag.name)}
-              onEditar={() => {}}
+              onEditar={() => navigate('/perfil/editar-perfil')}
               onInteresseClick={() => {}}
             />
           </div>
@@ -110,7 +108,7 @@ const Perfil: React.FC = () => {
         </div>
 
         {aba === 'Conquistas' && <PerfilConquistas />}
-        {aba === 'Atividades' && <PerfilAtividades idUsuario={idUsuario} />}
+        {aba === 'Atividades' && <PerfilAtividades idUsuario={user?.id!} />}
         {aba === 'Certificados' && <PerfilCertificados />}
         {aba === 'Estatísticas' && <PerfilEstatisticas />}
       </div>

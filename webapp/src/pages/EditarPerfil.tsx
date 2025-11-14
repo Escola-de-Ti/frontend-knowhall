@@ -1,22 +1,33 @@
 import React, { useMemo, useRef, useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import NavBar from '../components/NavBar';
 import '../styles/EditarPerfil.css';
 import { editarPerfil, uploadAvatar } from '../services/editar.perfil.service';
+import { getMyUser } from '../services/perfil.service';
+import { imagemService } from '../services/imagemService';
+import { tagService } from '../services/tagService';
 
-type Interesse = string;
+type TagComId = {
+  id: number;
+  name: string;
+};
 
 export default function EditarPerfil() {
+  const navigate = useNavigate();
   const [nome, setNome] = useState('');
   const [email, setEmail] = useState('');
   const [telefone, setTelefone] = useState('');
   const [bio, setBio] = useState('');
   const [buscaInteresse, setBuscaInteresse] = useState('');
-  const [selecionados, setSelecionados] = useState<Interesse[]>([]);
+  const [selecionados, setSelecionados] = useState<TagComId[]>([]);
   const [loading, setLoading] = useState(false);
   const [profileLoading, setProfileLoading] = useState(true);
+  const [imagemPerfilUrl, setImagemPerfilUrl] = useState<string | null>(null);
+  const [idImagemPerfil, setIdImagemPerfil] = useState<number | null>(null);
 
   const [file, setFile] = useState<File | null>(null);
   const [preview, setPreview] = useState<string | null>(null);
+  const [populares, setPopulares] = useState<TagComId[]>([]);
 
   const [errors, setErrors] = useState<{
     nome?: string;
@@ -30,31 +41,65 @@ export default function EditarPerfil() {
     text: '',
   });
 
-  const populares: Interesse[] = [
-    'React',
-    'JavaScript',
-    'Clean Architecture',
-    'TypeScript',
-    'Node.js',
-    'Python',
-    'React Native',
-  ];
-
   const fileRef = useRef<HTMLInputElement | null>(null);
 
   useEffect(() => {
-    const raw = localStorage.getItem('user_profile');
-    if (raw) {
+    const carregarDadosUsuario = async () => {
       try {
-        const u = JSON.parse(raw);
-        setNome(u?.nome || '');
-        setEmail(u?.email || '');
-        setTelefone(u?.telefone || '');
-        setBio(u?.bio || '');
-        setSelecionados(Array.isArray(u?.interesses) ? u.interesses.slice(0, 10) : []);
-      } catch {}
-    }
-    setProfileLoading(false);
+        setProfileLoading(true);
+        const userData = await getMyUser();
+        setNome(userData.nome || '');
+        setEmail(userData.email || '');
+        
+        const tel = userData.telefone || '';
+        if (tel) {
+          const digits = tel.replace(/\D/g, '');
+          if (digits.length === 11) {
+            setTelefone(`(${digits.substring(0, 2)}) ${digits.substring(2, 7)}-${digits.substring(7)}`);
+          } else if (digits.length === 10) {
+            setTelefone(`(${digits.substring(0, 2)}) ${digits.substring(2, 6)}-${digits.substring(6)}`);
+          } else {
+            setTelefone(tel);
+          }
+        }
+        
+        setBio(userData.biografia || '');
+        
+        // Carregar tags do usuário
+        if (userData.id) {
+          const { getUsuarioDetalhes } = await import('../services/perfil.service');
+          const detalhes = await getUsuarioDetalhes(userData.id);
+          
+          // Tags já vêm com ID do backend
+          setSelecionados(detalhes.tags.slice(0, 10));
+          
+          if (detalhes.imagemUrl) {
+            setImagemPerfilUrl(detalhes.imagemUrl);
+          }
+        }
+        
+        if (userData.idImagemPerfil) {
+          setIdImagemPerfil(userData.idImagemPerfil);
+        }
+      } catch (error) {
+        console.error('Erro ao carregar dados do usuário:', error);
+        setMsg({ type: 'erro', text: 'Erro ao carregar dados do perfil.' });
+      } finally {
+        setProfileLoading(false);
+      }
+    };
+
+    const carregarTagsPopulares = async () => {
+      try {
+        const tags = await tagService.getMostPopular(7);
+        setPopulares(tags);
+      } catch (error) {
+        console.error('Erro ao carregar tags populares:', error);
+      }
+    };
+
+    carregarDadosUsuario();
+    carregarTagsPopulares();
   }, []);
 
   useEffect(() => {
@@ -78,10 +123,10 @@ export default function EditarPerfil() {
     [nome]
   );
 
-  function toggleInteresse(tag: Interesse) {
+  function toggleInteresse(tag: TagComId) {
     setSelecionados((prev) => {
-      if (prev.includes(tag)) {
-        const next = prev.filter((t) => t !== tag);
+      if (prev.some(t => t.id === tag.id)) {
+        const next = prev.filter((t) => t.id !== tag.id);
         setErrors((e) => ({ ...e, interesses: undefined }));
         return next;
       }
@@ -95,16 +140,30 @@ export default function EditarPerfil() {
     });
   }
 
-  function addPersonalizado() {
+  async function addPersonalizado() {
     const v = buscaInteresse.trim();
     if (!v) return;
     if (selecionados.length >= 10) {
       setErrors((e) => ({ ...e, interesses: 'Você pode adicionar no máximo 10 interesses.' }));
       return;
     }
-    if (!selecionados.includes(v)) setSelecionados((p) => [...p, v]);
-    setBuscaInteresse('');
-    setErrors((e) => ({ ...e, interesses: undefined }));
+    
+    // Verificar se já existe
+    if (selecionados.some(t => t.name.toLowerCase() === v.toLowerCase())) {
+      setBuscaInteresse('');
+      return;
+    }
+    
+    try {
+      // Criar a tag no backend e obter o ID
+      const novaTag = await tagService.createOrGet(v);
+      setSelecionados((p) => [...p, novaTag]);
+      setBuscaInteresse('');
+      setErrors((e) => ({ ...e, interesses: undefined }));
+    } catch (error) {
+      console.error('Erro ao criar tag:', error);
+      setErrors((e) => ({ ...e, interesses: 'Erro ao adicionar interesse.' }));
+    }
   }
 
   function handleUploadClick() {
@@ -143,29 +202,41 @@ export default function EditarPerfil() {
     if (!validar()) return;
     try {
       setLoading(true);
-      const token =
-        localStorage.getItem('auth_token') || sessionStorage.getItem('auth_token') || '';
-      const userType =
-        localStorage.getItem('user_type') || sessionStorage.getItem('user_type') || 'ALUNO';
+      const token = localStorage.getItem('kh_access_token') || localStorage.getItem('kh_token') || '';
+      const userData = await getMyUser();
+
+      // Tags já têm IDs, apenas enviar os IDs
+      const tagIds = selecionados.map(tag => tag.id);
 
       const payload = {
         email,
         telefone: telefone.replace(/\D/g, ''),
         nome,
         biografia: bio,
-        tipoUsuario: userType,
-        tags: selecionados.map((t) => ({ name: t })),
+        tags: tagIds, // Envia array de IDs das tags
       };
 
       await editarPerfil(payload, token);
 
+      // Usar imagemService para atualizar a imagem
       if (file) {
-        await uploadAvatar(file, token);
+        if (idImagemPerfil) {
+          // Se já existe uma imagem, atualiza
+          await imagemService.atualizar(idImagemPerfil, file);
+        } else {
+          // Se não existe, faz upload como nova imagem
+          await imagemService.upload(file, {
+            type: 'PERFIL',
+            id_type: userData.id
+          });
+        }
       }
 
       setMsg({ type: 'ok', text: 'Perfil atualizado com sucesso.' });
-      const stored = { nome, email, telefone, bio, interesses: selecionados };
-      localStorage.setItem('user_profile', JSON.stringify(stored));
+      
+      setTimeout(() => {
+        navigate('/perfil');
+      }, 1500);
     } catch (e: any) {
       setMsg({ type: 'erro', text: e?.message || 'Erro ao salvar.' });
     } finally {
@@ -174,7 +245,7 @@ export default function EditarPerfil() {
   }
 
   function onCancelar() {
-    window.history.back();
+    navigate('/perfil');
   }
 
   const desabilitarSalvar = loading || profileLoading;
@@ -205,6 +276,8 @@ export default function EditarPerfil() {
             <div className="ep-avatar">
               {preview ? (
                 <img src={preview} alt="avatar" className="ep-avatar-img" />
+              ) : imagemPerfilUrl ? (
+                <img src={imagemPerfilUrl} alt="avatar" className="ep-avatar-img" />
               ) : (
                 iniciais || '??'
               )}
@@ -295,13 +368,13 @@ export default function EditarPerfil() {
           <div className="ep-chips-wrap">
             {selecionados.map((tag) => (
               <button
-                key={`sel-${tag}`}
+                key={`sel-${tag.id}`}
                 className="ep-chip ep-chip-selected"
                 onClick={() => toggleInteresse(tag)}
                 title="Remover"
                 disabled={loading}
               >
-                {tag}
+                {tag.name}
               </button>
             ))}
           </div>
@@ -325,12 +398,12 @@ export default function EditarPerfil() {
             <div className="ep-chips-wrap">
               {populares.map((tag) => (
                 <button
-                  key={tag}
-                  className={`ep-chip ${selecionados.includes(tag) ? 'ep-chip-selected' : ''}`}
+                  key={tag.id}
+                  className={`ep-chip ${selecionados.some(t => t.id === tag.id) ? 'ep-chip-selected' : ''}`}
                   onClick={() => toggleInteresse(tag)}
                   disabled={loading}
                 >
-                  {tag}
+                  {tag.name}
                 </button>
               ))}
             </div>

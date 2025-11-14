@@ -7,13 +7,17 @@ export type TagDTO = {
 
 export type UsuarioDTO = {
   id: number;
-  nome: string;
   email: string;
+  nome: string;
   biografia?: string;
-  imagemPerfil?: string;
-  status?: string;
-  tipo?: string;
-  interesses: string[];
+  telefone?: string;
+  telefone2?: string;
+  statusUsuario?: string;
+  tipoUsuario?: string;
+  qntdToken?: number;
+  qntdXp?: number;
+  idImagemPerfil?: number;
+  tags?: string[];
 };
 
 export type UsuarioDetalhesDTO = {
@@ -33,6 +37,10 @@ export type UsuarioDetalhesDTO = {
 
 export async function getUsuario(id: number) {
   return (await http.get<UsuarioDTO>(`/api/usuarios/${id}`)).data;
+}
+
+export async function getMyUser() {
+  return (await http.get<UsuarioDTO>(`/api/usuarios/user`)).data;
 }
 
 export async function getUsuarioDetalhes(id: number) {
