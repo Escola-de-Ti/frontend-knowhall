@@ -360,11 +360,7 @@ export default function PostDetailsModal({ open, onClose, post: initialPost }: P
             >
               <span className="ico-up" aria-hidden />
               <span>{activePost.metrica.upvotes}</span>
-            </button>
-            <button className="btn super" type="button">
-              <span className="ico-star" aria-hidden />
-              <span>{activePost.metrica.supervotes}</span>
-            </button>
+            </button>          
             <button className="btn com" type="button" onClick={openReplyForPost}>
               <span className="ico-com" aria-hidden />
               <span>{activePost.metrica.comentarios}</span>
