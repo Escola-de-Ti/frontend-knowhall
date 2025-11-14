@@ -1,5 +1,6 @@
 import { apiService } from './apiService';
 import API_CONFIG from '../config/api.config';
+import { authService } from './authService';
 
 export type ApiWorkshop = {
   id: number;
@@ -16,6 +17,8 @@ export type ApiWorkshop = {
     tema?: string;
     descricao?: string;
   };
+  custo: number;
+  capacidade: number;
 };
 
 export type UiWorkshop = {
@@ -84,31 +87,33 @@ function mapToUi(w: ApiWorkshop, currentInstructorId?: number): UiWorkshop {
     status: w.status,
     linkMeet: w.linkMeet,
     mine,
+    tokens: w.custo,
   };
 }
 
 export async function listWorkshops(opts?: {
   scope?: 'all' | 'enrolled' | 'mine';
-  instructorId?: number;
   status?: 'ABERTO' | 'CONCLUIDO' | 'INSCRITO';
 }): Promise<UiWorkshop[]> {
-  const { scope = 'all', instructorId, status } = opts ?? {};
+  const { scope = 'all', status } = opts ?? {};
 
-  // monta a URL relativa igual o apiService espera
+  const usuario = authService.getUsuario?.();
+  const currentInstructorId =
+    usuario && usuario.tipoUsuario === 'INSTRUTOR' ? Number(usuario.id) : undefined;
+
   let url = API_CONFIG.ENDPOINTS.WORKSHOPS;
   const params: string[] = [];
 
   if (status) params.push(`status=${encodeURIComponent(status)}`);
-  if (instructorId != null) params.push(`instrutorId=${encodeURIComponent(String(instructorId))}`);
 
-  if (params.length) {
-    url += `?${params.join('&')}`;
+  if (scope === 'mine' && currentInstructorId != null) {
+    params.push(`instrutorId=${encodeURIComponent(String(currentInstructorId))}`);
   }
 
-  // usa apiService igual UsuarioService
-  const data = await apiService.get<ApiWorkshop[]>(url);
+  if (params.length) url += `?${params.join('&')}`;
 
-  const ui = data.map((w) => mapToUi(w, instructorId));
+  const data = await apiService.get<ApiWorkshop[]>(url);
+  const ui = data.map((w) => mapToUi(w, currentInstructorId));
 
   if (scope === 'enrolled') return ui.filter((w) => w.enrolled);
   if (scope === 'mine') return ui.filter((w) => w.mine);
@@ -122,7 +127,8 @@ export async function createWorkshop(payload: {
   dataInicio: string;
   dataTermino: string;
   linkMeet?: string;
-  instrutorId?: number;
+  custo: number;
+  capacidade: number;
 }): Promise<UiWorkshop> {
   const body: any = {
     titulo: payload.titulo,
@@ -133,16 +139,11 @@ export async function createWorkshop(payload: {
       tema: payload.tema,
       descricao: payload.descricao,
     },
+    custo: payload.custo,
+    capacidade: payload.capacidade,
   };
 
-  if (payload.instrutorId != null) {
-    body.instrutorId = payload.instrutorId;
-  }
+  const created = await apiService.post<ApiWorkshop>(API_CONFIG.ENDPOINTS.WORKSHOPS, body);
 
-  const created = await apiService.post<ApiWorkshop>(
-    API_CONFIG.ENDPOINTS.WORKSHOPS,
-    body
-  );
-
-  return mapToUi(created, payload.instrutorId);
+  return mapToUi(created);
 }
