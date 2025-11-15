@@ -1,4 +1,5 @@
-import { http } from '../api/http';
+import { apiService } from './apiService';
+import API_CONFIG from '../config/api.config';
 
 export type TransacaoDTO = {
   id: number;
@@ -34,11 +35,11 @@ export async function buscarHistoricoTransacoes(
   params.append('page', page.toString());
   params.append('size', size.toString());
 
-  return (
-    await http.get<HistoricoTransacoesResponseDTO>(`/historico-transacoes?${params.toString()}`)
-  ).data;
+  return await apiService.get<HistoricoTransacoesResponseDTO>(
+    `/historico-transacoes?${params.toString()}`
+  );
 }
 
 export async function buscarResumoTransacoes(): Promise<ResumoTransacoesDTO> {
-  return (await http.get<ResumoTransacoesDTO>('/historico-transacoes/resumo')).data;
+  return await apiService.get<ResumoTransacoesDTO>('/historico-transacoes/resumo');
 }
