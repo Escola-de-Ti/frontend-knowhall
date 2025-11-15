@@ -236,3 +236,16 @@
     margin-top: 6px;
   }
 }
+
+.rk-empty {
+  text-align: center;
+  padding: 30px 20px;
+  color: #888;
+  font-family: 'Manrope', sans-serif;
+}
+
+.rk-empty p {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 500;
+}
