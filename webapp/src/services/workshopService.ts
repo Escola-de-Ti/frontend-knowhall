@@ -2,12 +2,7 @@
 import { apiService } from './apiService';
 import API_CONFIG from '../config/api.config';
 
-export type WorkshopStatus =
-  | 'ABERTO'
-  | 'FECHADO'
-  | 'ENCERRADO'
-  | 'EM_ANDAMENTO'
-  | 'CONCLUIDO';
+export type WorkshopStatus = 'ABERTO' | 'FECHADO' | 'ENCERRADO' | 'EM_ANDAMENTO' | 'CONCLUIDO';
 
 export interface WorkshopDescricaoDTO {
   id: number;
@@ -88,10 +83,7 @@ class WorkshopService {
         endpoint = `${endpoint}?${queryParams.toString()}`;
       }
 
-      const response = await apiService.get<WorkshopResponseDTO[]>(
-        endpoint,
-        true
-      );
+      const response = await apiService.get<WorkshopResponseDTO[]>(endpoint, true);
       return response;
     } catch (error: any) {
       console.error('Erro ao listar workshops:', error);
@@ -132,16 +124,11 @@ class WorkshopService {
     }
   }
 
-  async buscarPorInstrutor(
-    instrutorId: number
-  ): Promise<WorkshopResponseDTO[]> {
+  async buscarPorInstrutor(instrutorId: number): Promise<WorkshopResponseDTO[]> {
     return this.listar({ instrutorId });
   }
 
-  async atualizar(
-    id: number,
-    dados: WorkshopUpdateDTO
-  ): Promise<WorkshopResponseDTO> {
+  async atualizar(id: number, dados: WorkshopUpdateDTO): Promise<WorkshopResponseDTO> {
     try {
       const response = await apiService.patch<WorkshopResponseDTO>(
         `${API_CONFIG.ENDPOINTS.WORKSHOPS}/${id}`,
@@ -157,10 +144,7 @@ class WorkshopService {
 
   async deletar(id: number): Promise<void> {
     try {
-      await apiService.delete<void>(
-        `${API_CONFIG.ENDPOINTS.WORKSHOPS}/${id}`,
-        true
-      );
+      await apiService.delete<void>(`${API_CONFIG.ENDPOINTS.WORKSHOPS}/${id}`, true);
     } catch (error: any) {
       console.error('Erro ao deletar workshop:', error);
       throw error;
@@ -230,11 +214,7 @@ class WorkshopService {
     const inicio = new Date(workshop.dataInicio);
     const termino = new Date(workshop.dataTermino);
 
-    return (
-      agora >= inicio &&
-      agora <= termino &&
-      workshop.status === 'EM_ANDAMENTO'
-    );
+    return agora >= inicio && agora <= termino && workshop.status === 'EM_ANDAMENTO';
   }
 }
 

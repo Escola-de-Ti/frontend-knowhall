@@ -324,6 +324,19 @@ label {
   margin-top: -2px;
 }
 
+/* ALERTAS (ERRO GLOBAL) */
+.ws-alert {
+  margin-top: 8px;
+  padding: 10px 12px;
+  border-radius: 10px;
+  font-size: 13px;
+}
+.ws-error {
+  background: rgba(239, 68, 68, 0.12);
+  border: 1px solid rgba(239, 68, 68, 0.55);
+  color: #fecaca;
+}
+
 .ws-row-2 {
   display: grid;
   gap: 16px;
