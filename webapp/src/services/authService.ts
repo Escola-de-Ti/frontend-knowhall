@@ -132,6 +132,55 @@ class AuthService {
     return this.getUsuarioId();
   }
 
+  getTipoUsuario(): 'ALUNO' | 'INSTRUTOR' | 'ADMINISTRADOR' {
+    const decoded = this.getDecodedToken();
+    if (!decoded) return 'ALUNO';
+
+    const candidates: any[] = [];
+
+    if (decoded.tipoUsuario) candidates.push(decoded.tipoUsuario);
+    if (decoded.tipo_usuario) candidates.push(decoded.tipo_usuario);
+    if (decoded.role) candidates.push(decoded.role);
+    if (decoded.roles) candidates.push(decoded.roles);
+    if (decoded.authorities) candidates.push(decoded.authorities);
+
+    const flat: string[] = [];
+
+    for (const val of candidates) {
+      if (!val) continue;
+
+      if (Array.isArray(val)) {
+        for (const item of val) {
+          if (typeof item === 'string') {
+            flat.push(item);
+          } else if (
+            item &&
+            typeof item === 'object' &&
+            typeof (item as any).authority === 'string'
+          ) {
+            flat.push((item as any).authority);
+          }
+        }
+      } else if (typeof val === 'string') {
+        flat.push(val);
+      } else if (typeof val === 'object' && typeof (val as any).authority === 'string') {
+        flat.push((val as any).authority);
+      }
+    }
+
+    if (flat.length === 0) return 'ALUNO';
+
+    const normalized = flat.map((s) => s.toUpperCase());
+
+    if (normalized.some((s) => s.includes('ADMIN'))) return 'ADMINISTRADOR';
+    if (normalized.some((s) => s.includes('INSTRUTOR') || s.includes('INSTRUCTOR'))) {
+      return 'INSTRUTOR';
+    }
+    if (normalized.some((s) => s.includes('ALUNO'))) return 'ALUNO';
+
+    return 'ALUNO';
+  }
+
   clearTokens(): void {
     localStorage.removeItem(TOKEN_KEY);
     localStorage.removeItem(REFRESH_TOKEN_KEY);

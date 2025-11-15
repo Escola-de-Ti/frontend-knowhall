@@ -16,6 +16,7 @@ import HistoricoTransacoes from './pages/HistoricoTransacoes';
 import { NotificationProvider } from './contexts/NotificationContext';
 import { UserProvider } from './contexts/UserContext';
 import EditarWorkshop from './pages/EditarWorkshop';
+import WorkshopParticipantes from './pages/WorkshopParticipantes'; // 🔹 NOVO IMPORT
 
 function isAuth() {
   const basic = import.meta.env.VITE_API_USER;
@@ -100,6 +101,15 @@ function App() {
                 </PrivateRoute>
               }
             />
+            <Route
+              path="/workshops/:id/inscritos"
+              element={
+                <PrivateRoute>
+                  <WorkshopParticipantes />
+                </PrivateRoute>
+              }
+            />
+
             <Route
               path="/perfil"
               element={
