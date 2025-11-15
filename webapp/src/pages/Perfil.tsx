@@ -136,14 +136,14 @@ const Perfil: React.FC = () => {
 
         <div className="perfil-slide">
           <PerfilSlide
-            tabs={['Posts', 'Atividades', 'Estatísticas']}
+            tabs={['Posts', 'Comentários', 'Estatísticas']}
             value={aba}
             onChange={setAba}
           />
         </div>
 
         {aba === 'Posts' && <PerfilPosts idUsuario={user?.id!} />}
-        {aba === 'Atividades' && (
+        {aba === 'Comentários' && (
           <PerfilAtividades idUsuario={user?.id!} isOwnProfile={isOwnProfile} />
         )}
         {aba === 'Estatísticas' && <PerfilEstatisticas idUsuario={user?.id!} />}

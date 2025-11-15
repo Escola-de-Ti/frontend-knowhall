@@ -7,16 +7,18 @@
   z-index: 40;
 }
 
-.filter-menu.wk-filter-menu {
-  position: fixed;
-  top: 96px;
-  right: 40px;
-  width: 340px;
-  max-height: calc(100vh - 140px);
-  padding: 18px 18px 14px;
-  border-radius: 20px;
-  background: #151218;
-  border: 1px solid #b57fff55;
+.filter-menu {
+  position: absolute;
+  top: calc(100% + 12px);
+  right: 0;
+  min-width: 240px;
+  background: #1a1a1a;
+  border: 2px solid transparent;
+  border-radius: 12px;
+  background:
+    linear-gradient(#1a1a1a, #1a1a1a) padding-box,
+    linear-gradient(135deg, #a855f7, #ec4899) border-box;
+  padding: 8px;
   box-shadow:
     0 0 0 1px #7f68fd33,
     0 0 40px #7f68fd66;
@@ -69,77 +71,18 @@
   gap: 4px;
 }
 
-.wk-filter-label {
-  font-size: 13px;
-  font-weight: 600;
-  color: #b9b4ff;
+.lbl-filter {
+  min-width: 100px;
+  text-align: center;
 }
 
-.wk-filter-input {
-  height: 38px;
-  padding: 0 10px;
-  border-radius: 10px;
-  border: 1px solid #373546;
-  background: #1d1b27;
-  color: #f4f4f4;
-  font-size: 13px;
+.ico-filter {
+  display: inline-block;
+  width: 18px;
+  height: 18px;
 }
 
-.wk-filter-input::placeholder {
-  color: #77738f;
-}
-
-.wk-filter-input:focus {
-  outline: none;
-  border-color: #b57fff;
-  box-shadow: 0 0 0 1px #b57fff55;
-}
-
-.wk-filter-clear,
-.wk-filter-apply {
-  height: 40px;
-  border-radius: 12px;
-  border: 0;
-  font-weight: 800;
-  font-size: 14px;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.wk-filter-clear {
-  margin-top: 4px;
-  background: transparent;
-  color: #f4f4f4;
-  border: 1px solid #3b384c;
-}
-
-.wk-filter-clear:hover {
-  background: #262335;
-}
-
-.wk-filter-apply {
-  margin-top: 6px;
-  background: linear-gradient(90deg, #6ea2ff 0%, #b07bff 50%, #f08e90 100%);
-  color: #0e0e0e;
-  box-shadow:
-    0 10px 24px #7f68fd33,
-    0 2px 0 #0000002b inset;
-}
-
-.wk-filter-apply:active {
-  transform: translateY(1px);
-  box-shadow:
-    0 6px 18px #7f68fd33,
-    0 1px 0 #0000002b inset;
-}
-
-@media (max-width: 900px) {
-  .filter-menu.wk-filter-menu {
-    top: 90px;
-    right: 16px;
-    left: 16px;
-    width: auto;
-  }
+.ico-filter::before {
+  content: '▼';
+  font-size: 12px;
 }

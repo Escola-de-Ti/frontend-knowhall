@@ -40,7 +40,7 @@ export default function PerfilPosts({ idUsuario }: Props) {
             <div className="atividades-ico" aria-hidden>
             📝
             </div>
-            <h3 id="posts-title">Meus Posts</h3>
+            <h3 id="posts-title">Posts</h3>
         </header>
 
         {loading ? (

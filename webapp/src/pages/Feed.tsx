@@ -229,8 +229,7 @@ export default function Feed() {
       <main className="feed-container">
         <aside className="feed-left">
           <div className="feed-left-head">
-            <button className="btn-create" type="button" onClick={handleCriarPost}>
-              <span className="ico-plus" aria-hidden />
+            <button className="btn-create" type="button" onClick={handleCriarPost}>              
               <span className="lbl-grad">Criar Post</span>
             </button>
           </div>
@@ -257,8 +256,7 @@ export default function Feed() {
 
         <section className="feed-center">
           <div className="feed-filters-bar">
-            <button className="btn-filter" type="button" onClick={toggleFilterMenu}>
-              <span className="ico-filter" aria-hidden />
+            <button className="btn-filter" type="button" onClick={toggleFilterMenu}>              
               <span className="lbl-filter">Ordenar</span>
             </button>
 

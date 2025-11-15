@@ -9,6 +9,13 @@ import { getInitials, getRelativeTime } from '../../utils/feedHelpers';
 
 export type PostUser = { id?: number; nome: string; iniciais: string; nivel: number };
 
+export type PostImage = {
+  id: number;
+  imagemId: number;
+  url: string;
+  ordem: number;
+};
+
 export type PostDetails = {
   id: number;
   titulo: string;
@@ -18,6 +25,7 @@ export type PostDetails = {
   metrica: { upvotes: number; supervotes: number; comentarios: number };
   tempo: string;
   jaVotou: boolean;
+  imagens?: PostImage[];
 };
 
 export type PostCommentModel = {
@@ -87,6 +95,16 @@ export default function PostDetailsModal({ open, onClose, post: initialPost }: P
           },
           tempo: getRelativeTime(data.dataCriacao),
           jaVotou: (data as any).jaVotou || false,
+          imagens: (data as any).urlsImagens
+            ? (data as any).urlsImagens
+                .sort((a: any, b: any) => a.ordemImagem - b.ordemImagem)
+                .map((img: any) => ({
+                  id: img.id,
+                  imagemId: img.imagemId,
+                  url: img.urlImagem,
+                  ordem: img.ordemImagem,
+                }))
+            : [],
         };
 
         const rootComments = data.comentarios
@@ -303,9 +321,6 @@ export default function PostDetailsModal({ open, onClose, post: initialPost }: P
     }
   }
 
-  /**
-   * Navega para o perfil do autor do post
-   */
   function handleAutorClick(e: React.MouseEvent) {
     e.stopPropagation();
     if (activePost?.autor?.id) {
@@ -342,6 +357,10 @@ export default function PostDetailsModal({ open, onClose, post: initialPost }: P
 
         <article className="kh-modal-body">
           <p className="descricao">{activePost.corpo}</p>
+
+          {activePost.imagens && activePost.imagens.length > 0 && (
+            <ImageCarousel images={activePost.imagens} />
+          )}
 
           <div className="tags">
             {activePost.tags.map((t) => (
@@ -413,6 +432,68 @@ export default function PostDetailsModal({ open, onClose, post: initialPost }: P
           </section>
         </article>
       </section>
+    </div>
+  );
+}
+
+function ImageCarousel({ images }: { images: PostImage[] }) {
+  const [currentIndex, setCurrentIndex] = useState(0);
+
+  const goToPrevious = () => {
+    setCurrentIndex((prev) => (prev === 0 ? images.length - 1 : prev - 1));
+  };
+
+  const goToNext = () => {
+    setCurrentIndex((prev) => (prev === images.length - 1 ? 0 : prev + 1));
+  };
+
+  const goToSlide = (index: number) => {
+    setCurrentIndex(index);
+  };
+
+  if (images.length === 0) return null;
+
+  return (
+    <div className="image-carousel">
+      <div className="carousel-container">
+        <img
+          src={images[currentIndex].url}
+          alt={`Imagem ${currentIndex + 1} do post`}
+          className="carousel-image"
+        />
+
+        {images.length > 1 && (
+          <>
+            <button
+              className="carousel-btn carousel-btn-prev"
+              onClick={goToPrevious}
+              aria-label="Imagem anterior"
+            >
+              ‹
+            </button>
+            <button
+              className="carousel-btn carousel-btn-next"
+              onClick={goToNext}
+              aria-label="Próxima imagem"
+            >
+              ›
+            </button>
+          </>
+        )}
+      </div>
+
+      {images.length > 1 && (
+        <div className="carousel-indicators">
+          {images.map((_, index) => (
+            <button
+              key={index}
+              className={`indicator ${index === currentIndex ? 'active' : ''}`}
+              onClick={() => goToSlide(index)}
+              aria-label={`Ir para imagem ${index + 1}`}
+            />
+          ))}
+        </div>
+      )}
     </div>
   );
 }
@@ -652,7 +733,6 @@ function CommentNode({
           <span>Responder</span>
         </button>
 
-        {/* Botão para carregar respostas */}
         {canLoadReplies && (
           <button
             className="btn sm link"

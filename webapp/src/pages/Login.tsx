@@ -135,10 +135,6 @@ const Login: React.FC = () => {
                 {errors.senha && <span className="error">{errors.senha}</span>}
               </div>
 
-              <a href="/recuperar-senha" className="forgot">
-                Esqueci minha Senha.
-              </a>
-
               <button type="submit" className="kh-btn" disabled={loading}>
                 {loading ? 'ENTRANDO...' : 'ENTRAR'}
               </button>

@@ -75,6 +75,13 @@ export interface ComentarioResponseDTO {
   dataCriacao: string;
 }
 
+export interface ImagemPostDetalhesDTO {
+  id: number;
+  imagemId: number;
+  urlImagem: string;
+  ordemImagem: number;
+}
+
 export interface PostDetalhesDTO {
   id: number;
   usuarioId: number;
@@ -86,6 +93,7 @@ export interface PostDetalhesDTO {
   dataCriacao: string;
   comentarios: ComentarioResponseDTO[];
   hasMoreComentarios: boolean;
+  urlsImagens?: ImagemPostDetalhesDTO[]
 }
 
 export interface PostUpdateDTO {
