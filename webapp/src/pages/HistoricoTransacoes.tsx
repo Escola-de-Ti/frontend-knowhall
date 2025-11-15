@@ -22,37 +22,6 @@ interface HistoricoTransacaoListResponse {
   totalElements: number;
 }
 
-const mockTransacoes: HistoricoTransacaoListResponse = {
-  transacoes: [
-    {
-      id: 1,
-      quantidade: 50,
-      motivoDescricao: 'Up vote em comentário',
-      descricao: 'Recebimento por comentário',
-      dataTransacao: '2025-09-13T21:40:00Z',
-    },
-    {
-      id: 2,
-      quantidade: -650,
-      motivoDescricao: 'Inscrição em workshop como aluno',
-      descricao: 'Compra de Workshop',
-      dataTransacao: '2025-09-12T20:40:00Z',
-    },
-    {
-      id: 3,
-      quantidade: 100,
-      motivoDescricao: 'Super vote em comentário',
-      descricao: 'Recebimento por SuperVote',
-      dataTransacao: '2025-06-13T14:10:00Z',
-    },
-  ],
-  totalRecebido: 150,
-  totalGasto: 650,
-  saldoAtual: 2780,
-  hasMore: false,
-  totalPages: 1,
-  totalElements: 3,
-};
 
 export default function HistoricoTransacoes() {
   const [transacoes, setTransacoes] = useState<Transacao[]>([]);
@@ -66,12 +35,11 @@ export default function HistoricoTransacoes() {
         if (resposta && Array.isArray(resposta.transacoes)) {
           setTransacoes(resposta.transacoes);
         } else {
-          console.warn('Usando mock temporário');
-          setTransacoes(mockTransacoes.transacoes);
+          setTransacoes([]);
         }
       } catch (error) {
         console.error('Erro ao carregar histórico:', error);
-        setTransacoes(mockTransacoes.transacoes);
+        setTransacoes([]);
       } finally {
         setLoading(false);
       }

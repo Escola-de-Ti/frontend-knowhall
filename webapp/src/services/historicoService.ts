@@ -35,10 +35,10 @@ export async function buscarHistoricoTransacoes(
   params.append('size', size.toString());
 
   return (
-    await http.get<HistoricoTransacoesResponseDTO>(`/api/historico-transacoes?${params.toString()}`)
+    await http.get<HistoricoTransacoesResponseDTO>(`/historico-transacoes?${params.toString()}`)
   ).data;
 }
 
 export async function buscarResumoTransacoes(): Promise<ResumoTransacoesDTO> {
-  return (await http.get<ResumoTransacoesDTO>('/api/historico-transacoes/resumo')).data;
+  return (await http.get<ResumoTransacoesDTO>('/historico-transacoes/resumo')).data;
 }

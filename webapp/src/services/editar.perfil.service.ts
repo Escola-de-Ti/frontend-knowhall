@@ -11,9 +11,7 @@ export type EditarPerfilPayload = {
   nivel?: number;
 };
 
-import API_CONFIG from '../config/api.config';
-
-const BASE_URL = `${API_CONFIG.BASE_URL}${API_CONFIG.API_PREFIX}`;
+import API_CONFIG, { buildApiUrl } from '../config/api.config';
 
 function clean<T extends object>(obj: T, keepEmpty: string[] = []): T {
   const o: Record<string, unknown> = {};
@@ -26,7 +24,7 @@ function clean<T extends object>(obj: T, keepEmpty: string[] = []): T {
 
 export async function editarPerfil(payload: EditarPerfilPayload, token: string) {
   const body = JSON.stringify(clean(payload, ['biografia']));
-  const r = await fetch(`${BASE_URL}/api/usuarios/user`, {
+  const r = await fetch(buildApiUrl('/usuarios/user'), {
     method: 'PUT',
     headers: {
       'Content-Type': 'application/json',
@@ -48,7 +46,7 @@ export async function editarPerfil(payload: EditarPerfilPayload, token: string) 
 export async function uploadAvatar(file: File, token: string) {
   const fd = new FormData();
   fd.append('file', file);
-  const r = await fetch(`${BASE_URL}/api/usuarios/user/avatar`, {
+  const r = await fetch(buildApiUrl('/usuarios/user/avatar'), {
     method: 'PUT',
     headers: { Authorization: `Bearer ${token}` },
     body: fd,

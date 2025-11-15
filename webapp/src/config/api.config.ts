@@ -48,10 +48,15 @@ const API_CONFIG = {
 
 /**
  * Constrói a URL completa para um endpoint
- * @param endpoint - Caminho do endpoint (ex: '/posts')
- * @returns URL completa (ex: 'http://localhost:8080/api/posts')
+ * @param endpoint - Caminho do endpoint (ex: '/usuarios/user')
+ * @returns URL completa (ex: 'http://localhost:8080/api/usuarios/user')
  */
 export const buildApiUrl = (endpoint: string): string => {
+  // Em desenvolvimento, usa apenas /api + endpoint (proxy do Vite cuida do resto)
+  if (import.meta.env.DEV) {
+    return `${API_CONFIG.API_PREFIX}${endpoint}`;
+  }
+  // Em produção, usa URL completa
   return `${API_CONFIG.BASE_URL}${API_CONFIG.API_PREFIX}${endpoint}`;
 };
 
