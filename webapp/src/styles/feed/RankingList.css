@@ -73,9 +73,13 @@
   border-radius: 12px;
   background: #2f2f2f;
   border: 1.5px solid #2c2c2c;
+  cursor: pointer;
+  transition: all 0.2s ease;
 }
 .rk-item:hover {
-  border-color: #5ff4ca33;
+  border-color: #5ff4ca;
+  transform: translateX(4px);
+  box-shadow: 0 4px 12px rgba(95, 244, 202, 0.15);
 }
 
 .rk-1 {

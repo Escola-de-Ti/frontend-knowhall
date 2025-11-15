@@ -91,11 +91,14 @@
   padding: 14px 18px;
   margin-bottom: 10px;
   border: 1px solid #222;
-  transition: transform 0.2s ease;
+  cursor: pointer;
+  transition: all 0.2s ease;
 }
 
 .ranking-card:hover {
-  transform: scale(1.01);
+  transform: translateX(4px);
+  border-color: #6ef7c3;
+  box-shadow: 0 4px 12px rgba(110, 247, 195, 0.15);
 }
 
 .top-three {

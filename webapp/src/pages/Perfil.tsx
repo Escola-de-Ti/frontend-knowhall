@@ -10,13 +10,8 @@ import PerfilSlide from '../components/perfil/PerfilSlide';
 import PerfilEstatisticas from '../components/perfil/PerfilEstatisticas';
 import PerfilPosts from '../components/perfil/PerfilPosts';
 import NavBar from '../components/NavBar';
-import {
-  getUsuario,
-  getUsuarioDetalhes,
-  getMyUser,
-  type UsuarioDetalhesDTO,
-  UsuarioDTO,
-} from '../services/perfil.service';
+import { getUsuario, getUsuarioDetalhes, getMyUser, type UsuarioDetalhesDTO, UsuarioDTO } from '../services/perfil.service';
+import { useUser } from '../contexts/UserContext';
 
 const Perfil: React.FC = () => {
   const navigate = useNavigate();
@@ -27,6 +22,7 @@ const Perfil: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [user, setUser] = useState<UsuarioDTO | null>(null);
   const [isOwnProfile, setIsOwnProfile] = useState(false);
+  const { user: loggedUser } = useUser();
 
   useEffect(() => {
     const carregarDadosUsuario = async () => {
@@ -36,26 +32,37 @@ const Perfil: React.FC = () => {
 
         if (id) {
           const userId = parseInt(id);
-
-          const userData = await getUsuario(userId);
-          setUser(userData);
-
-          try {
-            const myUserData = await getMyUser();
-            setIsOwnProfile(myUserData.id === userId);
-          } catch (err) {
-            setIsOwnProfile(false);
+          
+          // Verifica se é o próprio perfil usando o contexto
+          const isSelf = loggedUser?.id === userId;
+          setIsOwnProfile(isSelf);
+          
+          // Se for o próprio perfil, usa os dados do contexto
+          if (isSelf && loggedUser) {
+            setUser(loggedUser);
+          } else {
+            // Se for perfil de outro usuário, busca os dados
+            const userData = await getUsuario(userId);
+            setUser(userData);
           }
 
           const dados = await getUsuarioDetalhes(userId);
           setUsuarioDetalhes(dados);
         } else {
-          const userData = await getMyUser();
-          setUser(userData);
-          setIsOwnProfile(true);
-
-          const dados = await getUsuarioDetalhes(userData.id);
-          setUsuarioDetalhes(dados);
+          // Se não tiver ID, usa os dados do contexto
+          if (loggedUser) {
+            setUser(loggedUser);
+            setIsOwnProfile(true);
+            const dados = await getUsuarioDetalhes(loggedUser.id);
+            setUsuarioDetalhes(dados);
+          } else {
+            // Fallback caso o contexto ainda não tenha carregado
+            const userData = await getMyUser();
+            setUser(userData);
+            setIsOwnProfile(true);
+            const dados = await getUsuarioDetalhes(userData.id);
+            setUsuarioDetalhes(dados);
+          }
         }
       } catch (err: any) {
         console.error('Erro ao carregar detalhes do usuário:', err);
@@ -66,7 +73,7 @@ const Perfil: React.FC = () => {
     };
 
     carregarDadosUsuario();
-  }, [id]);
+  }, [id, loggedUser]);
 
   if (loading) {
     return (
@@ -109,12 +116,11 @@ const Perfil: React.FC = () => {
               onInteresseClick={() => {}}
             />
           </div>
-
           <div className="perfil-card perfil-historico-card">
             <PerfilHistorico
               nivel={usuarioDetalhes.nivel}
               tokens={usuarioDetalhes.tokens}
-              ranking={1}
+              ranking={usuarioDetalhes.posicaoRanking}
               xpAtual={usuarioDetalhes.xp}
               xpNecessario={1000}
               progresso={Math.round((usuarioDetalhes.xp / 1000) * 100)}

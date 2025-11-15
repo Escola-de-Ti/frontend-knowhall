@@ -103,6 +103,32 @@ export default function HistoricoTransacoes() {
 
         {loading ? (
           <div className="historico-loading">Carregando...</div>
+        ) : transacoes.length === 0 ? (
+          <div className="historico-empty">
+            <div className="empty-icon">📊</div>
+            <h2 className="empty-title">Nenhuma transação ainda</h2>
+            <p className="empty-description">
+              Comece a interagir com a comunidade para ganhar tokens!
+            </p>
+            <div className="empty-tips">
+              <div className="tip-item">
+                <span className="tip-icon">✍️</span>
+                <span className="tip-text">Crie posts e compartilhe conhecimento</span>
+              </div>
+              <div className="tip-item">
+                <span className="tip-icon">💬</span>
+                <span className="tip-text">Comente e ajude outros membros</span>
+              </div>
+              <div className="tip-item">
+                <span className="tip-icon">👍</span>
+                <span className="tip-text">Receba upvotes e supervotes</span>
+              </div>
+              <div className="tip-item">
+                <span className="tip-icon">🎓</span>
+                <span className="tip-text">Ministre workshops e ensine</span>
+              </div>
+            </div>
+          </div>
         ) : (
           <div className="transacoes-list">
             {transacoes.map((item) => {

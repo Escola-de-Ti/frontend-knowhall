@@ -14,6 +14,7 @@ import Ranking from './pages/Ranking';
 import Workshops from './pages/Workshops';
 import HistoricoTransacoes from './pages/HistoricoTransacoes';
 import { NotificationProvider } from './contexts/NotificationContext';
+import { UserProvider } from './contexts/UserContext';
 import EditarWorkshop from './pages/EditarWorkshop';
 
 function isAuth() {
@@ -42,22 +43,24 @@ function App() {
         }}
       />
       <NotificationProvider>
-        <Routes>
-          <Route path="/login" element={<Login />} />
-          <Route path="/cadastro" element={<Cadastro />} />
-          <Route path="/criar-post" element={<CriarPost />} />
-          <Route path="/criar-workshop" element={<CriarWorkshop />} />
-          <Route path="/workshops/:id/editar" element={<EditarWorkshop />} />
-          <Route path="/perfil" element={<Perfil />} />
-          <Route path="/perfil/:id" element={<Perfil />} />
-          <Route path="/feed" element={<Feed />} />
-          <Route path="/perfil/editar-perfil" element={<EditarPerfil />} />
-          <Route path="/ranking" element={<Ranking />} />
-          <Route path="/workshops" element={<Workshops />} />
-          <Route path="/historico-transacoes" element={<HistoricoTransacoes />} />
-          <Route path="/" element={home} />
-          <Route path="*" element={<NotFound />} />
-        </Routes>
+        <UserProvider>
+          <Routes>
+            <Route path="/login" element={<Login />} />
+            <Route path="/cadastro" element={<Cadastro />} />
+            <Route path="/criar-post" element={<CriarPost />} />
+            <Route path="/criar-workshop" element={<CriarWorkshop />} />
+            <Route path="/workshops/:id/editar" element={<EditarWorkshop />} />
+            <Route path="/perfil" element={<Perfil />} />
+            <Route path="/perfil/:id" element={<Perfil />} />
+            <Route path="/feed" element={<Feed />} />
+            <Route path="/perfil/editar-perfil" element={<EditarPerfil />} />
+            <Route path="/ranking" element={<Ranking />} />
+            <Route path="/workshops" element={<Workshops />} />
+            <Route path="/historico-transacoes" element={<HistoricoTransacoes />} />
+            <Route path="/" element={home} />
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+        </UserProvider>
       </NotificationProvider>
     </>
   );
