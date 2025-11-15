@@ -41,6 +41,10 @@ const API_CONFIG = {
     
     // Votos
     VOTOS: '/votos',
+
+    // Inscrições
+    INSCRICOES: '/inscricoes',
+
   },
   TIMEOUT: 30000,
 };

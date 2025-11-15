@@ -7,6 +7,8 @@ import {
   type WorkshopStatus,
 } from '../services/workshopService';
 import { authService } from '../services/authService';
+import { inscricaoService } from '../services/inscricaoService';
+import { useNotification } from '../contexts/NotificationContext';
 import NavBar from '../components/NavBar';
 import '../styles/Workshops.css';
 
@@ -24,6 +26,7 @@ interface UiWorkshop {
   status: WorkshopStatus;
   tokens?: number;
   rating?: number;
+  meetLink?: string;
 }
 
 const PAGE_SIZE = 6;
@@ -41,6 +44,7 @@ function mapToUi(w: WorkshopResponseDTO): UiWorkshop {
     status: w.status,
     tokens: w.custo,
     rating: undefined,
+    meetLink: w.linkMeet,
   };
 }
 
@@ -62,7 +66,10 @@ export default function Workshops() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [page, setPage] = useState(1);
+  const [inscrevendoId, setInscrevendoId] = useState<number | null>(null);
+
   const navigate = useNavigate();
+  const { addNotification } = useNotification();
 
   const emptyMessage = useMemo(() => {
     if (tab === 'inscritos') {
@@ -101,6 +108,17 @@ export default function Workshops() {
               ? todos.filter((w) => w.instrutorNome === nomeInstrutor)
               : todos;
           }
+        } else if (tab === 'inscritos') {
+          const inscricoes = await inscricaoService.listarMinhas();
+
+          if (inscricoes.length === 0) {
+            workshops = [];
+          } else {
+            const detalhes = await Promise.all(
+              inscricoes.map((i) => workshopService.buscarPorId(i.workshopId))
+            );
+            workshops = detalhes;
+          }
         } else {
           workshops = [];
         }
@@ -111,7 +129,9 @@ export default function Workshops() {
       } catch (e: any) {
         if (!mounted) return;
         console.error(e);
-        setError(e?.message || 'Erro ao carregar workshops');
+        const resp = e?.response?.data;
+        const msg = resp?.message || resp?.error || e?.message || 'Erro ao carregar workshops';
+        setError(msg);
         setData([]);
       } finally {
         if (mounted) setLoading(false);
@@ -143,13 +163,56 @@ export default function Workshops() {
   const showEmpty = !loading && !error && data.length === 0;
   const showContent = !loading && !error && data.length > 0;
 
+  async function handleInscrever(w: UiWorkshop) {
+    try {
+      setInscrevendoId(w.id);
+      setError(null);
+
+      await inscricaoService.inscrever(w.id);
+
+      addNotification({
+        title: 'Inscrição realizada',
+        subtitle: `Você foi inscrito em "${w.title}".`,
+        path: '/workshops?tab=inscritos',
+      });
+
+      setTab('inscritos');
+    } catch (e: any) {
+      const resp = e?.response?.data;
+      const msg = resp?.message || resp?.error || e?.message || 'Erro ao realizar inscrição';
+      setError(msg);
+    } finally {
+      setInscrevendoId(null);
+    }
+  }
+
+  function handleEntrar(w: UiWorkshop) {
+    if (!w.meetLink) {
+      addNotification({
+        title: 'Link indisponível',
+        subtitle: 'Este workshop ainda não possui link do Meet configurado.',
+      });
+      return;
+    }
+
+    try {
+      const url = new URL(w.meetLink);
+      window.open(url.toString(), '_blank', 'noopener,noreferrer');
+    } catch {
+      addNotification({
+        title: 'Link inválido',
+        subtitle: 'O link do Meet parece inválido. Fale com o instrutor.',
+      });
+    }
+  }
+
   return (
     <>
       <NavBar />
       <div className="wk-wrap">
         <div className="wk-header">
           <div className="wk-header-top">
-            <button className="wk-back" onClick={() => navigate(-1)}>
+            <button className="wk-back" onClick={() => navigate(-1)} type="button">
               <span className="ico-back" />
               Voltar
             </button>
@@ -274,10 +337,13 @@ export default function Workshops() {
                             <button
                               className="wk-cta"
                               type="button"
-                              onClick={() => navigate(`/workshops/${w.id}`)}
+                              disabled={inscrevendoId === w.id}
+                              onClick={() => handleInscrever(w)}
                             >
                               <span className="wk-cta-ico" />
-                              <span>Inscreva-se</span>
+                              <span>
+                                {inscrevendoId === w.id ? 'Inscrevendo...' : 'Inscreva-se'}
+                              </span>
                             </button>
                           </div>
                         ) : (
@@ -312,7 +378,7 @@ export default function Workshops() {
                         <button
                           className="wk-btn-join"
                           type="button"
-                          onClick={() => navigate(`/workshops/${w.id}`)}
+                          onClick={() => handleEntrar(w)}
                         >
                           <span className="ico-video" />
                           Entrar
