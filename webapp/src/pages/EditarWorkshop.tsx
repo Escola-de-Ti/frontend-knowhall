@@ -158,6 +158,10 @@ export default function EditarWorkshop() {
       },
     };
 
+    console.log('Payload PATCH /workshops:', {
+      id: workshopId,
+      body: payload,
+    });
 
     try {
       setSaving(true);
@@ -173,10 +177,6 @@ export default function EditarWorkshop() {
       navigate('/workshops');
     } catch (e: any) {
       const resp = e?.response?.data;
-        status: e?.response?.status,
-        data: resp,
-      });
-
       const msg =
         resp?.message || resp?.error || e?.message || 'Erro inesperado ao atualizar workshop';
 
