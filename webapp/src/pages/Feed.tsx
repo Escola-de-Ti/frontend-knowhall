@@ -1,13 +1,19 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useState, useRef, useCallback, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import '../styles/Feed.css';
+
 import NavBar from '../components/NavBar';
 import PostCard, { PostModel } from '../components/feed/Post';
 import WorkshopList, { WorkshopItem } from '../components/feed/WorkshopList';
 import RankingList from '../components/feed/RankingList';
-import PostDetailsModal, { PostDetails } from '../components/feed/PostDetailsModal';
+import PostDetailsModal, {
+  PostDetails,
+  PostCommentModel,
+} from '../components/feed/PostDetailsModal';
 import FilterMenu, { OrderByOption } from '../components/feed/FilterMenu';
 import { workshopService, WorkshopResponseDTO } from '../services/workshopService';
+
 import { useFeed } from '../hooks/useFeed';
 import { PostFeedDTO } from '../services/postService';
 import { votoService } from '../services/votoService';
@@ -17,7 +23,7 @@ import { usuarioService, RankingUsuarioDTO } from '../services/usuarioService';
 
 export default function Feed() {
   const navigate = useNavigate();
-
+  
   const { 
     posts, 
     loading, 
@@ -29,6 +35,7 @@ export default function Feed() {
     updatePost,
     setOrderBy 
   } = useFeed(10);
+
   const observerTarget = useRef<HTMLDivElement>(null);
 
   const [workshops, setWorkshops] = useState<WorkshopItem[]>([]);
@@ -41,6 +48,7 @@ export default function Feed() {
 
   const [open, setOpen] = useState(false);
   const [current, setCurrent] = useState<PostDetails | null>(null);
+  const [comments, setComments] = useState<PostCommentModel[]>([]);
 
   // Estado para controlar o menu de filtros
   const [filterMenuOpen, setFilterMenuOpen] = useState(false);
@@ -179,7 +187,10 @@ export default function Feed() {
       jaVotou: postApi.jaVotou,
     };
 
+    const cmts: PostCommentModel[] = [];
+
     setCurrent(post);
+    setComments(cmts);
     setOpen(true);
   };
 
@@ -193,7 +204,7 @@ export default function Feed() {
     [hasMore, loading, loadMore]
   );
 
-  useEffect(() => {
+  React.useEffect(() => {
     const element = observerTarget.current;
     if (!element) return;
 
@@ -210,40 +221,6 @@ export default function Feed() {
       observer.unobserve(element);
     };
   }, [handleObserver]);
-
-        const data: WorkshopResponseDTO[] = await workshopService.listar({
-          status: 'ABERTO',
-        });
-
-        const mapped: WorkshopItem[] = data.slice(0, 4).map((w) => {
-          let vagas = 'Encerrado';
-
-          if (w.status === 'ABERTO') {
-            vagas = 'Inscrições abertas';
-          } else if (w.status === 'EM_ANDAMENTO') {
-            vagas = 'Em andamento';
-          }
-
-          return {
-            id: w.id,
-            titulo: w.titulo,
-            data: workshopService.formatarData(w.dataInicio),
-            vagas,
-            duracao: `${workshopService.calcularDuracao(w.dataInicio, w.dataTermino)}h`,
-          };
-        });
-
-        setWorkshops(mapped);
-      } catch (e) {
-        console.error('Erro ao carregar workshops', e);
-        setWorkshops([]);
-      } finally {
-        setWsLoading(false);
-      }
-    }
-
-    loadWorkshops();
-  }, []);
 
   const handleCriarPost = () => {
     navigate('/criar-post');
@@ -386,7 +363,11 @@ export default function Feed() {
         </aside>
       </main>
 
-      <PostDetailsModal open={open} onClose={handleCloseModal} post={current} />
+      <PostDetailsModal
+        open={open}
+        onClose={handleCloseModal}
+        post={current}
+      />
     </div>
   );
 }
