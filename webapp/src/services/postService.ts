@@ -47,10 +47,13 @@ export interface FeedResponseDTO {
   lastScore: number;
 }
 
+export type OrderByOption = 'RELEVANCE' | 'UPVOTES_DESC' | 'UPVOTES_ASC' | 'DATE_DESC' | 'DATE_ASC';
+
 export interface FeedRequestParams {
   pageSize?: number;
   lastPostId?: string;
   lastScore?: number;
+  orderBy?: OrderByOption;
 }
 
 interface ValidationErrors {
@@ -134,10 +137,11 @@ class PostService {
   }
 
   async getFeed(params: FeedRequestParams = {}): Promise<FeedResponseDTO> {
-    const { pageSize = 10, lastPostId, lastScore } = params;
+    const { pageSize = 10, lastPostId, lastScore, orderBy = 'RELEVANCE' } = params;
 
     const queryParams = new URLSearchParams();
     queryParams.append('pageSize', pageSize.toString());
+    queryParams.append('orderBy', orderBy);
 
     if (lastPostId && lastScore !== undefined) {
       queryParams.append('lastPostId', lastPostId);

@@ -1,15 +1,16 @@
-import React, { useState, useRef, useCallback } from 'react';
+import React, { useState, useRef, useCallback, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import '../styles/Feed.css';
 
 import NavBar from '../components/NavBar';
 import PostCard, { PostModel } from '../components/feed/Post';
 import WorkshopList, { WorkshopItem } from '../components/feed/WorkshopList';
-import RankingList, { RankUser } from '../components/feed/RankingList';
+import RankingList from '../components/feed/RankingList';
 import PostDetailsModal, {
   PostDetails,
   PostCommentModel,
 } from '../components/feed/PostDetailsModal';
+import FilterMenu, { OrderByOption } from '../components/feed/FilterMenu';
 import { workshopService, WorkshopResponseDTO } from '../services/workshopService';
 
 import { useFeed } from '../hooks/useFeed';
@@ -17,48 +18,108 @@ import { PostFeedDTO } from '../services/postService';
 import { votoService } from '../services/votoService';
 import { getRelativeTime, getInitials } from '../utils/feedHelpers';
 
+import { usuarioService, RankingUsuarioDTO } from '../services/usuarioService';
+
 export default function Feed() {
   const navigate = useNavigate();
   
-  const { posts, loading, error, hasMore, loadMore, refresh, updatePost } = useFeed(10);
+  const { 
+    posts, 
+    loading, 
+    error, 
+    hasMore, 
+    orderBy,
+    loadMore, 
+    refresh, 
+    updatePost,
+    setOrderBy 
+  } = useFeed(10);
 
   const observerTarget = useRef<HTMLDivElement>(null);
 
-  const workshops: WorkshopItem[] = [
-    {
-      id: 1,
-      titulo: 'Introdução ao React Hooks',
-      data: '15 Set 2025',
-      vagas: '12/20',
-      duracao: '2h',
-    },
-    {
-      id: 2,
-      titulo: 'Clean Architecture na Prática',
-      data: '15 Set 2025',
-      vagas: '12/20',
-      duracao: '2h',
-    },
-    { id: 3, titulo: 'Introdução ao MySQL', data: '15 Set 2025', vagas: '12/20', duracao: '2h' },
-    { id: 4, titulo: 'SpringBoot + React', data: '15 Set 2025', vagas: '12/20', duracao: '2h' },
-  ];
+  const [workshops, setWorkshops] = useState<WorkshopItem[]>([]);
+  const [workshopsLoading, setWorkshopsLoading] = useState(true);
+  const [workshopsError, setWorkshopsError] = useState<string | null>(null);
 
-  const ranking: RankUser[] = [
-    { id: 1, nome: 'Matheus Rossini', iniciais: 'MR', nivel: 18, tokens: '5.650' },
-    { id: 2, nome: 'Kauan Bertalha', iniciais: 'KB', nivel: 17, tokens: '5.450' },
-    { id: 3, nome: 'Andre Jacob', iniciais: 'AJ', nivel: 15, tokens: '5.630' },
-    { id: 4, nome: 'Gabriel Marassi', iniciais: 'GM', nivel: 14, tokens: '4.860' },
-    { id: 5, nome: 'Willyan Tomaz', iniciais: 'WT', nivel: 13, tokens: '4.560' },
-    { id: 6, nome: 'Fulano Beltrano', iniciais: 'FB', nivel: 12, tokens: '4.310' },
-    { id: 7, nome: 'Ciclano Souza', iniciais: 'CS', nivel: 12, tokens: '4.200' },
-    { id: 8, nome: 'Bruno Dias', iniciais: 'BD', nivel: 11, tokens: '3.990' },
-    { id: 9, nome: 'Lari Santos', iniciais: 'LS', nivel: 11, tokens: '3.820' },
-    { id: 10, nome: 'Gabi Ferreira', iniciais: 'GF', nivel: 10, tokens: '3.600' },
-  ];
+  const [rankingList, setRankingList] = useState<RankingUsuarioDTO[]>([]);
+  const [rankingLoading, setRankingLoading] = useState(true);
+  const [rankingError, setRankingError] = useState<string | null>(null);
 
   const [open, setOpen] = useState(false);
   const [current, setCurrent] = useState<PostDetails | null>(null);
   const [comments, setComments] = useState<PostCommentModel[]>([]);
+
+  // Estado para controlar o menu de filtros
+  const [filterMenuOpen, setFilterMenuOpen] = useState(false);
+
+  const transformWorkshopToItem = (workshop: WorkshopResponseDTO): WorkshopItem => {
+    const duracao = workshopService.calcularDuracao(
+      workshop.dataInicio,
+      workshop.dataTermino
+    );
+
+    const dataFormatada = workshopService.formatarData(workshop.dataInicio);
+
+    const vagas = workshop.capacidade ? `${workshop.capacidade} vagas` : 'Ilimitado';
+
+    return {
+      id: workshop.id,
+      titulo: workshop.titulo,
+      data: dataFormatada,
+      vagas: vagas,
+      duracao: `${duracao}h`,
+    };
+  };
+
+  useEffect(() => {
+    async function carregarWorkshops() {
+      try {
+        setWorkshopsLoading(true);
+        setWorkshopsError(null);
+
+        const response = await workshopService.listarPorStatus('ABERTO');
+
+        const workshopsFuturos = response
+          .filter((w) => new Date(w.dataInicio) > new Date())
+          .sort((a, b) => 
+            new Date(a.dataInicio).getTime() - new Date(b.dataInicio).getTime()
+          )
+          .slice(0, 4);
+
+        const workshopsFormatados = workshopsFuturos.map(transformWorkshopToItem);
+
+        setWorkshops(workshopsFormatados);
+      } catch (err: any) {
+        console.error('Erro ao carregar workshops:', err);
+        setWorkshopsError('Não foi possível carregar os workshops.');
+      } finally {
+        setWorkshopsLoading(false);
+      }
+    }
+
+    carregarWorkshops();
+  }, []);
+
+  useEffect(() => {
+    async function carregarRanking() {
+      try {
+        setRankingLoading(true);
+        setRankingError(null);
+        
+        const response = await usuarioService.buscarRanking();
+        
+        setRankingList(response.rankingList.slice(0, 10)); 
+
+      } catch (err: any) {
+        console.error("Erro ao carregar ranking:", err);
+        setRankingError("Não foi possível carregar o ranking.");
+      } finally {
+        setRankingLoading(false);
+      }
+    }
+    
+    carregarRanking();
+  }, []);
 
   const handleCloseModal = () => {
     setOpen(false);
@@ -130,7 +191,7 @@ export default function Feed() {
     setCurrent(post);
     setComments(cmts);
     setOpen(true);
-  }
+  };
 
   const handleObserver = useCallback(
     (entries: IntersectionObserverEntry[]) => {
@@ -160,9 +221,24 @@ export default function Feed() {
     };
   }, [handleObserver]);
 
-
   const handleCriarPost = () => {
     navigate('/criar-post');
+  };
+
+  const handleVerMaisRanking = () => {
+    console.log("Clicou em 'Ver mais' no ranking");
+  };
+
+  const handleVerMaisWorkshops = () => {
+    navigate('/workshops');
+  };
+
+  const toggleFilterMenu = () => {
+    setFilterMenuOpen((prev) => !prev);
+  };
+
+  const handleOrderChange = (newOrder: OrderByOption) => {
+    setOrderBy(newOrder);
   };
 
   return (
@@ -178,19 +254,38 @@ export default function Feed() {
             </button>
           </div>
 
-        <WorkshopList itens={workshops} onVerMais={() => {}} />
-        
+          {workshopsLoading ? (
+            <div className="ws-panel" style={{ padding: '20px', textAlign: 'center' }}>
+              Carregando workshops...
+            </div>
+          ) : workshopsError ? (
+            <div className="ws-panel" style={{ padding: '20px', color: 'red', textAlign: 'center' }}>
+              {workshopsError}
+            </div>
+          ) : workshops.length > 0 ? (
+            <WorkshopList itens={workshops} onVerMais={handleVerMaisWorkshops} />
+          ) : (
+            <div className="ws-panel" style={{ padding: '20px', textAlign: 'center' }}>
+              Nenhum workshop disponível no momento.
+            </div>
+          )}
         </aside>
 
         <section className="feed-center">
           <div className="feed-filters-bar">
-            <button className="btn-filter" type="button" onClick={() => {}}>
+            <button className="btn-filter" type="button" onClick={toggleFilterMenu}>
               <span className="ico-filter" aria-hidden />
-              <span className="lbl-filter">Filtros</span>
+              <span className="lbl-filter">Ordenar</span>
             </button>
+
+            <FilterMenu
+              isOpen={filterMenuOpen}
+              onClose={() => setFilterMenuOpen(false)}
+              currentOrder={orderBy}
+              onOrderChange={handleOrderChange}
+            />
           </div>
 
-          {/* Mensagem de erro */}
           {error && (
             <div className="error-message" style={{ margin: '20px 0', textAlign: 'center' }}>
               {error}
@@ -207,7 +302,6 @@ export default function Feed() {
             </div>
           )}
 
-          {/* Lista de posts */}
           <div className="posts-stack">
             {posts.map((p) => (
               <PostCard
@@ -218,14 +312,12 @@ export default function Feed() {
               />
             ))}
 
-            {/* Loading inicial */}
             {loading && posts.length === 0 && (
               <div style={{ textAlign: 'center', padding: '40px' }}>
                 <p>Carregando posts...</p>
               </div>
             )}
 
-            {/* Nenhum post encontrado */}
             {!loading && posts.length === 0 && !error && (
               <div style={{ textAlign: 'center', padding: '40px' }}>
                 <p>Nenhum post encontrado.</p>
@@ -233,7 +325,6 @@ export default function Feed() {
             )}
           </div>
 
-          {/* Elemento observador para scroll infinito */}
           <div ref={observerTarget} style={{ height: '20px', margin: '20px 0' }}>
             {loading && posts.length > 0 && (
               <div style={{ textAlign: 'center' }}>
@@ -242,7 +333,6 @@ export default function Feed() {
             )}
           </div>
 
-          {/* Fim dos posts */}
           {!hasMore && posts.length > 0 && (
             <div style={{ textAlign: 'center', padding: '20px', color: '#888' }}>
               <p>Você chegou ao fim! 🎉</p>
@@ -251,7 +341,24 @@ export default function Feed() {
         </section>
 
         <aside className="feed-right">
-          <RankingList users={ranking} onVerMais={() => {}} />
+          {rankingLoading && (
+            <div className="rk-panel" style={{ padding: '20px', textAlign: 'center' }}>
+              Carregando ranking...
+            </div> 
+          )}
+          
+          {rankingError && (
+            <div className="rk-panel" style={{ padding: '20px', color: 'red', textAlign: 'center' }}>
+              {rankingError}
+            </div>
+          )}
+
+          {!rankingLoading && !rankingError && (
+            <RankingList 
+              users={rankingList} 
+              onVerMais={handleVerMaisRanking}
+            />
+          )}
         </aside>
       </main>
 

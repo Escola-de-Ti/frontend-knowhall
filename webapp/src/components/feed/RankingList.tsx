@@ -1,15 +1,33 @@
 import React from 'react';
 import '../../styles/feed/RankingList.css';
+import { RankingUsuarioDTO } from '../../services/usuarioService';  // Ajuste o caminho se necessário
 
-export type RankUser = {
-  id: number;
-  nome: string;
-  iniciais: string;
-  nivel: number;
-  tokens: string;
+
+function gerarIniciais(nome: string): string {
+  if (!nome) return '??';
+  const partes = nome.trim().split(' ');
+  if (partes.length === 0) return '??';
+
+  const primeiraLetra = partes[0][0] || '';
+  const ultimaLetra = partes.length > 1 ? (partes[partes.length - 1][0] || '') : '';
+
+  return `${primeiraLetra}${ultimaLetra}`.toUpperCase();
+}
+
+function formatarXP(xp: number): string {
+  if (xp >= 10000) {
+    return `${(xp / 1000).toFixed(0)}k`;
+  }
+  if (xp >= 1000) {
+    return `${(xp / 1000).toFixed(1)}k`;
+  }
+  return xp.toString();
+}
+
+type Props = { 
+  users: RankingUsuarioDTO[]; 
+  onVerMais?: () => void 
 };
-
-type Props = { users: RankUser[]; onVerMais?: () => void };
 
 export default function RankingList({ users, onVerMais }: Props) {
   return (
@@ -23,14 +41,16 @@ export default function RankingList({ users, onVerMais }: Props) {
       </header>
 
       <ul className="rk-list">
-        {users.map((u, idx) => {
-          const pos = idx + 1;
+        {users.map((u) => {
+          const pos = u.posicao; 
           const topClass = pos <= 3 ? `rk-top rk-${pos}` : '';
+
           return (
-            <li key={u.id} className={`rk-item ${topClass}`}>
+            <li key={u.posicao} className={`rk-item ${topClass}`}>
+              
               <span className="rk-pos">{pos}</span>
 
-              <div className="rk-avatar">{u.iniciais}</div>
+              <div className="rk-avatar">{gerarIniciais(u.nome)}</div>
 
               <div className="rk-main">
                 <strong className="rk-name" title={u.nome}>
@@ -39,9 +59,10 @@ export default function RankingList({ users, onVerMais }: Props) {
 
                 <div className="rk-badges">
                   <span className="pill level-pill">Nvl. {u.nivel}</span>
+                  
                   <span className="pill token-pill">
                     <img src="/token_ico.svg" alt="" className="rk-token-ico" />
-                    <span className="rk-token-val">{u.tokens}</span>
+                    <span className="rk-token-val">{formatarXP(u.qntdXp)}</span>
                   </span>
                 </div>
               </div>
@@ -49,11 +70,6 @@ export default function RankingList({ users, onVerMais }: Props) {
           );
         })}
       </ul>
-
-      <button className="rk-more" onClick={onVerMais} type="button">
-        <span className="rk-more-plus" aria-hidden />
-        <span className="rk-more-text">Ver mais</span>
-      </button>
     </aside>
   );
 }
