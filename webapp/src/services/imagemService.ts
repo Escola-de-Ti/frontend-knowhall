@@ -111,13 +111,11 @@ class ImagemService {
    * @returns true se for válido, caso contrário lança um erro
    */
   validarImagem(file: File, maxSizeMB: number = 5): boolean {
-    // Valida tipo
     const tiposPermitidos = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp', 'image/gif'];
     if (!tiposPermitidos.includes(file.type)) {
       throw new Error('Tipo de arquivo não permitido. Use JPG, PNG, WEBP ou GIF.');
     }
 
-    // Valida tamanho
     const maxSizeBytes = maxSizeMB * 1024 * 1024;
     if (file.size > maxSizeBytes) {
       throw new Error(`Arquivo muito grande. Tamanho máximo: ${maxSizeMB}MB`);

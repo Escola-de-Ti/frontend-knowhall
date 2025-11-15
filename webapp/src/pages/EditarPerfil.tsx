@@ -65,12 +65,10 @@ export default function EditarPerfil() {
         
         setBio(userData.biografia || '');
         
-        // Carregar tags do usuário
         if (userData.id) {
           const { getUsuarioDetalhes } = await import('../services/perfil.service');
           const detalhes = await getUsuarioDetalhes(userData.id);
           
-          // Tags já vêm com ID do backend
           setSelecionados(detalhes.tags.slice(0, 10));
           
           if (detalhes.imagemUrl) {
@@ -148,14 +146,12 @@ export default function EditarPerfil() {
       return;
     }
     
-    // Verificar se já existe
     if (selecionados.some(t => t.name.toLowerCase() === v.toLowerCase())) {
       setBuscaInteresse('');
       return;
     }
     
     try {
-      // Criar a tag no backend e obter o ID
       const novaTag = await tagService.createOrGet(v);
       setSelecionados((p) => [...p, novaTag]);
       setBuscaInteresse('');
@@ -204,8 +200,6 @@ export default function EditarPerfil() {
       setLoading(true);
       const token = localStorage.getItem('kh_access_token') || localStorage.getItem('kh_token') || '';
       const userData = await getMyUser();
-
-      // Tags já têm IDs, apenas enviar os IDs
       const tagIds = selecionados.map(tag => tag.id);
 
       const payload = {
@@ -213,18 +207,15 @@ export default function EditarPerfil() {
         telefone: telefone.replace(/\D/g, ''),
         nome,
         biografia: bio,
-        tags: tagIds, // Envia array de IDs das tags
+        tags: tagIds,
       };
 
       await editarPerfil(payload, token);
 
-      // Usar imagemService para atualizar a imagem
       if (file) {
         if (idImagemPerfil) {
-          // Se já existe uma imagem, atualiza
           await imagemService.atualizar(idImagemPerfil, file);
         } else {
-          // Se não existe, faz upload como nova imagem
           await imagemService.upload(file, {
             type: 'PERFIL',
             id_type: userData.id

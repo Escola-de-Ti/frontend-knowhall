@@ -1,6 +1,6 @@
 import React from 'react';
 import '../../styles/feed/RankingList.css';
-import { RankingUsuarioDTO } from '../../services/usuarioService';  // Ajuste o caminho se necessário
+import { RankingUsuarioDTO } from '../../services/usuarioService';
 
 
 function gerarIniciais(nome: string): string {

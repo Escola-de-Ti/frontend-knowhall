@@ -12,13 +12,12 @@ export default function Ranking() {
   const [userPosition, setUserPosition] = useState<number | null>(null);
   const [userXpThisMonth, setUserXpThisMonth] = useState<number | null>(null);
 
-  // Cores para os 3 primeiros lugares
   const getCorPorPosicao = (posicao: number): string => {
     switch (posicao) {
-      case 1: return '#b14cb3'; // Roxo
-      case 2: return '#2edba7'; // Verde
-      case 3: return '#4562f0'; // Azul
-      default: return '#666666'; // Cinza para os demais
+      case 1: return '#b14cb3';
+      case 2: return '#2edba7';
+      case 3: return '#4562f0';
+      default: return '#666666';
     }
   };
 

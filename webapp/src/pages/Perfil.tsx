@@ -26,14 +26,12 @@ const Perfil: React.FC = () => {
         setLoading(true);
         setError(null);
         
-        // Se tiver ID na URL, busca o usuário específico
         if (id) {
           const userId = parseInt(id);
           
           const userData = await getUsuario(userId);
           setUser(userData);
           
-          // Verificar se é o próprio perfil
           try {
             const myUserData = await getMyUser();
             setIsOwnProfile(myUserData.id === userId);
@@ -44,7 +42,6 @@ const Perfil: React.FC = () => {
           const dados = await getUsuarioDetalhes(userId);
           setUsuarioDetalhes(dados);
         } else {
-          // Se não tiver ID, busca o usuário logado
           const userData = await getMyUser();
           setUser(userData);
           setIsOwnProfile(true);
@@ -109,9 +106,9 @@ const Perfil: React.FC = () => {
             <PerfilHistorico
               nivel={usuarioDetalhes.nivel}
               tokens={usuarioDetalhes.tokens}
-              ranking={1} // Ranking não vem na API ainda
+              ranking={1}
               xpAtual={usuarioDetalhes.xp}
-              xpNecessario={1000} // XP necessário precisa ser calculado
+              xpNecessario={1000}
               progresso={Math.round((usuarioDetalhes.xp / 1000) * 100)}
               posts={usuarioDetalhes.qtdPosts}
               upvotes={usuarioDetalhes.qtdUpVotes + usuarioDetalhes.qtdSuperVotes}

@@ -37,20 +37,15 @@ export default function Feed() {
   } = useFeed(10);
 
   const observerTarget = useRef<HTMLDivElement>(null);
-
   const [workshops, setWorkshops] = useState<WorkshopItem[]>([]);
   const [workshopsLoading, setWorkshopsLoading] = useState(true);
   const [workshopsError, setWorkshopsError] = useState<string | null>(null);
-
   const [rankingList, setRankingList] = useState<RankingUsuarioDTO[]>([]);
   const [rankingLoading, setRankingLoading] = useState(true);
   const [rankingError, setRankingError] = useState<string | null>(null);
-
   const [open, setOpen] = useState(false);
   const [current, setCurrent] = useState<PostDetails | null>(null);
   const [comments, setComments] = useState<PostCommentModel[]>([]);
-
-  // Estado para controlar o menu de filtros
   const [filterMenuOpen, setFilterMenuOpen] = useState(false);
 
   const transformWorkshopToItem = (workshop: WorkshopResponseDTO): WorkshopItem => {

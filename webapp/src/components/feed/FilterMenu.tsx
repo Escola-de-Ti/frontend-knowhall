@@ -24,14 +24,12 @@ export default function FilterMenu({
   };
 
   const handleVotesClick = () => {
-    // Toggle entre mais votados e menos votados
     const newOrder = currentOrder === 'UPVOTES_DESC' ? 'UPVOTES_ASC' : 'UPVOTES_DESC';
     onOrderChange(newOrder);
     onClose();
   };
 
   const handleDateClick = () => {
-    // Toggle entre mais recentes e mais antigos
     const newOrder = currentOrder === 'DATE_DESC' ? 'DATE_ASC' : 'DATE_DESC';
     onOrderChange(newOrder);
     onClose();
@@ -112,7 +110,6 @@ export default function FilterMenu({
   );
 }
 
-// Função helper para obter o label do filtro ativo
 export function getFilterLabel(orderBy: OrderByOption): string {
   switch (orderBy) {
     case 'RELEVANCE':

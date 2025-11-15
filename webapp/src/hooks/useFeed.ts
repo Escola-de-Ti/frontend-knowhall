@@ -117,7 +117,7 @@ export function useFeed(pageSize: number = 10): UseFeedReturn {
 
   useEffect(() => {
     loadInitial(orderBy);
-  }, []); // Apenas na montagem inicial
+  }, []);
 
   return {
     posts,

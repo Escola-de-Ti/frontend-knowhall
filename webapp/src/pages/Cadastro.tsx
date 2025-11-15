@@ -115,7 +115,6 @@ const Cadastro: React.FC = () => {
     setLoading(true);
 
     try {
-      // Prepara os dados para envio
       const payload: UsuarioCreateDTO = {
         email: formData.email,
         cpf: removeMask(formData.cpf),
@@ -125,7 +124,6 @@ const Cadastro: React.FC = () => {
         tipoUsuario: 'ALUNO',
       };
 
-      // Chama o service para criar o usuário
       const usuario = await usuarioService.criar(payload);
 
       console.log('Usuário cadastrado com sucesso:', usuario);

@@ -39,7 +39,6 @@ export default function PerfilAtividades({ idUsuario = 1, isOwnProfile = false }
         const comentariosAPI = await comentarioService.listarPorUsuario(idUsuario);
         setComentarios(comentariosAPI);
         
-        // Converter comentários da API para o formato de Atividade
         const atividadesComentarios: Atividade[] = comentariosAPI.map((comentario) => ({
           id: comentario.comentarioId,
           tipo: 'COMENTARIO' as const,
@@ -50,7 +49,6 @@ export default function PerfilAtividades({ idUsuario = 1, isOwnProfile = false }
         setItens(atividadesComentarios);
       } catch (err) {
         console.error('Erro ao carregar comentários:', err);
-        // Mantém array vazio em caso de erro
         setItens([]);
         setComentarios([]);
       } finally {
@@ -101,7 +99,6 @@ export default function PerfilAtividades({ idUsuario = 1, isOwnProfile = false }
     try {
       await comentarioService.atualizar(id, { texto: textoEditado });
       
-      // Atualizar localmente
       setComentarios(prev => prev.map(c => 
         c.comentarioId === id ? { ...c, texto: textoEditado } : c
       ));
@@ -131,7 +128,6 @@ export default function PerfilAtividades({ idUsuario = 1, isOwnProfile = false }
     try {
       await comentarioService.deletar(id);
       
-      // Remover localmente
       setComentarios(prev => prev.filter(c => c.comentarioId !== id));
       setItens(prev => prev.filter(a => a.id !== id));
       

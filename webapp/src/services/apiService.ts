@@ -69,7 +69,6 @@ class ApiService {
         
         toast.error(errorMessage);
 
-      // Status 204 (No Content) não retorna corpo
       if (response.status === 204) {
         return undefined as T;
       }

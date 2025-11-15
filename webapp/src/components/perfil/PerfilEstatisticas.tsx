@@ -39,7 +39,6 @@ export default function PerfilEstatisticas({ idUsuario }: PerfilEstatisticasProp
           workshops: detalhes.qtdWorkshops,
         });
         
-        // Buscar resumo de transações
         const resumo = await buscarResumoTransacoes();
         setTokens({
           ganhos_total: resumo.totalRecebido,
