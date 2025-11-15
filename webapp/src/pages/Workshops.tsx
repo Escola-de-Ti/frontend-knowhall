@@ -64,6 +64,16 @@ export default function Workshops() {
   const [page, setPage] = useState(1);
   const navigate = useNavigate();
 
+  const emptyMessage = useMemo(() => {
+    if (tab === 'inscritos') {
+      return 'Você ainda não está inscrito em nenhum workshop.';
+    }
+    if (tab === 'meus') {
+      return 'Você ainda não criou nenhum workshop.';
+    }
+    return 'Nenhum workshop disponível no momento.';
+  }, [tab]);
+
   useEffect(() => {
     let mounted = true;
 
@@ -130,6 +140,9 @@ export default function Workshops() {
   const isInscritos = tab === 'inscritos';
   const isMeus = tab === 'meus';
 
+  const showEmpty = !loading && !error && data.length === 0;
+  const showContent = !loading && !error && data.length > 0;
+
   return (
     <>
       <NavBar />
@@ -169,18 +182,21 @@ export default function Workshops() {
             <button
               className={`wk-tab ${activeIdx === 0 ? 'is-active' : ''}`}
               onClick={() => setTab('disponiveis')}
+              type="button"
             >
               Workshops Disponíveis
             </button>
             <button
               className={`wk-tab ${activeIdx === 1 ? 'is-active' : ''}`}
               onClick={() => setTab('inscritos')}
+              type="button"
             >
               Inscritos
             </button>
             <button
               className={`wk-tab ${activeIdx === 2 ? 'is-active' : ''}`}
               onClick={() => setTab('meus')}
+              type="button"
             >
               Meus Workshops
             </button>
@@ -190,15 +206,9 @@ export default function Workshops() {
         {loading && <div className="wk-empty">Carregando workshops...</div>}
         {error && !loading && <div className="wk-empty">Erro: {error}</div>}
 
-        {!loading && !error && data.length === 0 && (
-          <div className="wk-empty">
-            {tab === 'inscritos'
-              ? 'Você ainda não está inscrito em nenhum workshop.'
-              : 'Nada por aqui.'}
-          </div>
-        )}
+        {showEmpty && <div className="wk-empty">{emptyMessage}</div>}
 
-        {!loading && !error && data.length > 0 && (
+        {showContent && (
           <>
             <div className={`wk-grid ${isInscritos ? 'is-enrolled' : ''}`}>
               {paginated.map((w) => {
@@ -218,9 +228,7 @@ export default function Workshops() {
                       )}
                       {isInscritos && (
                         <span
-                          className={`wk-chip-status ${
-                            w.status === 'CONCLUIDO' ? 'ok' : 'info'
-                          }`}
+                          className={`wk-chip-status ${w.status === 'CONCLUIDO' ? 'ok' : 'info'}`}
                         >
                           {statusLabel}
                         </span>
@@ -297,9 +305,7 @@ export default function Workshops() {
                           {typeof w.rating === 'number' && (
                             <div className="wk-inline">
                               <span className="wk-ico wk-star" />
-                              <span className="wk-inline-text">
-                                {w.rating.toFixed(1)}
-                              </span>
+                              <span className="wk-inline-text">{w.rating.toFixed(1)}</span>
                             </div>
                           )}
                         </div>
@@ -318,27 +324,29 @@ export default function Workshops() {
               })}
             </div>
 
-            <div className="wk-pagination">
-              <button
-                type="button"
-                className="wk-page-btn"
-                disabled={page <= 1}
-                onClick={() => setPage((p) => Math.max(1, p - 1))}
-              >
-                Anterior
-              </button>
-              <span className="wk-page-info">
-                Página {page} de {totalPages}
-              </span>
-              <button
-                type="button"
-                className="wk-page-btn"
-                disabled={page >= totalPages}
-                onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
-              >
-                Próxima
-              </button>
-            </div>
+            {totalPages > 1 && (
+              <div className="wk-pagination">
+                <button
+                  type="button"
+                  className="wk-page-btn"
+                  disabled={page <= 1}
+                  onClick={() => setPage((p) => Math.max(1, p - 1))}
+                >
+                  Anterior
+                </button>
+                <span className="wk-page-info">
+                  Página {page} de {totalPages}
+                </span>
+                <button
+                  type="button"
+                  className="wk-page-btn"
+                  disabled={page >= totalPages}
+                  onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
+                >
+                  Próxima
+                </button>
+              </div>
+            )}
           </>
         )}
       </div>

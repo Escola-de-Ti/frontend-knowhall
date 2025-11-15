@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useMemo, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import '../styles/CriarWorkshop.css';
 import NavBar from '../components/NavBar';
 import { workshopService } from '../services/workshopService';
@@ -36,6 +37,8 @@ function fmtDate(d?: string) {
 }
 
 export default function CriarWorkshop() {
+  const navigate = useNavigate();
+
   const [titulo, setTitulo] = useState('');
   const [tema, setTema] = useState('');
   const [descricaoTxt, setDescricaoTxt] = useState('');
@@ -60,7 +63,10 @@ export default function CriarWorkshop() {
   });
 
   const titleCount = useMemo(() => `${titulo.length}/100 Caracteres`, [titulo]);
-  const descCount = useMemo(() => `${descricaoTxt.length}/1000 Caracteres`, [descricaoTxt]);
+  const descCount = useMemo(
+    () => `${descricaoTxt.length}/1000 Caracteres`,
+    [descricaoTxt]
+  );
   const duracao = useMemo(
     () => calcDurationDays(dataInicio, dataTermino),
     [dataInicio, dataTermino]
@@ -169,12 +175,28 @@ export default function CriarWorkshop() {
 
       <div className="ws-container">
         <div className="ws-header">
-          <div className="ws-head-text">
-            <h1>Criar Workshop</h1>
-            <p>Compartilhe seu conhecimento com a comunidade.</p>
+          <div className="ws-header-left">
+            <button
+              type="button"
+              className="ws-btn-back"
+              onClick={() => navigate(-1)}
+            >
+              <span className="ws-ico-back" />
+              Voltar
+            </button>
+
+            <div className="ws-head-text">
+              <h1>Criar Workshop</h1>
+              <p>Compartilhe seu conhecimento com a comunidade.</p>
+            </div>
           </div>
+
           <div className="ws-actions">
-            <button type="button" className="ws-btn-cancel" onClick={resetForm}>
+            <button
+              type="button"
+              className="ws-btn-cancel"
+              onClick={resetForm}
+            >
               Cancelar
             </button>
             <button
@@ -215,11 +237,15 @@ export default function CriarWorkshop() {
                 </li>
                 <li className="ws-summary-row">
                   <span className="ws-summary-label">Custo</span>
-                  <span className="ws-chip">{custo !== '' ? `${custo} tokens` : '-'}</span>
+                  <span className="ws-chip">
+                    {custo !== '' ? `${custo} tokens` : '-'}
+                  </span>
                 </li>
                 <li className="ws-summary-row">
                   <span className="ws-summary-label">Capacidade</span>
-                  <span className="ws-chip">{capacidade !== '' ? capacidade : '-'}</span>
+                  <span className="ws-chip">
+                    {capacidade !== '' ? capacidade : '-'}
+                  </span>
                 </li>
                 <li className="ws-summary-row">
                   <span className="ws-summary-label">Link Meet</span>

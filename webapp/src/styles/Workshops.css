@@ -437,3 +437,59 @@
     0 2px 0 #0000002b inset;
   cursor: pointer;
 }
+
+/* estados vazios */
+.wk-empty {
+  max-width: 1260px;
+  margin: 60px auto 0;
+  padding: 40px 0;
+  text-align: center;
+  font-family: 'Manrope', sans-serif;
+  font-size: 15px;
+  color: #d0d0d0;
+  opacity: 0.9;
+}
+
+/* paginação */
+.wk-pagination {
+  max-width: 1260px;
+  margin: 26px auto 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  font-family: 'Manrope', sans-serif;
+}
+
+.wk-page-info {
+  font-size: 14px;
+  color: #f4f4f4;
+}
+
+.wk-page-btn {
+  min-width: 90px;
+  height: 32px;
+  padding: 0 12px;
+  border-radius: 999px;
+  border: 1px solid var(--stroke);
+  background: #242425;
+  color: #f4f4f4;
+  font-size: 13px;
+  font-weight: 700;
+  font-family: 'Manrope', sans-serif;
+  cursor: pointer;
+  transition:
+    background 0.18s ease,
+    border-color 0.18s ease,
+    opacity 0.18s ease;
+}
+
+.wk-page-btn:hover:not(:disabled) {
+  background: #2e2e30;
+  border-color: #7f68fd66;
+}
+
+.wk-page-btn:disabled {
+  opacity: 0.3;
+  cursor: default;
+}
