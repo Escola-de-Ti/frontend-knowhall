@@ -1,15 +1,10 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import React, { useMemo, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useEffect, useMemo, useState } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
 import '../styles/CriarWorkshop.css';
 import NavBar from '../components/NavBar';
-import { workshopService } from '../services/workshopService';
+import { workshopService, type WorkshopResponseDTO } from '../services/workshopService';
 import { useNotification } from '../contexts/NotificationContext';
-
-function toIsoDay(date: string, end?: boolean) {
-  if (!date) return date;
-  return end ? `${date}T23:59:59` : `${date}T00:00:00`;
-}
 
 function isValidUrl(url: string) {
   try {
@@ -36,9 +31,13 @@ function fmtDate(d?: string) {
   return dt.toLocaleDateString('pt-BR');
 }
 
-export default function CriarWorkshop() {
+export default function EditarWorkshop() {
   const navigate = useNavigate();
+  const { id } = useParams<{ id: string }>();
   const { addNotification } = useNotification();
+
+  const workshopId = Number(id);
+  const idInvalido = !Number.isFinite(workshopId) || workshopId <= 0;
 
   const [titulo, setTitulo] = useState('');
   const [tema, setTema] = useState('');
@@ -48,8 +47,8 @@ export default function CriarWorkshop() {
   const [linkMeet, setLinkMeet] = useState('');
   const [custo, setCusto] = useState('');
   const [capacidade, setCapacidade] = useState('');
-
-  const [loading, setLoading] = useState(false);
+  const [loadingInit, setLoadingInit] = useState(true);
+  const [saving, setSaving] = useState(false);
   const [errorGlobal, setErrorGlobal] = useState<string | null>(null);
   const [touched, setTouched] = useState({
     titulo: false,
@@ -90,8 +89,52 @@ export default function CriarWorkshop() {
     setTouched((t) => ({ ...t, [name]: true }));
   }
 
+  useEffect(() => {
+    if (idInvalido) {
+      setErrorGlobal('Workshop inválido');
+      setLoadingInit(false);
+      return;
+    }
+
+    let mounted = true;
+
+    async function load() {
+      try {
+        const wk: WorkshopResponseDTO = await workshopService.buscarPorId(workshopId);
+
+        if (!mounted) return;
+
+        setTitulo(wk.titulo ?? '');
+        setTema(wk.descricao?.tema ?? '');
+        setDescricaoTxt(wk.descricao?.descricao ?? '');
+        setLinkMeet(wk.linkMeet ?? '');
+        setCusto(wk.custo != null ? String(wk.custo) : '');
+        setCapacidade(wk.capacidade != null ? String(wk.capacidade) : '');
+        setDataInicio(wk.dataInicio ? wk.dataInicio.slice(0, 10) : '');
+        setDataTermino(wk.dataTermino ? wk.dataTermino.slice(0, 10) : '');
+      } catch (e: any) {
+        const resp = e?.response?.data;
+        const msg = resp?.message || resp?.error || e?.message || 'Erro ao carregar workshop';
+        setErrorGlobal(msg);
+      } finally {
+        if (mounted) setLoadingInit(false);
+      }
+    }
+
+    load();
+
+    return () => {
+      mounted = false;
+    };
+  }, [idInvalido, workshopId]);
+
   async function onSubmit() {
     setErrorGlobal(null);
+
+    if (idInvalido) {
+      setErrorGlobal('Workshop inválido');
+      return;
+    }
 
     if (hasErrors) {
       setTouched({
@@ -107,69 +150,68 @@ export default function CriarWorkshop() {
       return;
     }
 
-    const inicioIso = toIsoDay(dataInicio, false);
-    const terminoIso = toIsoDay(dataTermino, true);
+    const payload = {
+      titulo,
+      descricao: {
+        tema,
+        descricao: descricaoTxt,
+      },
+    };
 
-    const custoNum = Number(custo);
-    const capacidadeNum = Number(capacidade);
-
-    if (Number.isNaN(custoNum) || Number.isNaN(capacidadeNum)) {
-      setErrorGlobal('Custo e capacidade devem ser numéricos');
-      return;
-    }
+    console.log('Payload PATCH /workshops:', {
+      id: workshopId,
+      body: payload,
+    });
 
     try {
-      setLoading(true);
+      setSaving(true);
 
-      await workshopService.criar({
-        titulo,
-        linkMeet,
-        dataInicio: inicioIso,
-        dataTermino: terminoIso,
-        custo: custoNum,
-        capacidade: capacidadeNum,
-        descricao: {
-          tema,
-          descricao: descricaoTxt,
-        },
-      });
-
-      resetForm();
+      await workshopService.atualizar(workshopId, payload);
 
       addNotification({
-        title: 'Workshop criado com sucesso',
-        subtitle: 'Ele já está em "Meus Workshops".',
+        title: 'Workshop atualizado com sucesso',
+        subtitle: 'As alterações foram salvas.',
         path: '/workshops',
       });
 
       navigate('/workshops');
     } catch (e: any) {
-      setErrorGlobal(e?.message || 'Erro inesperado ao criar workshop');
+      const resp = e?.response?.data;
+      console.log('Erro ao atualizar workshop:', {
+        status: e?.response?.status,
+        data: resp,
+      });
+
+      const msg =
+        resp?.message || resp?.error || e?.message || 'Erro inesperado ao atualizar workshop';
+
+      setErrorGlobal(msg);
     } finally {
-      setLoading(false);
+      setSaving(false);
     }
   }
 
-  function resetForm() {
-    setTitulo('');
-    setTema('');
-    setDescricaoTxt('');
-    setDataInicio('');
-    setDataTermino('');
-    setLinkMeet('');
-    setCusto('');
-    setCapacidade('');
-    setTouched({
-      titulo: false,
-      tema: false,
-      descricao: false,
-      dataInicio: false,
-      dataTermino: false,
-      linkMeet: false,
-      custo: false,
-      capacidade: false,
-    });
-    setErrorGlobal(null);
+  if (loadingInit) {
+    return (
+      <>
+        <NavBar />
+        <div className="ws-container">
+          <div className="ws-header">
+            <div className="ws-header-left">
+              <button type="button" className="ws-btn-back" onClick={() => navigate(-1)}>
+                <span className="ws-ico-back" />
+                Voltar
+              </button>
+
+              <div className="ws-head-text">
+                <h1>Editar Workshop</h1>
+                <p>Carregando dados do workshop...</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </>
+    );
   }
 
   return (
@@ -185,28 +227,27 @@ export default function CriarWorkshop() {
             </button>
 
             <div className="ws-head-text">
-              <h1>Criar Workshop</h1>
-              <p>Compartilhe seu conhecimento com a comunidade.</p>
+              <h1>Editar Workshop</h1>
+              <p>Ajuste título, datas, custo e descrição.</p>
             </div>
           </div>
 
           <div className="ws-actions">
-            <button type="button" className="ws-btn-cancel" onClick={resetForm}>
+            <button type="button" className="ws-btn-cancel" onClick={() => navigate('/workshops')}>
               Cancelar
             </button>
             <button
               type="button"
               className="ws-btn-save"
-              disabled={loading || hasErrors}
+              disabled={saving || hasErrors}
               onClick={onSubmit}
             >
-              {loading ? 'Salvando...' : 'Publicar'}
+              {saving ? 'Salvando...' : 'Salvar alterações'}
             </button>
           </div>
         </div>
 
         <div className="ws-grid">
-          {/* COLUNA ESQUERDA – RESUMO */}
           <aside className="ws-left">
             <section className="ws-card ws-summary">
               <h3 className="ws-summary-title">Resumo do Workshop</h3>
@@ -247,7 +288,6 @@ export default function CriarWorkshop() {
             </section>
           </aside>
 
-          {/* COLUNA CENTRAL – FORM */}
           <section className="ws-card ws-center">
             <h2 className="ws-title-gradient">Conteúdo do Workshop</h2>
 
@@ -415,11 +455,11 @@ export default function CriarWorkshop() {
 
           <aside className="ws-right">
             <section className="ws-card">
-              <h2 className="ws-title-gradient">Dicas para bons Workshops:</h2>
+              <h2 className="ws-title-gradient">Dicas:</h2>
               <ul className="ws-tips-list">
-                <li>Use um título claro e descritivo</li>
-                <li>Defina bem o tema e o público-alvo</li>
-                <li>Inclua exemplos práticos ou código quando possível</li>
+                <li>Atualize o título para refletir melhor o conteúdo.</li>
+                <li>Revise datas, custo e capacidade.</li>
+                <li>Deixe a descrição clara para quem está chegando agora.</li>
               </ul>
             </section>
           </aside>

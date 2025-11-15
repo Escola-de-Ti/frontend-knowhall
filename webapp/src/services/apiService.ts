@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { authService } from './authService';
 import { buildApiUrl } from '../config/api.config';
 import toast from 'react-hot-toast';

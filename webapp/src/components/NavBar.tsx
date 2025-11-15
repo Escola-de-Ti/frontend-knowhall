@@ -1,20 +1,27 @@
-import React from 'react';
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import SideMenu from './SideMenu';
 import NotificationMenu from '../components/NotificationMenu';
+import { authService } from '../services/authService';
+import { useNotification } from '../contexts/NotificationContext';
 import '../styles/NavBar.css';
 
 export default function NavBar() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [notifOpen, setNotifOpen] = useState(false);
   const navigate = useNavigate();
+  const { items, markAsRead } = useNotification();
 
   const go = (path: string) => {
     navigate(path);
     setMenuOpen(false);
     setNotifOpen(false);
   };
+
+  function handleLogout() {
+    authService.logout();
+    navigate('/login');
+  }
 
   return (
     <>
@@ -46,12 +53,22 @@ export default function NavBar() {
             >
               <span className="bell" aria-hidden />
             </button>
-            <NotificationMenu open={notifOpen} onClose={() => setNotifOpen(false)} onGo={go} />
+            <NotificationMenu
+              open={notifOpen}
+              onClose={() => setNotifOpen(false)}
+              onGo={go}
+              items={items}
+              onMarkAsRead={markAsRead}
+            />
           </div>
 
           <button className="profile" onClick={() => go('/perfil')}>
             <div className="avatar">AJ</div>
             <span className="profile-name">Andre Jacob</span>
+          </button>
+
+          <button className="nav-logout" onClick={handleLogout}>
+            Sair
           </button>
         </div>
       </header>

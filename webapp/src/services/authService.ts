@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { buildApiUrl } from '../config/api.config';
 import API_CONFIG from '../config/api.config';
 
@@ -10,10 +11,11 @@ interface JwtTokenDTO {
 
 interface DecodedToken {
   sub: string;
-  iss: string;
-  iat: number;
-  exp: number;
-  typ: string;
+  iss?: string;
+  iat?: number;
+  exp?: number;
+  typ?: string;
+  [key: string]: any;
 }
 
 const TOKEN_KEY = 'kh_access_token';
@@ -22,9 +24,10 @@ const TOKEN_EXPIRY_KEY = 'kh_token_expiry';
 
 class AuthService {
   saveTokens(tokenData: JwtTokenDTO): void {
+    const expiresAt = Date.now() + tokenData.expires_in * 1000;
     localStorage.setItem(TOKEN_KEY, tokenData.access_token);
     localStorage.setItem(REFRESH_TOKEN_KEY, tokenData.refresh_token);
-    localStorage.setItem(TOKEN_EXPIRY_KEY, tokenData.expires_in.toString());
+    localStorage.setItem(TOKEN_EXPIRY_KEY, String(expiresAt));
   }
 
   getAccessToken(): string | null {
@@ -68,12 +71,65 @@ class AuthService {
     }
   }
 
-  getUserEmail(): string | null {
+  private getDecodedToken(): DecodedToken | null {
     const token = this.getAccessToken();
     if (!token) return null;
+    return this.decodeToken(token);
+  }
 
-    const decoded = this.decodeToken(token);
+  getUserEmail(): string | null {
+    const decoded = this.getDecodedToken();
     return decoded?.sub || null;
+  }
+
+  getUsuarioNome(): string | null {
+    const decoded = this.getDecodedToken();
+    if (!decoded) return null;
+
+    const possibleKeys = ['nome', 'name', 'fullName', 'usuarioNome'];
+
+    for (const key of possibleKeys) {
+      const value = decoded[key];
+      if (typeof value === 'string' && value.trim()) return value;
+    }
+
+    return null;
+  }
+
+  getUsuarioId(): number | null {
+    const decoded = this.getDecodedToken();
+    if (!decoded) return null;
+
+    const candidateKeys = ['id', 'userId', 'usuarioId', 'instrutorId', 'user_id', 'usuario_id'];
+
+    for (const key of candidateKeys) {
+      const value = decoded[key];
+      if (typeof value === 'number') return value;
+      if (typeof value === 'string') {
+        const num = Number(value);
+        if (!Number.isNaN(num)) return num;
+      }
+    }
+
+    const subNum = Number(decoded.sub);
+    if (!Number.isNaN(subNum)) return subNum;
+
+    for (const [key, value] of Object.entries(decoded)) {
+      if (key === 'iat' || key === 'exp' || key === 'nbf') continue;
+
+      if (typeof value === 'number' && Number.isInteger(value)) return value;
+
+      if (typeof value === 'string') {
+        const num = Number(value);
+        if (!Number.isNaN(num)) return num;
+      }
+    }
+
+    return null;
+  }
+
+  getInstrutorId(): number | null {
+    return this.getUsuarioId();
   }
 
   clearTokens(): void {

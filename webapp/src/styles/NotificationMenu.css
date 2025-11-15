@@ -72,3 +72,9 @@
 .nm-ver-todas:hover {
   background: rgba(255, 255, 255, 0.05);
 }
+
+.nm-empty {
+  padding: 16px 18px;
+  font-size: 14px;
+  color: #a0a0ad;
+}

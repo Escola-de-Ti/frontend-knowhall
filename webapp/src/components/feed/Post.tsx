@@ -10,22 +10,19 @@ export type PostModel = {
   tags: string[];
   metrica: { comentarios: number; upvotes: number };
   tempo: string;
-  jaVotou: boolean; // ← NOVO: Indica se o usuário já votou neste post
+  jaVotou: boolean;
 };
 
 type Props = {
   post: PostModel;
   onMoreClick?: (id: number) => void;
-  onVote?: (postId: number) => Promise<void>; // ← NOVO: Handler para votar
+  onVote?: (postId: number) => Promise<void>;
 };
 
 export default function Post({ post, onMoreClick, onVote }: Props) {
   const navigate = useNavigate();
   const [isVoting, setIsVoting] = useState(false);
 
-  /**
-   * Handler do botão de upvote
-   */
   const handleVote = async (e: React.MouseEvent) => {
     e.stopPropagation();
 
@@ -41,9 +38,6 @@ export default function Post({ post, onMoreClick, onVote }: Props) {
     }
   };
 
-  /**
-   * Handler para navegar ao perfil do autor
-   */
   const handleAutorClick = (e: React.MouseEvent) => {
     e.stopPropagation();
     if (post.autor.id) {

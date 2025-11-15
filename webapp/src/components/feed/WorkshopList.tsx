@@ -1,4 +1,5 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import '../../styles/feed/WorkshopList.css';
 
 export type WorkshopItem = {
@@ -12,6 +13,16 @@ export type WorkshopItem = {
 type Props = { itens: WorkshopItem[]; onVerMais?: () => void };
 
 export default function WorkshopList({ itens, onVerMais }: Props) {
+  const navigate = useNavigate();
+
+  function goToWorkshops() {
+    if (onVerMais) {
+      onVerMais();
+      return;
+    }
+    navigate('/workshops');
+  }
+
   return (
     <aside className="ws-panel">
       <header className="ws-head">
@@ -24,7 +35,19 @@ export default function WorkshopList({ itens, onVerMais }: Props) {
 
       <ul className="ws-list">
         {itens.map((w) => (
-          <li key={w.id} className="ws-item" role="button" tabIndex={0}>
+          <li
+            key={w.id}
+            className="ws-item"
+            role="button"
+            tabIndex={0}
+            onClick={goToWorkshops}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                goToWorkshops();
+              }
+            }}
+          >
             <div className="ws-line1">
               <span className="ws-title ws-title-pixel">{w.titulo}</span>
               <span className="ws-pill">
@@ -50,8 +73,9 @@ export default function WorkshopList({ itens, onVerMais }: Props) {
         ))}
       </ul>
 
-      <button className="ws-more" onClick={onVerMais}>
-        <span className="ws-more-plus">+</span> <span className="ws-more-text">Ver mais</span>
+      <button className="ws-more" onClick={goToWorkshops}>
+        <span className="ws-more-plus">+</span>
+        <span className="ws-more-text">Ver mais</span>
       </button>
     </aside>
   );
