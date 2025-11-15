@@ -219,13 +219,33 @@ export default function EditarPerfil() {
       await editarPerfil(payload, token);
 
       if (file) {
-        if (idImagemPerfil) {
-          await imagemService.atualizar(idImagemPerfil, file);
-        } else {
-          await imagemService.upload(file, {
-            type: 'PERFIL',
-            id_type: userData.id,
-          });
+        try {
+          if (idImagemPerfil) {
+            // Tenta atualizar a imagem existente
+            await imagemService.atualizar(idImagemPerfil, file);
+          } else {
+            // Cria uma nova imagem se não existir
+            const novaImagem = await imagemService.upload(file, {
+              type: 'USUARIO'
+            });
+            if (novaImagem) {
+              setIdImagemPerfil(novaImagem.id);
+            }
+          }
+        } catch (imageError) {
+          console.error('Erro ao atualizar imagem, tentando criar nova:', imageError);
+          // Se falhar ao atualizar, tenta criar uma nova
+          try {
+            const novaImagem = await imagemService.upload(file, {
+              type: 'USUARIO'
+            });
+            if (novaImagem) {
+              setIdImagemPerfil(novaImagem.id);
+            }
+          } catch (uploadError) {
+            console.error('Erro ao criar nova imagem:', uploadError);
+            throw new Error('Não foi possível salvar a imagem do perfil.');
+          }
         }
       }
 

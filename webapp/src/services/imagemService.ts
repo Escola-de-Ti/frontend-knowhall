@@ -1,8 +1,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { apiService } from './apiService';
-import API_CONFIG from '../config/api.config';
+import API_CONFIG, { buildApiUrl } from '../config/api.config';
 
-export type ImagemType = 'POST' | 'WORKSHOP' | 'PERFIL';
+export type ImagemType = 'POST' | 'WORKSHOP' | 'USUARIO';
 
 export interface ImagemResponseDTO {
   id: number;
@@ -16,7 +16,7 @@ export interface ImagemResponseDTO {
 
 export interface ImagemUploadParams {
   type: ImagemType;
-  id_type: number;
+  id_type?: number;
 }
 
 class ImagemService {
@@ -30,12 +30,14 @@ class ImagemService {
     try {
       const queryParams = new URLSearchParams();
       queryParams.append('type', params.type);
-      queryParams.append('id_type', params.id_type.toString());
+      if(params.id_type){
+        queryParams.append('id_type', params.id_type.toString());
+      }
 
       const url = `${API_CONFIG.ENDPOINTS.IMAGEM_UPLOAD}?${queryParams.toString()}`;
 
       const token = localStorage.getItem('kh_access_token');
-      const response = await fetch(`${API_CONFIG.BASE_URL}${API_CONFIG.API_PREFIX}${url}`, {
+      const response = await fetch(buildApiUrl(url), {
         method: 'POST',
         headers: {
           Authorization: `Bearer ${token}`,
@@ -79,7 +81,7 @@ class ImagemService {
     try {
       const token = localStorage.getItem('kh_access_token');
       const response = await fetch(
-        `${API_CONFIG.BASE_URL}${API_CONFIG.API_PREFIX}${API_CONFIG.ENDPOINTS.IMAGEM_UPDATE}/${id}`,
+        buildApiUrl(`${API_CONFIG.ENDPOINTS.IMAGEM_UPDATE}/${id}`),
         {
           method: 'PUT',
           headers: {
