@@ -21,7 +21,7 @@ import WorkshopParticipantes from './pages/WorkshopParticipantes'; // 🔹 NOVO 
 function isAuth() {
   const basic = import.meta.env.VITE_API_USER;
   const token = localStorage.getItem('kh_access_token');
-  return !!token || !!basic;
+  return !!token && !!basic;
 }
 
 function PrivateRoute({ children }: { children: JSX.Element }) {
