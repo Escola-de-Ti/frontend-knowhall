@@ -11,7 +11,6 @@ export interface TagCreateDTO {
 }
 
 class TagService {
-
   async createOrGet(name: string): Promise<TagResponseDTO> {
     const dto: TagCreateDTO = { name: name.trim() };
     return apiService.post<TagResponseDTO>(API_CONFIG.ENDPOINTS.TAGS, dto, true);
@@ -23,12 +22,12 @@ class TagService {
   }
 
   async processMultipleTags(tagNames: string[]): Promise<number[]> {
-    const uniqueNames = [...new Set(tagNames.map(name => name.trim()).filter(Boolean))];
-    
-    const promises = uniqueNames.map(name => this.createOrGet(name));
+    const uniqueNames = [...new Set(tagNames.map((name) => name.trim()).filter(Boolean))];
+
+    const promises = uniqueNames.map((name) => this.createOrGet(name));
     const tags = await Promise.all(promises);
-    
-    return tags.map(tag => tag.id);
+
+    return tags.map((tag) => tag.id);
   }
 }
 

@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import '../styles/Perfil.css';
@@ -8,7 +10,13 @@ import PerfilSlide from '../components/perfil/PerfilSlide';
 import PerfilEstatisticas from '../components/perfil/PerfilEstatisticas';
 import PerfilPosts from '../components/perfil/PerfilPosts';
 import NavBar from '../components/NavBar';
-import { getUsuario, getUsuarioDetalhes, getMyUser, type UsuarioDetalhesDTO, UsuarioDTO } from '../services/perfil.service';
+import {
+  getUsuario,
+  getUsuarioDetalhes,
+  getMyUser,
+  type UsuarioDetalhesDTO,
+  UsuarioDTO,
+} from '../services/perfil.service';
 
 const Perfil: React.FC = () => {
   const navigate = useNavigate();
@@ -25,27 +33,27 @@ const Perfil: React.FC = () => {
       try {
         setLoading(true);
         setError(null);
-        
+
         if (id) {
           const userId = parseInt(id);
-          
+
           const userData = await getUsuario(userId);
           setUser(userData);
-          
+
           try {
             const myUserData = await getMyUser();
             setIsOwnProfile(myUserData.id === userId);
           } catch (err) {
             setIsOwnProfile(false);
           }
-          
+
           const dados = await getUsuarioDetalhes(userId);
           setUsuarioDetalhes(dados);
         } else {
           const userData = await getMyUser();
           setUser(userData);
           setIsOwnProfile(true);
-          
+
           const dados = await getUsuarioDetalhes(userData.id);
           setUsuarioDetalhes(dados);
         }
@@ -96,7 +104,7 @@ const Perfil: React.FC = () => {
               id_imagem_perfil={usuarioDetalhes.imagemUrl}
               status_usuario="ATIVO"
               tipo_usuario="PADRAO"
-              interesses={usuarioDetalhes.tags.map(tag => tag.name)}
+              interesses={usuarioDetalhes.tags.map((tag) => tag.name)}
               onEditar={isOwnProfile ? () => navigate('/perfil/editar-perfil') : undefined}
               onInteresseClick={() => {}}
             />
@@ -129,7 +137,9 @@ const Perfil: React.FC = () => {
         </div>
 
         {aba === 'Posts' && <PerfilPosts idUsuario={user?.id!} />}
-        {aba === 'Atividades' && <PerfilAtividades idUsuario={user?.id!} isOwnProfile={isOwnProfile} />}
+        {aba === 'Atividades' && (
+          <PerfilAtividades idUsuario={user?.id!} isOwnProfile={isOwnProfile} />
+        )}
         {aba === 'Estatísticas' && <PerfilEstatisticas idUsuario={user?.id!} />}
       </div>
     </div>

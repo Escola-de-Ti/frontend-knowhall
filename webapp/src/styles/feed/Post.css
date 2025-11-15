@@ -179,7 +179,8 @@
   mask: url('data:image/svg+xml;utf8,\
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">\
 <path fill="%23000" d="M20 2H4a2 2 0 0 0-2 2v18l4-4h14a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2m0 12H5.17L4 15.17V4h16z"/>\
-</svg>') no-repeat center/contain;
+</svg>')
+    no-repeat center/contain;
   background: var(--muted);
   transition: background 0.2s ease;
 }
@@ -263,7 +264,8 @@
 
 /* Animação de pulse durante voto */
 @keyframes pulse {
-  0%, 100% {
+  0%,
+  100% {
     transform: scale(1);
   }
   50% {
@@ -336,7 +338,9 @@
   border-radius: 50%;
   background: rgba(147, 255, 107, 0.1);
   transform: translate(-50%, -50%);
-  transition: width 0.6s, height 0.6s;
+  transition:
+    width 0.6s,
+    height 0.6s;
 }
 
 .kpi-up:active::after {
@@ -354,7 +358,7 @@
     padding: 8px 10px;
     font-size: 13px;
   }
-  
+
   .ico-up {
     width: 14px;
     height: 14px;
@@ -376,15 +380,15 @@
   .kpi-up {
     color: #aaa;
   }
-  
+
   .kpi-up:hover {
-  background: rgba(147, 255, 107, 0.1);
-  color: #7fff6b;
+    background: rgba(147, 255, 107, 0.1);
+    color: #7fff6b;
   }
-  
+
   .kpi-up.active {
-  background: rgba(147, 255, 107, 0.1);
-  color: #7fff6b;
+    background: rgba(147, 255, 107, 0.1);
+    color: #7fff6b;
   }
 }
 

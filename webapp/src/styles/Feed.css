@@ -29,18 +29,18 @@
   align-items: start;
 }
 
-.feed-left  { 
+.feed-left {
   margin-top: 0;
 }
 
-.feed-center{ 
+.feed-center {
   margin-top: 0;
 }
 
 .feed-right {
   margin-top: calc(var(--filters-h) + 23px);
   align-self: start;
-  position: sticky; 
+  position: sticky;
   top: 96px;
 }
 
@@ -84,7 +84,9 @@
     0 0 18px rgba(91, 228, 203, 0.25),
     0 0 22px rgba(132, 118, 217, 0.18);
   cursor: pointer;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
 }
 
 .btn-create:hover {
@@ -138,7 +140,9 @@
     0 0 14px rgba(226, 131, 208, 0.22),
     0 0 18px rgba(154, 121, 215, 0.16);
   cursor: pointer;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
 }
 
 .btn-filter:hover {

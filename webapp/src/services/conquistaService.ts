@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { apiService } from './apiService';
 import API_CONFIG from '../config/api.config';
 

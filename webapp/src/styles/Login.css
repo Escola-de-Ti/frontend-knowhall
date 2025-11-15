@@ -4,15 +4,17 @@
   --bg: #171717;
   --card: #373737;
   --muted: #1b1b1f;
-  --text: #FFFFFF;
-  --soft: #DFDFDF;
+  --text: #ffffff;
+  --soft: #dfdfdf;
   --stroke: rgba(255, 255, 255, 0.08);
   --g1: #55f6c9;
   --g2: #6c6fec;
   --radius: 22px;
 }
 
-html, body, #root {
+html,
+body,
+#root {
   height: 100vh;
   overflow: hidden;
   margin: 0;
@@ -136,7 +138,7 @@ body {
   min-height: 48px;
   padding: 12px 16px;
   border-radius: 8px;
-  background: #4A4A4A;
+  background: #4a4a4a;
   border: 1px solid var(--stroke);
   color: var(--text);
   outline: none;
@@ -154,13 +156,13 @@ body {
 }
 
 .req::after {
-  content: " *";
-  color: #FF0000;
+  content: ' *';
+  color: #ff0000;
 }
 
 /* link "esqueci minha senha" */
 .forgot {
-  color: #5468FF;
+  color: #5468ff;
   text-decoration: none;
   font-size: 13px;
   text-align: right;
@@ -218,8 +220,7 @@ body {
   max-width: 320px;
   width: 100%;
   height: auto;
-  filter:
-    drop-shadow(-18px 18px 0 rgba(0, 0, 0, 0.35))
+  filter: drop-shadow(-18px 18px 0 rgba(0, 0, 0, 0.35))
     drop-shadow(0 0 70px rgba(108, 255, 211, 0.25));
 }
 
@@ -271,19 +272,21 @@ body {
     height: auto;
     min-height: 100vh;
   }
-  
-  html, body, #root {
+
+  html,
+  body,
+  #root {
     overflow-y: auto;
   }
-  
+
   .kh {
     height: auto;
   }
-  
+
   .kh-side {
     display: none;
   }
-  
+
   .kh-login .kh-side,
   .kh-login .kh-col {
     order: unset;
@@ -294,7 +297,7 @@ body {
   .kh-btn {
     width: 100%;
   }
-  
+
   .kh-card {
     padding: 24px 20px;
   }

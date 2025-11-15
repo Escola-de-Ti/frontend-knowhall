@@ -36,9 +36,9 @@ export default function PerfilHistorico({
     <section className="history-container" aria-labelledby="history-title">
       <header className="history-header">
         {isOwnProfile && (
-          <button 
-            id="history-title" 
-            className="history-title" 
+          <button
+            id="history-title"
+            className="history-title"
             type="button"
             onClick={() => navigate('/historico-transacoes')}
           >

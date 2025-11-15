@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useRef, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 
 type Preview = { id: string; file: File; url: string };
 
@@ -19,14 +19,14 @@ const ImagePicker: React.FC<ImagePickerProps> = ({
   const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
-    previews.forEach(p => URL.revokeObjectURL(p.url));
+    previews.forEach((p) => URL.revokeObjectURL(p.url));
     const next: Preview[] = value.map((file, i) => ({
       id: `${file.name}-${file.size}-${i}-${crypto.randomUUID()}`,
       file,
       url: URL.createObjectURL(file),
     }));
     setPreviews(next);
-    return () => next.forEach(p => URL.revokeObjectURL(p.url));
+    return () => next.forEach((p) => URL.revokeObjectURL(p.url));
   }, [value]);
 
   const remaining = useMemo(() => Math.max(0, maxFiles - value.length), [maxFiles, value.length]);
@@ -38,7 +38,7 @@ const ImagePicker: React.FC<ImagePickerProps> = ({
   function validate(files: File[]) {
     const valid: File[] = [];
     for (const f of files) {
-      if (!f.type.startsWith("image/")) continue;
+      if (!f.type.startsWith('image/')) continue;
       if (f.size > maxSizeMB * 1024 * 1024) continue;
       valid.push(f);
     }
@@ -51,7 +51,7 @@ const ImagePicker: React.FC<ImagePickerProps> = ({
     const valid = validate(incoming);
 
     const dedup = valid.filter(
-      nf => !value.some(v => v.name === nf.name && v.size === nf.size)
+      (nf) => !value.some((v) => v.name === nf.name && v.size === nf.size)
     );
 
     if (dedup.length === 0) return;
@@ -64,7 +64,7 @@ const ImagePicker: React.FC<ImagePickerProps> = ({
   }
 
   function onRemove(id: string) {
-    const keep = previews.filter(p => p.id !== id).map(p => p.file);
+    const keep = previews.filter((p) => p.id !== id).map((p) => p.file);
     onChange(keep);
   }
 
@@ -72,7 +72,7 @@ const ImagePicker: React.FC<ImagePickerProps> = ({
     <div className="uploader">
       {/* Dropzone / botão */}
       <div
-        className={`load-file ${remaining === 0 ? "disabled" : ""}`}
+        className={`load-file ${remaining === 0 ? 'disabled' : ''}`}
         onDragOver={(e) => e.preventDefault()}
         onDrop={onDrop}
         onClick={pickMore}
@@ -96,8 +96,8 @@ const ImagePicker: React.FC<ImagePickerProps> = ({
         </svg>
         <p>
           {remaining > 0
-            ? "Clique para adicionar imagens ou arraste aqui"
-            : "Limite de imagens atingido"}
+            ? 'Clique para adicionar imagens ou arraste aqui'
+            : 'Limite de imagens atingido'}
         </p>
         <input
           ref={inputRef}

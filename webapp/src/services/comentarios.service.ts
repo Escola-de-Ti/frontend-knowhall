@@ -51,10 +51,7 @@ class ComentarioService {
    */
   async criar(data: CreateComentarioDTO): Promise<ComentarioResponseDTO> {
     try {
-      return await apiService.post<ComentarioResponseDTO>(
-        API_CONFIG.ENDPOINTS.COMENTARIOS,
-        data
-      );
+      return await apiService.post<ComentarioResponseDTO>(API_CONFIG.ENDPOINTS.COMENTARIOS, data);
     } catch (error) {
       console.error('Erro ao criar comentário:', error);
       throw error;
@@ -66,10 +63,7 @@ class ComentarioService {
    */
   async responder(data: CreateComentarioDTO): Promise<ComentarioResponseDTO> {
     try {
-      return await apiService.post<ComentarioResponseDTO>(
-        API_CONFIG.ENDPOINTS.COMENTARIOS,
-        data
-      );
+      return await apiService.post<ComentarioResponseDTO>(API_CONFIG.ENDPOINTS.COMENTARIOS, data);
     } catch (error) {
       console.error('Erro ao responder comentário:', error);
       throw error;
@@ -161,10 +155,7 @@ class ComentarioService {
   /**
    * Atualiza o texto de um comentário
    */
-  async atualizar(
-    comentarioId: number,
-    data: UpdateComentarioDTO
-  ): Promise<ComentarioResponseDTO> {
+  async atualizar(comentarioId: number, data: UpdateComentarioDTO): Promise<ComentarioResponseDTO> {
     try {
       return await apiService.patch<ComentarioResponseDTO>(
         `${API_CONFIG.ENDPOINTS.COMENTARIOS}/${comentarioId}`,
@@ -181,9 +172,7 @@ class ComentarioService {
    */
   async deletar(comentarioId: number): Promise<void> {
     try {
-      await apiService.delete<void>(
-        `${API_CONFIG.ENDPOINTS.COMENTARIOS}/${comentarioId}`
-      );
+      await apiService.delete<void>(`${API_CONFIG.ENDPOINTS.COMENTARIOS}/${comentarioId}`);
     } catch (error) {
       console.error('Erro ao deletar comentário:', error);
       throw error;
@@ -230,11 +219,11 @@ class ComentarioService {
     if (diffMinutos < 60) return `${diffMinutos}m`;
     if (diffHoras < 24) return `${diffHoras}h`;
     if (diffDias < 7) return `${diffDias}d`;
-    
+
     return data.toLocaleDateString('pt-BR', {
       day: '2-digit',
       month: '2-digit',
-      year: 'numeric'
+      year: 'numeric',
     });
   }
 

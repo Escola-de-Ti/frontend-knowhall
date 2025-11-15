@@ -1,5 +1,5 @@
-import React, { useEffect, useMemo, useRef, useState } from "react";
-import "../../styles/perfil/PerfilSlide.css";
+import React, { useEffect, useMemo, useRef, useState } from 'react';
+import '../../styles/perfil/PerfilSlide.css';
 
 type Props = {
   tabs: string[];
@@ -9,10 +9,7 @@ type Props = {
 
 export default function PerfilSlide({ tabs, value, onChange }: Props) {
   const containerRef = useRef<HTMLDivElement>(null);
-  const btnRefs = useMemo(
-    () => tabs.map(() => React.createRef<HTMLButtonElement>()),
-    [tabs]
-  );
+  const btnRefs = useMemo(() => tabs.map(() => React.createRef<HTMLButtonElement>()), [tabs]);
   const [box, setBox] = useState({ x: 0, w: 0 });
 
   const recalc = () => {
@@ -27,14 +24,14 @@ export default function PerfilSlide({ tabs, value, onChange }: Props) {
 
   useEffect(() => {
     recalc();
-  }, [value, tabs.join("|")]);
+  }, [value, tabs.join('|')]);
 
   useEffect(() => {
     const ro = new ResizeObserver(recalc);
     if (containerRef.current) ro.observe(containerRef.current);
-    window.addEventListener("resize", recalc);
+    window.addEventListener('resize', recalc);
     return () => {
-      window.removeEventListener("resize", recalc);
+      window.removeEventListener('resize', recalc);
       ro.disconnect();
     };
   }, []);
@@ -46,8 +43,8 @@ export default function PerfilSlide({ tabs, value, onChange }: Props) {
       role="tablist"
       style={
         {
-          "--x": `${box.x}px`,
-          "--w": `${box.w}px`,
+          '--x': `${box.x}px`,
+          '--w': `${box.w}px`,
         } as React.CSSProperties
       }
     >
@@ -58,7 +55,7 @@ export default function PerfilSlide({ tabs, value, onChange }: Props) {
           <button
             key={t}
             ref={btnRefs[i]}
-            className={`perfil-slide-tab${active ? " is-active" : ""}`}
+            className={`perfil-slide-tab${active ? ' is-active' : ''}`}
             role="tab"
             aria-selected={active}
             onClick={() => onChange(t)}

@@ -1,8 +1,9 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useMemo, useRef, useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import NavBar from '../components/NavBar';
 import '../styles/EditarPerfil.css';
-import { editarPerfil, uploadAvatar } from '../services/editar.perfil.service';
+import { editarPerfil } from '../services/editar.perfil.service';
 import { getMyUser } from '../services/perfil.service';
 import { imagemService } from '../services/imagemService';
 import { tagService } from '../services/tagService';
@@ -50,32 +51,36 @@ export default function EditarPerfil() {
         const userData = await getMyUser();
         setNome(userData.nome || '');
         setEmail(userData.email || '');
-        
+
         const tel = userData.telefone || '';
         if (tel) {
           const digits = tel.replace(/\D/g, '');
           if (digits.length === 11) {
-            setTelefone(`(${digits.substring(0, 2)}) ${digits.substring(2, 7)}-${digits.substring(7)}`);
+            setTelefone(
+              `(${digits.substring(0, 2)}) ${digits.substring(2, 7)}-${digits.substring(7)}`
+            );
           } else if (digits.length === 10) {
-            setTelefone(`(${digits.substring(0, 2)}) ${digits.substring(2, 6)}-${digits.substring(6)}`);
+            setTelefone(
+              `(${digits.substring(0, 2)}) ${digits.substring(2, 6)}-${digits.substring(6)}`
+            );
           } else {
             setTelefone(tel);
           }
         }
-        
+
         setBio(userData.biografia || '');
-        
+
         if (userData.id) {
           const { getUsuarioDetalhes } = await import('../services/perfil.service');
           const detalhes = await getUsuarioDetalhes(userData.id);
-          
+
           setSelecionados(detalhes.tags.slice(0, 10));
-          
+
           if (detalhes.imagemUrl) {
             setImagemPerfilUrl(detalhes.imagemUrl);
           }
         }
-        
+
         if (userData.idImagemPerfil) {
           setIdImagemPerfil(userData.idImagemPerfil);
         }
@@ -123,7 +128,7 @@ export default function EditarPerfil() {
 
   function toggleInteresse(tag: TagComId) {
     setSelecionados((prev) => {
-      if (prev.some(t => t.id === tag.id)) {
+      if (prev.some((t) => t.id === tag.id)) {
         const next = prev.filter((t) => t.id !== tag.id);
         setErrors((e) => ({ ...e, interesses: undefined }));
         return next;
@@ -145,12 +150,12 @@ export default function EditarPerfil() {
       setErrors((e) => ({ ...e, interesses: 'Você pode adicionar no máximo 10 interesses.' }));
       return;
     }
-    
-    if (selecionados.some(t => t.name.toLowerCase() === v.toLowerCase())) {
+
+    if (selecionados.some((t) => t.name.toLowerCase() === v.toLowerCase())) {
       setBuscaInteresse('');
       return;
     }
-    
+
     try {
       const novaTag = await tagService.createOrGet(v);
       setSelecionados((p) => [...p, novaTag]);
@@ -198,9 +203,10 @@ export default function EditarPerfil() {
     if (!validar()) return;
     try {
       setLoading(true);
-      const token = localStorage.getItem('kh_access_token') || localStorage.getItem('kh_token') || '';
+      const token =
+        localStorage.getItem('kh_access_token') || localStorage.getItem('kh_token') || '';
       const userData = await getMyUser();
-      const tagIds = selecionados.map(tag => tag.id);
+      const tagIds = selecionados.map((tag) => tag.id);
 
       const payload = {
         email,
@@ -218,13 +224,13 @@ export default function EditarPerfil() {
         } else {
           await imagemService.upload(file, {
             type: 'PERFIL',
-            id_type: userData.id
+            id_type: userData.id,
           });
         }
       }
 
       setMsg({ type: 'ok', text: 'Perfil atualizado com sucesso.' });
-      
+
       setTimeout(() => {
         navigate('/perfil');
       }, 1500);
@@ -390,7 +396,7 @@ export default function EditarPerfil() {
               {populares.map((tag) => (
                 <button
                   key={tag.id}
-                  className={`ep-chip ${selecionados.some(t => t.id === tag.id) ? 'ep-chip-selected' : ''}`}
+                  className={`ep-chip ${selecionados.some((t) => t.id === tag.id) ? 'ep-chip-selected' : ''}`}
                   onClick={() => toggleInteresse(tag)}
                   disabled={loading}
                 >

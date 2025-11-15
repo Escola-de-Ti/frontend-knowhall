@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { apiService } from './apiService';
 import API_CONFIG from '../config/api.config';
 import { TagResponseDTO } from './tagService';
@@ -34,7 +35,7 @@ export interface PostFeedDTO {
   descricao: string;
   totalUpVotes: number;
   tags: TagResponseDTO[];
-  dataCriacao: string; 
+  dataCriacao: string;
   relevanceScore: number;
   tagsEmComum: number;
   jaVotou: boolean;
@@ -109,11 +110,7 @@ export interface PostSearchParams {
 
 class PostService {
   async criar(dados: PostCreateDTO): Promise<PostResponseDTO> {
-    return apiService.post<PostResponseDTO>(
-      API_CONFIG.ENDPOINTS.POSTS,
-      dados,
-      true
-    );
+    return apiService.post<PostResponseDTO>(API_CONFIG.ENDPOINTS.POSTS, dados, true);
   }
 
   validateFormData(data: PostFormData): string[] {
@@ -159,10 +156,7 @@ class PostService {
 
   async listarTodos(): Promise<PostResponseDTO[]> {
     try {
-      const response = await apiService.get<PostResponseDTO[]>(
-        API_CONFIG.ENDPOINTS.POSTS,
-        true
-      );
+      const response = await apiService.get<PostResponseDTO[]>(API_CONFIG.ENDPOINTS.POSTS, true);
       return response;
     } catch (error: any) {
       console.error('Erro ao listar posts:', error);
@@ -212,10 +206,7 @@ class PostService {
 
   async deletar(id: string): Promise<void> {
     try {
-      await apiService.delete<void>(
-        `${API_CONFIG.ENDPOINTS.POSTS}/${id}`,
-        true
-      );
+      await apiService.delete<void>(`${API_CONFIG.ENDPOINTS.POSTS}/${id}`, true);
     } catch (error: any) {
       console.error('Erro ao deletar post:', error);
       throw error;
@@ -245,7 +236,7 @@ class PostService {
   }
 
   async getPostDetailsComPaginacao(
-    id: number, 
+    id: number,
     pageSize: number = 10,
     lastComentarioId?: number
   ): Promise<PostDetalhesDTO> {

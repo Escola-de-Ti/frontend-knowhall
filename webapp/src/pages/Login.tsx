@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useState, FormEvent, ChangeEvent, useEffect } from 'react';
 import SlideLogin from '../components/SlideLogin';
 import '../styles/Login.css';
@@ -146,7 +147,7 @@ const Login: React.FC = () => {
         </div>
       </div>
     </div>
-  )
-}
+  );
+};
 
 export default Login;

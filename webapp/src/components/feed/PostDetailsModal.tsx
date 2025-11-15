@@ -1,7 +1,8 @@
-import React, { useEffect, useMemo, useState } from 'react';
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import '../../styles/feed/PostDetailsModal.css';
-import { postService, PostDetalhesDTO } from '../../services/postService';
+import { postService } from '../../services/postService';
 import { comentarioService, ComentarioResponseDTO } from '../../services/comentarioService';
 import { votoService } from '../../services/votoService';
 import { getInitials, getRelativeTime } from '../../utils/feedHelpers';
@@ -28,8 +29,8 @@ export type PostCommentModel = {
   supervotes: number;
   respostas?: PostCommentModel[];
   hasMoreReplies?: boolean;
-  repliesLoaded?: boolean; 
-  totalRespostas?: number; 
+  repliesLoaded?: boolean;
+  totalRespostas?: number;
   jaVotou?: boolean;
   jaSuperVotou?: boolean;
 };
@@ -78,7 +79,7 @@ export default function PostDetailsModal({ open, onClose, post: initialPost }: P
             iniciais: getInitials(data.usuarioNome),
             nivel: 10,
           },
-          tags: data.tags.map(t => t.name),
+          tags: data.tags.map((t) => t.name),
           metrica: {
             upvotes: data.totalUpVotes,
             supervotes: 0,
@@ -89,8 +90,8 @@ export default function PostDetailsModal({ open, onClose, post: initialPost }: P
         };
 
         const rootComments = data.comentarios
-          .filter(c => !c.comentarioPaiId)
-          .map(dto => mapComentarioDTO(dto));
+          .filter((c) => !c.comentarioPaiId)
+          .map((dto) => mapComentarioDTO(dto));
 
         setDetails(mappedPost);
         setLocalComments(rootComments);
@@ -117,8 +118,6 @@ export default function PostDetailsModal({ open, onClose, post: initialPost }: P
       document.body.style.overflow = prev;
     };
   }, [open, onClose]);
-
-  const CURRENT_USER: PostUser = useMemo(() => ({ nome: 'Você', iniciais: 'VC', nivel: 1 }), []);
 
   if (!open) return null;
 
@@ -179,7 +178,7 @@ export default function PostDetailsModal({ open, onClose, post: initialPost }: P
 
       if (replyTarget === 'post') {
         setLocalComments((prev) => [mapped, ...prev]);
-        
+
         setDetails((prev) => {
           if (!prev) return prev;
           return {
@@ -326,11 +325,7 @@ export default function PostDetailsModal({ open, onClose, post: initialPost }: P
           <div className="head-col">
             <h3 className="title">{activePost.titulo}</h3>
             <div className="meta">
-              <span 
-                className="autor" 
-                onClick={handleAutorClick}
-                style={{ cursor: 'pointer' }}
-              >
+              <span className="autor" onClick={handleAutorClick} style={{ cursor: 'pointer' }}>
                 {activePost.autor.nome}
               </span>
               <span className="dot" />
@@ -366,7 +361,7 @@ export default function PostDetailsModal({ open, onClose, post: initialPost }: P
             >
               <span className="ico-up" aria-hidden />
               <span>{activePost.metrica.upvotes}</span>
-            </button>          
+            </button>
             <button className="btn com" type="button" onClick={openReplyForPost}>
               <span className="ico-com" aria-hidden />
               <span>{activePost.metrica.comentarios}</span>
@@ -609,7 +604,7 @@ function CommentNode({
           {c.autor.iniciais}
         </div>
         <div className="author">
-          <span 
+          <span
             className="nome"
             onClick={(e) => {
               e.stopPropagation();

@@ -35,9 +35,7 @@ export async function buscarHistoricoTransacoes(
   params.append('size', size.toString());
 
   return (
-    await http.get<HistoricoTransacoesResponseDTO>(
-      `/api/historico-transacoes?${params.toString()}`
-    )
+    await http.get<HistoricoTransacoesResponseDTO>(`/api/historico-transacoes?${params.toString()}`)
   ).data;
 }
 

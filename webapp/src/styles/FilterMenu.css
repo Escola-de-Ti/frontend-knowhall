@@ -18,8 +18,9 @@
   border-image: linear-gradient(135deg, #a855f7, #ec4899) 1;
   border-radius: 12px;
   padding: 8px;
-  box-shadow: 0 8px 24px rgba(168, 85, 247, 0.3), 
-              0 0 40px rgba(168, 85, 247, 0.1);
+  box-shadow:
+    0 8px 24px rgba(168, 85, 247, 0.3),
+    0 0 40px rgba(168, 85, 247, 0.1);
   z-index: 1000;
   animation: filterMenuSlide 0.2s ease-out;
 }
@@ -86,7 +87,6 @@
   color: #a855f7;
 }
 
-
 .feed-filters-bar {
   position: relative;
   margin-bottom: 7px;
@@ -133,6 +133,6 @@
 
 /* Ícone de filtro SVG - você pode substituir por um ícone real */
 .ico-filter::before {
-  content: "▼";
+  content: '▼';
   font-size: 12px;
 }

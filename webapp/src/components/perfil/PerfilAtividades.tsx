@@ -9,7 +9,7 @@ type Atividade = {
   snippet: string;
 };
 
-type Props = { 
+type Props = {
   idUsuario?: number;
   isOwnProfile?: boolean;
 };
@@ -33,19 +33,19 @@ export default function PerfilAtividades({ idUsuario = 1, isOwnProfile = false }
   useEffect(() => {
     const carregarComentarios = async () => {
       if (!idUsuario) return;
-      
+
       try {
         setLoading(true);
         const comentariosAPI = await comentarioService.listarPorUsuario(idUsuario);
         setComentarios(comentariosAPI);
-        
+
         const atividadesComentarios: Atividade[] = comentariosAPI.map((comentario) => ({
           id: comentario.comentarioId,
           tipo: 'COMENTARIO' as const,
           data: comentario.dataCriacao,
           snippet: comentario.texto,
         }));
-        
+
         setItens(atividadesComentarios);
       } catch (err) {
         console.error('Erro ao carregar comentários:', err);
@@ -85,7 +85,7 @@ export default function PerfilAtividades({ idUsuario = 1, isOwnProfile = false }
     });
 
   const handleEditar = (id: number) => {
-    const comentario = comentarios.find(c => c.comentarioId === id);
+    const comentario = comentarios.find((c) => c.comentarioId === id);
     if (comentario) {
       setEditando(id);
       setTextoEditado(comentario.texto);
@@ -95,17 +95,15 @@ export default function PerfilAtividades({ idUsuario = 1, isOwnProfile = false }
 
   const handleSalvarEdicao = async (id: number) => {
     if (!textoEditado.trim()) return;
-    
+
     try {
       await comentarioService.atualizar(id, { texto: textoEditado });
-      
-      setComentarios(prev => prev.map(c => 
-        c.comentarioId === id ? { ...c, texto: textoEditado } : c
-      ));
-      setItens(prev => prev.map(a => 
-        a.id === id ? { ...a, snippet: textoEditado } : a
-      ));
-      
+
+      setComentarios((prev) =>
+        prev.map((c) => (c.comentarioId === id ? { ...c, texto: textoEditado } : c))
+      );
+      setItens((prev) => prev.map((a) => (a.id === id ? { ...a, snippet: textoEditado } : a)));
+
       setEditando(null);
       setTextoEditado('');
     } catch (err) {
@@ -127,10 +125,10 @@ export default function PerfilAtividades({ idUsuario = 1, isOwnProfile = false }
   const handleConfirmarExclusao = async (id: number) => {
     try {
       await comentarioService.deletar(id);
-      
-      setComentarios(prev => prev.filter(c => c.comentarioId !== id));
-      setItens(prev => prev.filter(a => a.id !== id));
-      
+
+      setComentarios((prev) => prev.filter((c) => c.comentarioId !== id));
+      setItens((prev) => prev.filter((a) => a.id !== id));
+
       setDeletando(null);
     } catch (err) {
       console.error('Erro ao excluir comentário:', err);
@@ -159,8 +157,7 @@ export default function PerfilAtividades({ idUsuario = 1, isOwnProfile = false }
         <>
           <div className="atividades-list">
             {itens.map((a) => {
-              const comentario = comentarios.find(c => c.comentarioId === a.id);
-              
+
               return (
                 <article key={a.id} className="atividade-card">
                   <div className="atividade-left">
@@ -180,16 +177,13 @@ export default function PerfilAtividades({ idUsuario = 1, isOwnProfile = false }
                         autoFocus
                       />
                       <div className="edit-actions">
-                        <button 
-                          className="edit-btn edit-btn-save" 
+                        <button
+                          className="edit-btn edit-btn-save"
                           onClick={() => handleSalvarEdicao(a.id)}
                         >
                           Salvar
                         </button>
-                        <button 
-                          className="edit-btn edit-btn-cancel" 
-                          onClick={handleCancelarEdicao}
-                        >
+                        <button className="edit-btn edit-btn-cancel" onClick={handleCancelarEdicao}>
                           Cancelar
                         </button>
                       </div>
@@ -211,15 +205,15 @@ export default function PerfilAtividades({ idUsuario = 1, isOwnProfile = false }
 
                       {openMenu === a.id && (
                         <div role="menu" className="kebab-menu">
-                          <button 
-                            role="menuitem" 
+                          <button
+                            role="menuitem"
                             className="kebab-item"
                             onClick={() => handleExcluir(a.id)}
                           >
                             Excluir
                           </button>
-                          <button 
-                            role="menuitem" 
+                          <button
+                            role="menuitem"
                             className="kebab-item"
                             onClick={() => handleEditar(a.id)}
                           >
@@ -240,16 +234,13 @@ export default function PerfilAtividades({ idUsuario = 1, isOwnProfile = false }
                 <h4>Confirmar exclusão</h4>
                 <p>Tem certeza que deseja excluir este comentário?</p>
                 <div className="delete-modal-actions">
-                  <button 
-                    className="delete-btn delete-btn-confirm" 
+                  <button
+                    className="delete-btn delete-btn-confirm"
                     onClick={() => handleConfirmarExclusao(deletando)}
                   >
                     Excluir
                   </button>
-                  <button 
-                    className="delete-btn delete-btn-cancel" 
-                    onClick={handleCancelarExclusao}
-                  >
+                  <button className="delete-btn delete-btn-cancel" onClick={handleCancelarExclusao}>
                     Cancelar
                   </button>
                 </div>

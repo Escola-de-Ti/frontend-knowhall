@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import '../../styles/perfil/PerfilEstatisticas.css';
-import { getUsuarioDetalhes, type UsuarioDetalhesDTO } from '../../services/perfil.service';
-import { buscarResumoTransacoes, type ResumoTransacoesDTO } from '../../services/historicoService';
+import { getUsuarioDetalhes } from '../../services/perfil.service';
+import { buscarResumoTransacoes } from '../../services/historicoService';
 
 type ContribuicaoStats = {
   posts: number;
@@ -24,21 +24,21 @@ type PerfilEstatisticasProps = {
 export default function PerfilEstatisticas({ idUsuario }: PerfilEstatisticasProps) {
   const [contrib, setContrib] = useState<ContribuicaoStats | null>(null);
   const [tokens, setTokens] = useState<TokenStats | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [, setLoading] = useState(true);
 
   useEffect(() => {
     const carregarEstatisticas = async () => {
       try {
         setLoading(true);
         const detalhes = await getUsuarioDetalhes(idUsuario);
-        
+
         setContrib({
           posts: detalhes.qtdPosts,
           comentarios: detalhes.qtdComentarios,
           upvotesDados: detalhes.qtdUpVotes + detalhes.qtdSuperVotes,
           workshops: detalhes.qtdWorkshops,
         });
-        
+
         const resumo = await buscarResumoTransacoes();
         setTokens({
           ganhos_total: resumo.totalRecebido,

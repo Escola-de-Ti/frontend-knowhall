@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useState, useEffect } from 'react';
 import '../styles/Ranking.css';
 import NavBar from '../components/NavBar';
@@ -8,16 +9,20 @@ export default function Ranking() {
   const [rankingData, setRankingData] = useState<RankingUsuarioDTO[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  
+
   const [userPosition, setUserPosition] = useState<number | null>(null);
   const [userXpThisMonth, setUserXpThisMonth] = useState<number | null>(null);
 
   const getCorPorPosicao = (posicao: number): string => {
     switch (posicao) {
-      case 1: return '#b14cb3';
-      case 2: return '#2edba7';
-      case 3: return '#4562f0';
-      default: return '#666666';
+      case 1:
+        return '#b14cb3';
+      case 2:
+        return '#2edba7';
+      case 3:
+        return '#4562f0';
+      default:
+        return '#666666';
     }
   };
 
@@ -26,13 +31,12 @@ export default function Ranking() {
       try {
         setLoading(true);
         setError(null);
-        
+
         const response = await usuarioService.buscarRanking();
-        
+
         setRankingData(response.rankingList.slice(0, 50));
         setUserPosition(response.usuarioLogado.posicao);
         setUserXpThisMonth(response.usuarioLogado.xpRecebidoUltimos30Dias);
-        
       } catch (err: any) {
         console.error('Erro ao carregar ranking:', err);
         setError('Não foi possível carregar o ranking.');
@@ -40,7 +44,7 @@ export default function Ranking() {
         setLoading(false);
       }
     }
-    
+
     carregarRanking();
   }, []);
 
@@ -103,7 +107,7 @@ export default function Ranking() {
           {rankingData.map((user) => {
             const topThree = user.posicao <= 3;
             const cor = getCorPorPosicao(user.posicao);
-            
+
             return (
               <div
                 key={user.posicao}
@@ -116,12 +120,7 @@ export default function Ranking() {
                 <div className="ranking-info">
                   <div className="ranking-left">
                     <div className="ranking-header">
-                      {topThree && (
-                        <FaTrophy
-                          className="user-trophy"
-                          style={{ color: cor }}
-                        />
-                      )}
+                      {topThree && <FaTrophy className="user-trophy" style={{ color: cor }} />}
                       <span className="ranking-position">#{user.posicao}</span>
                       <span className="ranking-name">{user.nome}</span>
                     </div>
