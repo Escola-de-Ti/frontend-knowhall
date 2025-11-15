@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { JSX } from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import { Toaster } from 'react-hot-toast';
 
@@ -23,8 +23,22 @@ function isAuth() {
   return !!token || !!basic;
 }
 
+function PrivateRoute({ children }: { children: JSX.Element }) {
+  if (!isAuth()) {
+    return <Navigate to="/login" replace />;
+  }
+  return children;
+}
+
+function PublicRoute({ children }: { children: JSX.Element }) {
+  if (isAuth()) {
+    return <Navigate to="/feed" replace />;
+  }
+  return children;
+}
+
 function App() {
-  const home = isAuth() ? <Navigate to="/feed" replace /> : <Navigate to="/feed" replace />;
+  const home = isAuth() ? <Navigate to="/feed" replace /> : <Navigate to="/login" replace />;
 
   return (
     <>
@@ -45,18 +59,104 @@ function App() {
       <NotificationProvider>
         <UserProvider>
           <Routes>
-            <Route path="/login" element={<Login />} />
-            <Route path="/cadastro" element={<Cadastro />} />
-            <Route path="/criar-post" element={<CriarPost />} />
-            <Route path="/criar-workshop" element={<CriarWorkshop />} />
-            <Route path="/workshops/:id/editar" element={<EditarWorkshop />} />
-            <Route path="/perfil" element={<Perfil />} />
-            <Route path="/perfil/:id" element={<Perfil />} />
-            <Route path="/feed" element={<Feed />} />
-            <Route path="/perfil/editar-perfil" element={<EditarPerfil />} />
-            <Route path="/ranking" element={<Ranking />} />
-            <Route path="/workshops" element={<Workshops />} />
-            <Route path="/historico-transacoes" element={<HistoricoTransacoes />} />
+            <Route
+              path="/login"
+              element={
+                <PublicRoute>
+                  <Login />
+                </PublicRoute>
+              }
+            />
+            <Route
+              path="/cadastro"
+              element={
+                <PublicRoute>
+                  <Cadastro />
+                </PublicRoute>
+              }
+            />
+
+            <Route
+              path="/criar-post"
+              element={
+                <PrivateRoute>
+                  <CriarPost />
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="/criar-workshop"
+              element={
+                <PrivateRoute>
+                  <CriarWorkshop />
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="/workshops/:id/editar"
+              element={
+                <PrivateRoute>
+                  <EditarWorkshop />
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="/perfil"
+              element={
+                <PrivateRoute>
+                  <Perfil />
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="/perfil/:id"
+              element={
+                <PrivateRoute>
+                  <Perfil />
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="/feed"
+              element={
+                <PrivateRoute>
+                  <Feed />
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="/perfil/editar-perfil"
+              element={
+                <PrivateRoute>
+                  <EditarPerfil />
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="/ranking"
+              element={
+                <PrivateRoute>
+                  <Ranking />
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="/workshops"
+              element={
+                <PrivateRoute>
+                  <Workshops />
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="/historico-transacoes"
+              element={
+                <PrivateRoute>
+                  <HistoricoTransacoes />
+                </PrivateRoute>
+              }
+            />
+
             <Route path="/" element={home} />
             <Route path="*" element={<NotFound />} />
           </Routes>
