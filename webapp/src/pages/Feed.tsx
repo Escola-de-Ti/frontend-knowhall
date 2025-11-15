@@ -275,7 +275,7 @@ export default function Feed() {
           <div className="feed-filters-bar">
             <button className="btn-filter" type="button" onClick={toggleFilterMenu}>
               <span className="ico-filter" aria-hidden />
-              <span className="lbl-filter">Filtros</span>
+              <span className="lbl-filter">Ordenar</span>
             </button>
 
             <FilterMenu
