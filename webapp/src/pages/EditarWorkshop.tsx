@@ -4,7 +4,6 @@ import { useNavigate, useParams } from 'react-router-dom';
 import '../styles/CriarWorkshop.css';
 import NavBar from '../components/NavBar';
 import { workshopService, type WorkshopResponseDTO } from '../services/workshopService';
-import Tags from '../components/Tags';
 import { useNotification } from '../contexts/NotificationContext';
 
 function isValidUrl(url: string) {
@@ -48,8 +47,6 @@ export default function EditarWorkshop() {
   const [linkMeet, setLinkMeet] = useState('');
   const [custo, setCusto] = useState('');
   const [capacidade, setCapacidade] = useState('');
-  const [tags, setTags] = useState<string[]>([]);
-
   const [loadingInit, setLoadingInit] = useState(true);
   const [saving, setSaving] = useState(false);
   const [errorGlobal, setErrorGlobal] = useState<string | null>(null);
@@ -115,8 +112,6 @@ export default function EditarWorkshop() {
         setCapacidade(wk.capacidade != null ? String(wk.capacidade) : '');
         setDataInicio(wk.dataInicio ? wk.dataInicio.slice(0, 10) : '');
         setDataTermino(wk.dataTermino ? wk.dataTermino.slice(0, 10) : '');
-
-        setTags([]);
       } catch (e: any) {
         const resp = e?.response?.data;
         const msg = resp?.message || resp?.error || e?.message || 'Erro ao carregar workshop';
@@ -468,10 +463,6 @@ export default function EditarWorkshop() {
               </ul>
             </section>
           </aside>
-
-          <section className="ws-card ws-tags">
-            <Tags value={tags} onChange={setTags} maxTags={10} />
-          </section>
         </div>
       </div>
     </>

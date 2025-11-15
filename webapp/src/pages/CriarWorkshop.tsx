@@ -4,7 +4,6 @@ import { useNavigate } from 'react-router-dom';
 import '../styles/CriarWorkshop.css';
 import NavBar from '../components/NavBar';
 import { workshopService } from '../services/workshopService';
-import Tags from '../components/Tags';
 import { useNotification } from '../contexts/NotificationContext';
 
 function toIsoDay(date: string, end?: boolean) {
@@ -49,7 +48,6 @@ export default function CriarWorkshop() {
   const [linkMeet, setLinkMeet] = useState('');
   const [custo, setCusto] = useState('');
   const [capacidade, setCapacidade] = useState('');
-  const [tags, setTags] = useState<string[]>([]);
 
   const [loading, setLoading] = useState(false);
   const [errorGlobal, setErrorGlobal] = useState<string | null>(null);
@@ -134,7 +132,6 @@ export default function CriarWorkshop() {
           tema,
           descricao: descricaoTxt,
         },
-        // tags futuramente se o backend aceitar
       });
 
       resetForm();
@@ -162,7 +159,6 @@ export default function CriarWorkshop() {
     setLinkMeet('');
     setCusto('');
     setCapacidade('');
-    setTags([]);
     setTouched({
       titulo: false,
       tema: false,
@@ -427,10 +423,6 @@ export default function CriarWorkshop() {
               </ul>
             </section>
           </aside>
-
-          <section className="ws-card ws-tags">
-            <Tags value={tags} onChange={setTags} maxTags={10} />
-          </section>
         </div>
       </div>
     </>
