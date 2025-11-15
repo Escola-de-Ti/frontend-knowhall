@@ -101,8 +101,9 @@ export function useFeed(pageSize: number = 10): UseFeedReturn {
 
   const updatePost = useCallback((postId: string, updates: Partial<PostFeedDTO>) => {
     setPosts((prevPosts) =>
-      prevPosts.map((post) => {
-        if (post.id === postId) {
+      prevPosts.map((post) => {      
+        console.log(post.id)
+        if (post.id == postId) {
           return { ...post, ...updates };
         }
         return post;

@@ -13,8 +13,11 @@
   --lvl-c1: #55f3ca;
   --lvl-c2: #5469fe;
   --kpi-neutral: #bfb8b4;
-  --kpi-up: #5ee3b9;
   --kpi-com: #c58af5;
+  --upvote-color: #7fff6b;
+  --upvote-bg-hover: rgba(147, 255, 107, 0.1);
+  --upvote-bg-active: rgba(147, 255, 107, 0.15);
+  --upvote-bg-active-hover: rgba(147, 255, 107, 0.2);
 }
 
 .post-card {
@@ -53,53 +56,30 @@
   display: grid;
   gap: 4px;
 }
+
 .post-autor {
   font-family: Geologica, Manrope, sans-serif;
   font-weight: 800;
   font-size: 18px;
   line-height: 1.1;
 }
+
 .post-sub {
   display: flex;
   align-items: center;
   gap: 10px;
   font-size: 13px;
 }
+
 .post-time {
   color: var(--time);
 }
+
 .post-sub .dot {
   width: 4px;
   height: 4px;
   border-radius: 999px;
   background: #6c6662;
-}
-
-.level-pill {
-  padding: 4px 8px;
-  border-radius: 10px;
-  border: 1.5px solid transparent;
-  background:
-    linear-gradient(var(--card-bg), var(--card-bg)) padding-box,
-    linear-gradient(90deg, var(--lvl-c1), var(--lvl-c2)) border-box;
-}
-.level-text {
-  background: linear-gradient(90deg, var(--lvl-c1), var(--lvl-c2));
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
-  font-weight: 800;
-  font-family: Geologica, Manrope, sans-serif;
-}
-
-.post-more {
-  background: transparent;
-  border: 0;
-  color: #ccc;
-  cursor: pointer;
-  font-size: 20px;
-  line-height: 1;
-  padding: 4px;
 }
 
 .post-title {
@@ -109,6 +89,7 @@
   font-size: 22px;
   letter-spacing: 0.2px;
 }
+
 .post-body {
   margin: 0;
   color: #f1f1f1;
@@ -123,6 +104,7 @@
   gap: 8px;
   margin-top: 4px;
 }
+
 .tag {
   padding: 6px 10px;
   border-radius: 999px;
@@ -140,22 +122,30 @@
   gap: 10px;
   margin-top: 2px;
 }
+
 .kpi {
   display: inline-flex;
   align-items: center;
   gap: 8px;
   padding: 8px 12px;
   border-radius: 10px;
-  border: 1px solid #3a3837;
-  background: #242323;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  background: rgba(0, 0, 0, 0.15);
   cursor: pointer;
-  transition: all 0.18s ease;
+  transition: all 0.2s ease;
+  position: relative;
+  overflow: hidden;
 }
+
 .kpi .kpi-val {
   font-family: Geologica, Manrope, sans-serif;
   font-weight: 800;
+  font-size: 13px;
   letter-spacing: 0.2px;
   color: #ddd;
+  font-variant-numeric: tabular-nums;
+  min-width: 20px;
+  text-align: center;
 }
 
 .ico-up,
@@ -163,95 +153,59 @@
   width: 18px;
   height: 18px;
   display: inline-block;
-  background: var(--kpi-neutral);
+  transition: transform 0.2s ease;
 }
 
 .ico-up {
+  background: var(--kpi-neutral);
   mask: url('data:image/svg+xml;utf8,\
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="%23000" d="M12 4l6 7h-4v9H10V11H6z"/></svg>')
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="%23000" d="M7.41 15.41 12 10.83l4.59 4.58L18 14l-6-6-6 6z"/></svg>')
     no-repeat center/contain;
 }
-/* balão de comentário */
+
 .ico-com {
-  width: 18px;
-  height: 18px;
-  display: inline-block;
+  background: var(--kpi-neutral);
   mask: url('data:image/svg+xml;utf8,\
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">\
 <path fill="%23000" d="M20 2H4a2 2 0 0 0-2 2v18l4-4h14a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2m0 12H5.17L4 15.17V4h16z"/>\
 </svg>')
     no-repeat center/contain;
-  background: var(--muted);
-  transition: background 0.2s ease;
-}
-
-/* cores ao hover */
-.kpi-up:hover .ico-up {
-  background: var(--kpi-up);
-}
-.kpi-com:hover .ico-com {
-  background: var(--kpi-com);
-}
-.kpi:hover {
-  border-color: #4a4847;
-  box-shadow: 0 0 0 2px #00000033 inset;
-}
-
-@media (max-width: 640px) {
-  .post-title {
-    font-size: 20px;
-  }
-  .post-avatar {
-    width: 46px;
-    height: 46px;
-  }
-}
-/* ========================================
-   ESTILOS PARA BOTÃO DE VOTO (UPVOTE)
-   ======================================== */
-
-/* 
- * Adicione este CSS ao arquivo: src/styles/feed/Post.css
- * Ou crie um arquivo separado e importe no componente Post
- */
-
-/* Estado normal do botão de upvote */
-.kpi-up {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  padding: 6px 12px;
-  border: none;
-  border-radius: 6px;
-  background: transparent;
-  color: #666;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  font-size: 14px;
-  font-weight: 500;
 }
 
 .kpi-up:hover {
-  background: rgba(147, 255, 107, 0.1);
-  color: #7fff6b;
+  background: var(--upvote-bg-hover);
+  border-color: rgba(255, 255, 255, 0.28);
+  transform: translateY(-1px);
 }
 
-/* Estado VOTADO (quando jaVotou = true) */
+.kpi-up:hover .ico-up {
+  background: var(--upvote-color);
+}
+
+.kpi-up:hover .kpi-val {
+  color: var(--upvote-color);
+}
+
 .kpi-up.active {
-  background: rgba(147, 255, 107, 0.1);
-  color: #7fff6b;
-  font-weight: 600;
+  background: var(--upvote-bg-active);
+  color: var(--upvote-color);
 }
 
 .kpi-up.active .ico-up {
+  background: var(--upvote-color);
   transform: scale(1.1);
 }
 
-.kpi-up.active:hover {
-  background: rgba(147, 255, 107, 0.1);
+.kpi-up.active .kpi-val {
+  color: var(--upvote-color);
+  font-weight: 600;
+  animation: pop 0.3s ease-out;
 }
 
-/* Estado VOTANDO (durante requisição) */
+.kpi-up.active:hover {
+  background: var(--upvote-bg-active-hover);
+}
+
 .kpi-up.voting {
   opacity: 0.6;
   cursor: wait;
@@ -262,52 +216,35 @@
   animation: pulse 0.8s ease-in-out infinite;
 }
 
-/* Animação de pulse durante voto */
-@keyframes pulse {
-  0%,
-  100% {
-    transform: scale(1);
-  }
-  50% {
-    transform: scale(1.15);
-  }
-}
-
-/* Desabilitado */
 .kpi-up:disabled {
   cursor: not-allowed;
   opacity: 0.5;
 }
 
-/* Ícone do upvote */
-.ico-up {
-  display: inline-block;
-  width: 16px;
-  height: 16px;
-  transition: transform 0.2s ease;
+.kpi-com:hover {
+  background: rgba(197, 138, 245, 0.1);
+  border-color: rgba(255, 255, 255, 0.28);
+  transform: translateY(-1px);
 }
 
-/* Se você usa ícones SVG inline, adicione: */
-.ico-up svg {
-  width: 100%;
-  height: 100%;
-  fill: currentColor;
+.kpi-com:hover .ico-com {
+  background: var(--kpi-com);
 }
 
-/* Valor do contador */
-.kpi-val {
-  font-variant-numeric: tabular-nums;
-  min-width: 20px;
-  text-align: center;
+.kpi-com:hover .kpi-val {
+  color: var(--kpi-com);
 }
 
-/* ========================================
-   ESTILOS OPCIONAIS - FEEDBACK VISUAL
-   ======================================== */
-
-/* Efeito de "pop" ao votar */
-.kpi-up.active .kpi-val {
-  animation: pop 0.3s ease-out;
+@keyframes pulse {
+  0%,
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.15);
+    opacity: 0.8;
+  }
 }
 
 @keyframes pop {
@@ -322,12 +259,6 @@
   }
 }
 
-/* Ripple effect ao clicar (opcional) */
-.kpi-up {
-  position: relative;
-  overflow: hidden;
-}
-
 .kpi-up::after {
   content: '';
   position: absolute;
@@ -336,11 +267,12 @@
   width: 0;
   height: 0;
   border-radius: 50%;
-  background: rgba(147, 255, 107, 0.1);
+  background: rgba(147, 255, 107, 0.2);
   transform: translate(-50%, -50%);
   transition:
     width 0.6s,
     height 0.6s;
+  pointer-events: none;
 }
 
 .kpi-up:active::after {
@@ -348,66 +280,41 @@
   height: 100px;
 }
 
-/* ========================================
-   RESPONSIVO
-   ======================================== */
+.kpi-up:focus-visible {
+  outline: 2px solid var(--upvote-color);
+  outline-offset: 2px;
+}
 
-/* Mobile */
 @media (max-width: 768px) {
-  .kpi-up {
+  .post-title {
+    font-size: 20px;
+  }
+  .post-avatar {
+    width: 46px;
+    height: 46px;
+  }
+  .kpi {
     padding: 8px 10px;
+  }
+  .kpi .kpi-val {
     font-size: 13px;
   }
-
-  .ico-up {
+  .ico-up,
+  .ico-com {
     width: 14px;
     height: 14px;
   }
 }
 
-/* Tablet */
-@media (min-width: 769px) and (max-width: 1024px) {
-  .kpi-up {
-    padding: 6px 11px;
-  }
-}
-
-/* ========================================
-   DARK MODE (OPCIONAL)
-   ======================================== */
-
-@media (prefers-color-scheme: dark) {
-  .kpi-up {
-    color: #aaa;
-  }
-
-  .kpi-up:hover {
-    background: rgba(147, 255, 107, 0.1);
-    color: #7fff6b;
-  }
-
-  .kpi-up.active {
-    background: rgba(147, 255, 107, 0.1);
-    color: #7fff6b;
-  }
-}
-
-/* ========================================
-   ACESSIBILIDADE
-   ======================================== */
-
-/* Foco para navegação por teclado */
-.kpi-up:focus-visible {
-  outline: 2px solid #7fff6b;
-  outline-offset: 2px;
-}
-
-/* Reduzir animações se usuário preferir */
 @media (prefers-reduced-motion: reduce) {
-  .kpi-up,
+  .kpi,
   .ico-up,
+  .ico-com,
   .kpi-val {
     animation: none !important;
     transition: none !important;
+  }
+  .kpi-up::after {
+    display: none;
   }
 }

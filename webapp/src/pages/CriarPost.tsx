@@ -195,6 +195,7 @@ const CriarPost: React.FC = () => {
     });
     setErrors({});
     setSuccessMessage('');
+    navigate('/feed');
   };
 
   return (

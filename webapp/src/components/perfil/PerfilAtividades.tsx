@@ -146,13 +146,13 @@ export default function PerfilAtividades({ idUsuario = 1, isOwnProfile = false }
         <div className="atividades-ico" aria-hidden>
           🗓️
         </div>
-        <h3 id="atividades-title">Atividades</h3>
+        <h3 id="atividades-title">Comentários</h3>
       </header>
 
       {loading ? (
-        <p className="atividades-loading">Carregando atividades...</p>
+        <p className="atividades-loading">Carregando comentários...</p>
       ) : itens.length === 0 ? (
-        <p className="atividades-empty">Nenhuma atividade encontrada.</p>
+        <p className="atividades-empty">Nenhum comentário encontrado.</p>
       ) : (
         <>
           <div className="atividades-list">

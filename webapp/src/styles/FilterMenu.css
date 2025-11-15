@@ -14,9 +14,11 @@
   right: 0;
   min-width: 240px;
   background: #1a1a1a;
-  border: 2px solid;
-  border-image: linear-gradient(135deg, #a855f7, #ec4899) 1;
+  border: 2px solid transparent;
   border-radius: 12px;
+  background:
+    linear-gradient(#1a1a1a, #1a1a1a) padding-box,
+    linear-gradient(135deg, #a855f7, #ec4899) border-box;
   padding: 8px;
   box-shadow:
     0 8px 24px rgba(168, 85, 247, 0.3),
@@ -94,35 +96,9 @@
   justify-content: flex-end;
 }
 
-.btn-filter {
-  position: relative;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 10px 20px;
-  background: transparent;
-  border: 2px solid;
-  border-image: linear-gradient(135deg, #a855f7, #ec4899) 1;
-  border-radius: 8px;
-  color: #fff;
-  font-size: 15px;
-  font-weight: 500;
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
-
-.btn-filter:hover {
-  background: rgba(168, 85, 247, 0.1);
-  transform: translateY(-2px);
-}
-
-.btn-filter.active {
-  background: linear-gradient(135deg, rgba(168, 85, 247, 0.2), rgba(236, 72, 153, 0.2));
-}
-
 .lbl-filter {
   min-width: 100px;
-  text-align: left;
+  text-align: center;
 }
 
 .ico-filter {
@@ -131,7 +107,6 @@
   height: 18px;
 }
 
-/* Ícone de filtro SVG - você pode substituir por um ícone real */
 .ico-filter::before {
   content: '▼';
   font-size: 12px;

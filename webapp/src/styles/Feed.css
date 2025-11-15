@@ -12,6 +12,10 @@
   --btn-filter-border-faded1: #e283d0;
   --btn-filter-border-faded2: #9a79d7;
   --filters-h: 44px;
+  --upvote-color: #7fff6b;
+  --upvote-bg-hover: rgba(147, 255, 107, 0.1);
+  --upvote-bg-active: rgba(147, 255, 107, 0.15);
+  --upvote-bg-active-hover: rgba(147, 255, 107, 0.2);
 }
 
 .feed-page {
@@ -35,6 +39,8 @@
 
 .feed-center {
   margin-top: 0;
+  display: grid;
+  gap: 18px;
 }
 
 .feed-right {
@@ -42,11 +48,6 @@
   align-self: start;
   position: sticky;
   top: 96px;
-}
-
-.feed-center {
-  display: grid;
-  gap: 18px;
 }
 
 .posts-stack {
@@ -70,11 +71,11 @@
 
 .btn-create {
   width: 100%;
-  display: flex;
+  display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 10px;
-  padding: 14px 20px;
+  padding: 14px 0;
   border-radius: 12px;
   border: 1.6px solid transparent;
   background:
@@ -124,11 +125,11 @@
 }
 
 .btn-filter {
-  display: flex;
+  display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 10px;
-  padding: 12px 20px;
+  padding: 12px 0;
   min-width: 140px;
   border-radius: 12px;
   border: 1.8px solid transparent;
@@ -180,7 +181,6 @@
     no-repeat center/contain;
 }
 
-/* Responsivo */
 @media (max-width: 1220px) {
   .feed-container {
     grid-template-columns: 300px 1fr 320px;
