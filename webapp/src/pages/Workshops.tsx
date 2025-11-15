@@ -220,7 +220,9 @@ export default function Workshops() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [page, setPage] = useState(1);
+
   const [inscrevendoId, setInscrevendoId] = useState<number | null>(null);
+  const [inscricaoSucessoId, setInscricaoSucessoId] = useState<number | null>(null);
 
   const [isFilterOpen, setIsFilterOpen] = useState(false);
   const [filters, setFilters] = useState<WorkshopFilterState>({
@@ -236,6 +238,7 @@ export default function Workshops() {
   const navigate = useNavigate();
   const { addNotification } = useNotification();
 
+  // carrega tipo de usuário
   useEffect(() => {
     let mounted = true;
 
@@ -296,12 +299,14 @@ export default function Workshops() {
     return 'Nenhum workshop disponível no momento.';
   }, [tab]);
 
+  // garante que aluno não fique na tab "meus"
   useEffect(() => {
     if (!canSeeMeusTab && tab === 'meus') {
       setTab('disponiveis');
     }
   }, [canSeeMeusTab, tab]);
 
+  // carrega a lista de workshops conforme a aba
   useEffect(() => {
     let mounted = true;
 
@@ -360,6 +365,7 @@ export default function Workshops() {
     };
   }, [tab, canSeeMeusTab, tipoUsuario, usuarioId]);
 
+  // sempre que filtros ou aba mudarem, volta pra página 1
   useEffect(() => {
     setPage(1);
   }, [tab, filters.startDate, filters.endDate, filters.minTokens, filters.maxTokens]);
@@ -415,12 +421,17 @@ export default function Workshops() {
   const showEmpty = !loading && !error && filtered.length === 0;
   const showContent = !loading && !error && filtered.length > 0;
 
+  // botão de inscrição com loading + sucesso + notificação de erro
   async function handleInscrever(w: UiWorkshop) {
+    if (inscrevendoId != null) return;
+
     try {
       setInscrevendoId(w.id);
-      setError(null);
+      setInscricaoSucessoId(null);
 
       await inscricaoService.inscrever(w.id);
+
+      setInscricaoSucessoId(w.id);
 
       addNotification({
         title: 'Inscrição realizada',
@@ -428,11 +439,20 @@ export default function Workshops() {
         path: '/workshops?tab=inscritos',
       });
 
-      setTab('inscritos');
+      // dá um tempinho pro usuário ver o check antes de ir pra aba "Inscritos"
+      setTimeout(() => {
+        setTab('inscritos');
+        setInscricaoSucessoId(null);
+      }, 650);
     } catch (e: any) {
       const resp = e?.response?.data;
       const msg = resp?.message || resp?.error || e?.message || 'Erro ao realizar inscrição';
-      setError(msg);
+
+      // não mexe na lista, só mostra notificação
+      addNotification({
+        title: 'Não foi possível inscrever',
+        subtitle: msg,
+      });
     } finally {
       setInscrevendoId(null);
     }
@@ -475,6 +495,8 @@ export default function Workshops() {
     });
   }
 
+  const tabsClassName = `wk-tabs ${canSeeMeusTab ? 'three-tabs' : 'two-tabs'}`;
+
   return (
     <>
       <NavBar />
@@ -515,7 +537,7 @@ export default function Workshops() {
         </div>
 
         <div className="wk-tabs-wrap">
-          <div className="wk-tabs">
+          <div className={tabsClassName}>
             <span className={`wk-tabs-thumb pos-${activeIdx}`} />
             <button
               className={`wk-tab ${activeIdx === 0 ? 'is-active' : ''}`}
@@ -555,6 +577,10 @@ export default function Workshops() {
                 const statusLabel = getStatusChipLabelList(w, isInscritos);
                 const statusClass = getStatusChipClass(w, isInscritos);
                 const expired = isWorkshopExpired(w);
+                const showDescription = !!w.description;
+
+                const isLoading = inscrevendoId === w.id;
+                const isSuccess = inscricaoSucessoId === w.id;
 
                 return (
                   <article
@@ -563,17 +589,21 @@ export default function Workshops() {
                       w.status === 'CONCLUIDO' ? 'done' : ''
                     }`}
                   >
-                    <header className="wk-row">
-                      <h2 className="wk-card-title">{w.title}</h2>
+                    <header className="wk-card-header">
+                      <div className="wk-card-header-main">
+                        <h2 className="wk-card-title">{w.title}</h2>
+                        {!isInscritos && showDescription && (
+                          <p className="wk-desc">{w.description}</p>
+                        )}
+                      </div>
 
-                      {typeof w.tokens === 'number' && !isInscritos && (
-                        <span className="wk-chip-tokens">{w.tokens} tokens</span>
-                      )}
-
-                      <span className={`wk-chip-status ${statusClass}`}>{statusLabel}</span>
+                      <div className="wk-card-header-side">
+                        {typeof w.tokens === 'number' && !isInscritos && (
+                          <span className="wk-chip-tokens">{w.tokens} tokens</span>
+                        )}
+                        <span className={`wk-chip-status ${statusClass}`}>{statusLabel}</span>
+                      </div>
                     </header>
-
-                    <p className="wk-desc">{w.description}</p>
 
                     {!isInscritos && (
                       <>
@@ -608,18 +638,22 @@ export default function Workshops() {
                         {!isMeus ? (
                           <div className="wk-cta-row">
                             <button
-                              className="wk-cta"
+                              className={`wk-cta ${isLoading ? 'is-loading' : ''} ${
+                                isSuccess ? 'is-success' : ''
+                              }`}
                               type="button"
-                              disabled={inscrevendoId === w.id || expired}
+                              disabled={expired || isLoading || isSuccess}
                               onClick={() => handleInscrever(w)}
                             >
-                              <span className="wk-cta-ico" />
+                              <span className={isSuccess ? 'wk-cta-ico-check' : 'wk-cta-ico'} />
                               <span>
                                 {expired
                                   ? 'Encerrado'
-                                  : inscrevendoId === w.id
-                                    ? 'Inscrevendo...'
-                                    : 'Inscreva-se'}
+                                  : isSuccess
+                                    ? 'Inscrito!'
+                                    : isLoading
+                                      ? 'Inscrevendo...'
+                                      : 'Inscreva-se'}
                               </span>
                             </button>
                           </div>
@@ -647,28 +681,34 @@ export default function Workshops() {
                     )}
 
                     {isInscritos && (
-                      <div className="wk-enroll-footer">
-                        <div className="wk-enroll-meta">
-                          <div className="wk-inline">
-                            <span className="wk-ico wk-cal" />
-                            <span className="wk-inline-text">{w.date}</span>
-                          </div>
-                          {typeof w.rating === 'number' && (
+                      <>
+                        {showDescription && (
+                          <p className="wk-desc wk-desc-small">{w.description}</p>
+                        )}
+
+                        <div className="wk-enroll-footer">
+                          <div className="wk-enroll-meta">
                             <div className="wk-inline">
-                              <span className="wk-ico wk-star" />
-                              <span className="wk-inline-text">{w.rating.toFixed(1)}</span>
+                              <span className="wk-ico wk-cal" />
+                              <span className="wk-inline-text">{w.date}</span>
                             </div>
-                          )}
+                            {typeof w.rating === 'number' && (
+                              <div className="wk-inline">
+                                <span className="wk-ico wk-star" />
+                                <span className="wk-inline-text">{w.rating.toFixed(1)}</span>
+                              </div>
+                            )}
+                          </div>
+                          <button
+                            className="wk-btn-join"
+                            type="button"
+                            onClick={() => handleEntrar(w)}
+                          >
+                            <span className="ico-video" />
+                            Entrar
+                          </button>
                         </div>
-                        <button
-                          className="wk-btn-join"
-                          type="button"
-                          onClick={() => handleEntrar(w)}
-                        >
-                          <span className="ico-video" />
-                          Entrar
-                        </button>
-                      </div>
+                      </>
                     )}
                   </article>
                 );

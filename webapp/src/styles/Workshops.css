@@ -137,7 +137,6 @@
 .wk-tabs {
   position: relative;
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
   gap: 8px;
   padding: 6px;
   background: #1f1f20;
@@ -145,10 +144,18 @@
   border-radius: 26px;
 }
 
+.wk-tabs.three-tabs {
+  grid-template-columns: repeat(3, 1fr);
+}
+
+.wk-tabs.two-tabs {
+  grid-template-columns: repeat(2, 0.5fr);
+}
+
 .wk-tabs-thumb {
   position: absolute;
   top: 6px;
-  left: 6px;
+  left: 1px;
   height: calc(100% - 12px);
   width: calc((100% - 16px) / 3);
   border-radius: 22px;
@@ -158,6 +165,11 @@
     0 4px 14px #c37aae33;
   transition: transform 0.22s ease;
   pointer-events: none;
+}
+
+/* largura correta quando só existem 2 tabs */
+.wk-tabs.two-tabs .wk-tabs-thumb {
+  width: calc((100% - 8px) / 2);
 }
 
 .wk-tabs-thumb.pos-0 {
@@ -214,6 +226,40 @@
   box-shadow:
     0 1px 0 #00000040 inset,
     0 0 0 1px #00000010;
+  transition:
+    transform 0.18s ease,
+    box-shadow 0.18s ease,
+    border-color 0.18s ease,
+    background 0.18s ease;
+}
+
+.wk-card:hover {
+  transform: translateY(-3px);
+  border-color: #4a3f8a;
+  background: #222225;
+  box-shadow:
+    0 16px 40px #000000cc,
+    0 0 0 1px #8476d955;
+}
+
+.wk-card-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+
+.wk-card-header-main {
+  flex: 1 1 260px;
+  min-width: 0;
+}
+
+.wk-card-header-side {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 8px;
 }
 
 .wk-row {
@@ -227,7 +273,6 @@
   font-family: 'Press Start 2P', monospace;
   font-size: 22px;
   color: #e7d8ff;
-  flex: 1 1 100%;
 }
 
 .wk-desc {
@@ -236,6 +281,13 @@
   opacity: 0.92;
   line-height: 1.5;
   font-size: 14px;
+  margin-top: 8px;
+}
+
+.wk-desc-small {
+  font-size: 13px;
+  opacity: 0.8;
+  margin-top: 4px;
 }
 
 .wk-chip-tokens {
@@ -361,12 +413,38 @@
     0 2px 0 #0000002b inset;
 }
 
+/* estado visual enquanto carrega: afunda um pouco */
+.wk-cta.is-loading {
+  transform: translateY(2px) scale(0.98);
+  box-shadow:
+    0 6px 18px #000000aa,
+    0 1px 0 #00000066 inset;
+  filter: brightness(0.96);
+}
+
+/* estado de sucesso: verdezinho */
+.wk-cta.is-success {
+  background: linear-gradient(90deg, #55f6c9 0%, #6ee7b7 40%, #a7f3d0 100%);
+}
+
 .wk-cta-ico {
   width: 18px;
   height: 18px;
   background: #0e0e0e;
   display: inline-block;
   -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 5v14M5 12h14' fill='white'/%3E%3C/svg%3E")
+    center/contain no-repeat;
+}
+
+/* ícone de check quando a inscrição foi concluída */
+.wk-cta-ico-check {
+  width: 18px;
+  height: 18px;
+  background: #ffffff; /* branco pra contrastar com o gradiente verde */
+  display: inline-block;
+  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M5 13 9 17 19 7' fill='white'/%3E%3C/svg%3E")
+    center/contain no-repeat;
+  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M5 13 9 17 19 7' fill='white'/%3E%3C/svg%3E")
     center/contain no-repeat;
 }
 
@@ -411,6 +489,7 @@
 .wk-card-actions {
   display: flex;
   justify-content: flex-end;
+  gap: 10px;
 }
 
 .wk-btn-edit {
@@ -497,6 +576,33 @@
     0 10px 24px #7f68fd22,
     0 2px 0 #0000002b inset;
   cursor: pointer;
+}
+
+/* animação geral dos botões principais */
+.wk-create,
+.wk-cta,
+.wk-btn-join {
+  transition:
+    transform 0.18s ease,
+    box-shadow 0.18s ease,
+    filter 0.18s ease,
+    opacity 0.18s ease;
+}
+
+.wk-create:hover,
+.wk-cta:hover:not(:disabled),
+.wk-btn-join:hover {
+  transform: translateY(-1px);
+  filter: brightness(1.05);
+  box-shadow:
+    0 18px 40px #55f6c935,
+    0 2px 0 #00000066 inset;
+}
+
+.wk-cta:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  box-shadow: none;
 }
 
 .wk-empty {

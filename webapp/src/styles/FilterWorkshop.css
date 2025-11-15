@@ -26,6 +26,7 @@
   z-index: 50;
   font-family: 'Manrope', sans-serif;
   animation: wkFilterMenuIn 0.18s ease-out;
+  overflow-y: auto;
 }
 
 @keyframes wkFilterMenuIn {
@@ -46,8 +47,6 @@
     0 0 0 3px #7f68fd33,
     0 0 24px #7f68fd44;
 }
-
-/* opções */
 
 .filter-option {
   width: 100%;
