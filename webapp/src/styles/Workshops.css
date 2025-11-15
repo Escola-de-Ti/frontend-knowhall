@@ -698,3 +698,105 @@
     font-size: 18px;
   }
 }
+
+.wk-sub-count {
+  font-size: 13px;
+  color: #e4e4e4;
+  margin-top: 6px;
+}
+
+.wk-grid.is-enrolled {
+  max-width: 860px;
+  margin: 28px auto 0;
+  grid-template-columns: minmax(0, 1fr);
+  justify-content: center;
+}
+
+.wk-participants-toolbar {
+  max-width: 860px;
+  margin: 20px auto 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  font-family: 'Manrope', sans-serif;
+}
+
+.wk-participants-search {
+  flex: 1 1 260px;
+  height: 42px;
+  padding: 0 14px;
+  border-radius: 14px;
+  border: 1px solid var(--stroke);
+  background: #1c1c1d;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.wk-participants-search input {
+  flex: 1;
+  border: 0;
+  outline: 0;
+  background: transparent;
+  color: var(--text);
+  font-size: 14px;
+  font-family: 'Manrope', sans-serif;
+}
+
+.wk-participants-search input::placeholder {
+  color: var(--muted);
+}
+
+.wk-participants-count {
+  font-size: 13px;
+  color: var(--muted);
+}
+
+.wk-ico.wk-search {
+  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='11' cy='11' r='8'/%3E%3Cline x1='21' y1='21' x2='16.65' y2='16.65'/%3E%3C/svg%3E")
+    center/contain no-repeat;
+  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='11' cy='11' r='8'/%3E%3Cline x1='21' y1='21' x2='16.65' y2='16.65'/%3E%3C/svg%3E")
+    center/contain no-repeat;
+}
+
+.wk-card.enrolled {
+  gap: 10px;
+}
+
+.wk-card.enrolled .wk-card-title {
+  font-size: 18px;
+}
+
+.wk-participant-main {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.wk-participant-texts {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.wk-participant-id {
+  font-family: 'Geologica', sans-serif;
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.wk-meta-full {
+  margin-top: 4px;
+}
+
+@media (max-width: 900px) {
+  .wk-participants-toolbar {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .wk-participants-count {
+    text-align: right;
+  }
+}
