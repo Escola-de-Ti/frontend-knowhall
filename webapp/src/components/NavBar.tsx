@@ -4,6 +4,7 @@ import SideMenu from './SideMenu';
 import NotificationMenu from '../components/NotificationMenu';
 import { authService } from '../services/authService';
 import { useNotification } from '../contexts/NotificationContext';
+import { useUser } from '../contexts/UserContext';
 import '../styles/NavBar.css';
 
 export default function NavBar() {
@@ -11,6 +12,14 @@ export default function NavBar() {
   const [notifOpen, setNotifOpen] = useState(false);
   const navigate = useNavigate();
   const { items, markAsRead } = useNotification();
+  const { user: userData, clearUser } = useUser();
+
+  const getInitials = (name: string) => {
+    if (!name) return '??';
+    const parts = name.trim().split(' ');
+    if (parts.length === 1) return parts[0].substring(0, 2).toUpperCase();
+    return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
+  };
 
   const go = (path: string) => {
     navigate(path);
@@ -19,6 +28,7 @@ export default function NavBar() {
   };
 
   function handleLogout() {
+    clearUser();
     authService.logout();
     navigate('/login');
   }
@@ -42,7 +52,7 @@ export default function NavBar() {
         <div className="nav-actions">
           <button className="token-chip" aria-label="Saldo de tokens">
             <img src="/token_ico.svg" alt="Token" className="token-ico" />
-            <span className="token-val">2.780</span>
+            <span className="token-val">{userData?.qntdToken?.toLocaleString('pt-BR') || '0'}</span>
           </button>
 
           <div className="notif-wrap">
@@ -63,8 +73,16 @@ export default function NavBar() {
           </div>
 
           <button className="profile" onClick={() => go('/perfil')}>
-            <div className="avatar">AJ</div>
-            <span className="profile-name">Andre Jacob</span>
+            {userData?.idImagemPerfil ? (
+              <img 
+                src={userData.urlImagemPerfil || ''} 
+                alt={userData.nome}
+                className="avatar-img"
+              />
+            ) : (
+              <div className="avatar">{getInitials(userData?.nome || '')}</div>
+            )}
+            <span className="profile-name">{userData?.nome || 'Carregando...'}</span>
           </button>
 
           <button className="nav-logout" onClick={handleLogout}>

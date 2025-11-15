@@ -231,6 +231,18 @@
   display: flex;
   align-items: center;
   gap: 10px;
+  cursor: pointer;
+  padding: 8px;
+  margin: 0 -8px;
+  border-radius: 8px;
+  transition: all 0.2s ease;
+}
+.wk-mentor:hover {
+  background: rgba(110, 247, 195, 0.1);
+  transform: translateX(4px);
+}
+.wk-mentor:hover .wk-mentor-name {
+  color: #6ef7c3;
 }
 .wk-avatar {
   width: 36px;

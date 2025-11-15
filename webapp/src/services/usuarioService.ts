@@ -41,6 +41,7 @@ interface UsuarioResponseDTO {
 }
 
 interface RankingUsuarioDTO {
+  id: number;
   posicao: number;
   nome: string;
   qntdXp: number;
@@ -73,6 +74,7 @@ interface UsuarioDetalhesDTO {
   qtdSuperVotes: number;
   qtdWorkshops: number;
   imagemUrl: string | null;
+  posicaoRanking: number;
 }
 
 interface RefreshTokenDTO {

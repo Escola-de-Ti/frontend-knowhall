@@ -1,6 +1,7 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import '../../styles/feed/RankingList.css';
-import { RankingUsuarioDTO } from '../../services/usuarioService';  // Ajuste o caminho se necessário
+import { RankingUsuarioDTO } from '../../services/usuarioService';
 
 
 function gerarIniciais(nome: string): string {
@@ -30,6 +31,12 @@ type Props = {
 };
 
 export default function RankingList({ users, onVerMais }: Props) {
+  const navigate = useNavigate();
+
+  const handleUserClick = (userId: number) => {
+    navigate(`/perfil/${userId}`);
+  };
+
   return (
     <aside className="rk-panel">
       <header className="rk-head">
@@ -46,7 +53,12 @@ export default function RankingList({ users, onVerMais }: Props) {
           const topClass = pos <= 3 ? `rk-top rk-${pos}` : '';
 
           return (
-            <li key={u.posicao} className={`rk-item ${topClass}`}>
+            <li 
+              key={u.posicao} 
+              className={`rk-item ${topClass}`}
+              onClick={() => handleUserClick(u.id)}
+              style={{ cursor: 'pointer' }}
+            >
               
               <span className="rk-pos">{pos}</span>
 

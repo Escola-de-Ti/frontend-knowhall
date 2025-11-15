@@ -18,7 +18,7 @@ interface UiWorkshop {
   id: number;
   title: string;
   description: string;
-  mentor: { name: string };
+  mentor: { name: string; id: number };
   date: string;
   startTime: string;
   endTime: string;
@@ -36,7 +36,7 @@ function mapToUi(w: WorkshopResponseDTO): UiWorkshop {
     id: w.id,
     title: w.titulo,
     description: w.descricao?.descricao ?? '',
-    mentor: { name: w.instrutorNome },
+    mentor: { name: w.instrutorNome, id: w.instrutorId },
     date: workshopService.formatarData(w.dataInicio),
     startTime: workshopService.formatarHora(w.dataInicio),
     endTime: workshopService.formatarHora(w.dataTermino),
@@ -302,7 +302,11 @@ export default function Workshops() {
 
                     {!isInscritos && (
                       <>
-                        <div className="wk-mentor">
+                        <div 
+                          className="wk-mentor"
+                          onClick={() => navigate(`/perfil/${w.mentor.id}`)}
+                          style={{ cursor: 'pointer' }}
+                        >
                           <div className="wk-avatar">
                             {w.mentor.name
                               .split(' ')

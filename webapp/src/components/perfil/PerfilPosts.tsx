@@ -12,16 +12,16 @@ export default function PerfilPosts({ idUsuario }: Props) {
         const carregarPosts = async () => {
         if (!idUsuario) return;
         
-        try {
-            setLoading(true);
-            const postsUsuario = await postService.buscarPorUsuario(idUsuario.toString());
-            setPosts(postsUsuario);
-        } catch (err) {
-            console.error('Erro ao carregar posts:', err);
-            setPosts([]);
-        } finally {
-            setLoading(false);
-        }
+            try {
+                setLoading(true);
+                const postsUsuario = await postService.buscarPorUsuario(idUsuario.toString());
+                setPosts(postsUsuario);
+            } catch (err) {
+                console.error('Erro ao carregar posts:', err);
+                setPosts([]);
+            } finally {
+                setLoading(false);
+            }
         };
 
         carregarPosts();

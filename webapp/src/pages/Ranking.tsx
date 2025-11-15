@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import '../styles/Ranking.css';
 import NavBar from '../components/NavBar';
 import { FaTrophy, FaStar } from 'react-icons/fa';
 import { usuarioService, RankingUsuarioDTO } from '../services/usuarioService';
 
 export default function Ranking() {
+  const navigate = useNavigate();
   const [rankingData, setRankingData] = useState<RankingUsuarioDTO[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -112,7 +114,9 @@ export default function Ranking() {
                 style={{
                   borderLeft: `4px solid ${cor}`,
                   backgroundColor: topThree ? `${cor}22` : '#141417',
+                  cursor: 'pointer',
                 }}
+                onClick={() => navigate(`/perfil/${user.id}`)}
               >
                 <div className="ranking-info">
                   <div className="ranking-left">

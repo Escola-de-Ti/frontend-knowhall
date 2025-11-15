@@ -18,6 +18,7 @@ export type UsuarioDTO = {
   qntdToken?: number;
   qntdXp?: number;
   idImagemPerfil?: number;
+  urlImagemPerfil?: string;
   tags?: string[];
 };
 
@@ -34,6 +35,7 @@ export type UsuarioDetalhesDTO = {
   qtdSuperVotes: number;
   qtdWorkshops: number;
   imagemUrl: string;
+  posicaoRanking: number;
 };
 
 export async function getUsuario(id: number) {
