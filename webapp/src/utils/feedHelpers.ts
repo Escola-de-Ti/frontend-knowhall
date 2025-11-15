@@ -37,9 +37,7 @@ export function getInitials(nomeCompleto: string): string {
 
   if (partes.length === 1) {
     const nome = partes[0];
-    return nome.length > 1
-      ? (nome[0] + nome[1]).toUpperCase()
-      : (nome[0] + nome[0]).toUpperCase();
+    return nome.length > 1 ? (nome[0] + nome[1]).toUpperCase() : (nome[0] + nome[0]).toUpperCase();
   }
 
   const primeiroNome = partes[0];
@@ -47,7 +45,6 @@ export function getInitials(nomeCompleto: string): string {
 
   return (primeiroNome[0] + ultimoNome[0]).toUpperCase();
 }
-
 
 export function calculateLevel(qntdXp: number): number {
   if (!qntdXp || qntdXp <= 0) return 1;

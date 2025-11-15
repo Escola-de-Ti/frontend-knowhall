@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { apiService } from './apiService';
 import API_CONFIG from '../config/api.config';
 
@@ -37,7 +38,7 @@ class ImagemService {
       const response = await fetch(`${API_CONFIG.BASE_URL}${API_CONFIG.API_PREFIX}${url}`, {
         method: 'POST',
         headers: {
-          'Authorization': `Bearer ${token}`,
+          Authorization: `Bearer ${token}`,
           'Content-Type': file.type, // image/png, image/jpeg, etc.
         },
         body: file, // Envia o arquivo como binary
@@ -61,10 +62,7 @@ class ImagemService {
    */
   async deletar(id: number): Promise<void> {
     try {
-      await apiService.delete<void>(
-        `${API_CONFIG.ENDPOINTS.IMAGEM_DELETE}/${id}`,
-        true
-      );
+      await apiService.delete<void>(`${API_CONFIG.ENDPOINTS.IMAGEM_DELETE}/${id}`, true);
     } catch (error: any) {
       console.error('Erro ao deletar imagem:', error);
       throw error;
@@ -85,10 +83,10 @@ class ImagemService {
         {
           method: 'PUT',
           headers: {
-            'Authorization': `Bearer ${token}`,
+            Authorization: `Bearer ${token}`,
             'Content-Type': file.type,
           },
-          body: file, 
+          body: file,
         }
       );
 
@@ -111,13 +109,11 @@ class ImagemService {
    * @returns true se for válido, caso contrário lança um erro
    */
   validarImagem(file: File, maxSizeMB: number = 5): boolean {
-    // Valida tipo
     const tiposPermitidos = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp', 'image/gif'];
     if (!tiposPermitidos.includes(file.type)) {
       throw new Error('Tipo de arquivo não permitido. Use JPG, PNG, WEBP ou GIF.');
     }
 
-    // Valida tamanho
     const maxSizeBytes = maxSizeMB * 1024 * 1024;
     if (file.size > maxSizeBytes) {
       throw new Error(`Arquivo muito grande. Tamanho máximo: ${maxSizeMB}MB`);

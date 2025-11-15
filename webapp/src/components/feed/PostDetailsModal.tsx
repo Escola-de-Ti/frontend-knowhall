@@ -1,7 +1,8 @@
-import React, { useEffect, useMemo, useState } from 'react';
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import '../../styles/feed/PostDetailsModal.css';
-import { postService, PostDetalhesDTO } from '../../services/postService';
+import { postService } from '../../services/postService';
 import { comentarioService, ComentarioResponseDTO } from '../../services/comentarioService';
 import { votoService } from '../../services/votoService';
 import { getInitials, getRelativeTime } from '../../utils/feedHelpers';
@@ -16,7 +17,7 @@ export type PostDetails = {
   tags: string[];
   metrica: { upvotes: number; supervotes: number; comentarios: number };
   tempo: string;
-  jaVotou: boolean; // ← Indica se o usuário já votou neste post
+  jaVotou: boolean;
 };
 
 export type PostCommentModel = {
@@ -27,11 +28,11 @@ export type PostCommentModel = {
   upvotes: number;
   supervotes: number;
   respostas?: PostCommentModel[];
-  hasMoreReplies?: boolean; // Indica se há mais respostas para carregar
-  repliesLoaded?: boolean; // Indica se as respostas já foram carregadas
-  totalRespostas?: number; // Total de respostas (se disponível)
-  jaVotou?: boolean; // ← Indica se o usuário já votou neste comentário
-  jaSuperVotou?: boolean; // ← Indica se o usuário já super votou neste comentário
+  hasMoreReplies?: boolean;
+  repliesLoaded?: boolean;
+  totalRespostas?: number;
+  jaVotou?: boolean;
+  jaSuperVotou?: boolean;
 };
 
 type Props = {
@@ -47,12 +48,8 @@ export default function PostDetailsModal({ open, onClose, post: initialPost }: P
   const [loading, setLoading] = useState(false);
   const [loadingReplies, setLoadingReplies] = useState<Set<number>>(new Set());
   const [submittingComment, setSubmittingComment] = useState(false);
-  
-  // Estados de votação
   const [votingPost, setVotingPost] = useState(false);
   const [votingComments, setVotingComments] = useState<Set<number>>(new Set());
-  
-  // Estados de super votação (apenas comentários)
   const [superVotingComments, setSuperVotingComments] = useState<Set<number>>(new Set());
 
   const [replyTarget, setReplyTarget] = useState<null | 'post' | number>(null);
@@ -82,20 +79,19 @@ export default function PostDetailsModal({ open, onClose, post: initialPost }: P
             iniciais: getInitials(data.usuarioNome),
             nivel: 10,
           },
-          tags: data.tags.map(t => t.name),
+          tags: data.tags.map((t) => t.name),
           metrica: {
             upvotes: data.totalUpVotes,
             supervotes: 0,
             comentarios: data.comentarios.length,
           },
           tempo: getRelativeTime(data.dataCriacao),
-          jaVotou: (data as any).jaVotou || false, // ← Adiciona informação de voto
+          jaVotou: (data as any).jaVotou || false,
         };
 
-        // Mapeia apenas comentários raiz (sem comentarioPaiId)
         const rootComments = data.comentarios
-          .filter(c => !c.comentarioPaiId)
-          .map(dto => mapComentarioDTO(dto));
+          .filter((c) => !c.comentarioPaiId)
+          .map((dto) => mapComentarioDTO(dto));
 
         setDetails(mappedPost);
         setLocalComments(rootComments);
@@ -109,7 +105,6 @@ export default function PostDetailsModal({ open, onClose, post: initialPost }: P
     fetchDetails();
   }, [open, initialPost]);
 
-  // Fecha com ESC e trava scroll do body
   useEffect(() => {
     if (!open) return;
     const onKey = (e: KeyboardEvent) => {
@@ -123,8 +118,6 @@ export default function PostDetailsModal({ open, onClose, post: initialPost }: P
       document.body.style.overflow = prev;
     };
   }, [open, onClose]);
-
-  const CURRENT_USER: PostUser = useMemo(() => ({ nome: 'Você', iniciais: 'VC', nivel: 1 }), []);
 
   if (!open) return null;
 
@@ -147,8 +140,8 @@ export default function PostDetailsModal({ open, onClose, post: initialPost }: P
       respostas: [],
       repliesLoaded: false,
       hasMoreReplies: false,
-      jaVotou: (dto as any).jaVotou || false, // ← Adiciona informação de voto
-      jaSuperVotou: (dto as any).jaSuperVotou || false, // ← Adiciona informação de super voto
+      jaVotou: (dto as any).jaVotou || false,
+      jaSuperVotou: (dto as any).jaSuperVotou || false,
     };
   }
 
@@ -184,10 +177,8 @@ export default function PostDetailsModal({ open, onClose, post: initialPost }: P
       const mapped = mapComentarioDTO(novoComentario);
 
       if (replyTarget === 'post') {
-        // Adiciona comentário raiz
         setLocalComments((prev) => [mapped, ...prev]);
-        
-        // Atualiza contador de comentários
+
         setDetails((prev) => {
           if (!prev) return prev;
           return {
@@ -199,7 +190,6 @@ export default function PostDetailsModal({ open, onClose, post: initialPost }: P
           };
         });
       } else if (typeof replyTarget === 'number') {
-        // Adiciona resposta a um comentário
         setLocalComments((prev) => addReplyToTree(prev, replyTarget, mapped));
       }
 
@@ -244,7 +234,6 @@ export default function PostDetailsModal({ open, onClose, post: initialPost }: P
     try {
       const response = await votoService.votarEmComentario(comentarioId.toString());
 
-      // Atualiza o contador de upvotes e o estado jaVotou do comentário
       setLocalComments((prev) =>
         updateCommentVotes(prev, comentarioId, response.totalUpVotes, response.votado)
       );
@@ -267,7 +256,6 @@ export default function PostDetailsModal({ open, onClose, post: initialPost }: P
     try {
       const response = await votoService.superVotarEmComentario(comentarioId.toString());
 
-      // Atualiza o contador de supervotes e o estado jaSuperVotou do comentário
       setLocalComments((prev) =>
         updateCommentSuperVotes(prev, comentarioId, response.totalUpVotes, response.votado)
       );
@@ -290,7 +278,6 @@ export default function PostDetailsModal({ open, onClose, post: initialPost }: P
     try {
       const response = await votoService.votarEmPost(activePost.id.toString());
 
-      // Atualiza o estado do post
       setDetails((prev) => {
         if (!prev) return prev;
         return {
@@ -338,11 +325,7 @@ export default function PostDetailsModal({ open, onClose, post: initialPost }: P
           <div className="head-col">
             <h3 className="title">{activePost.titulo}</h3>
             <div className="meta">
-              <span 
-                className="autor" 
-                onClick={handleAutorClick}
-                style={{ cursor: 'pointer' }}
-              >
+              <span className="autor" onClick={handleAutorClick} style={{ cursor: 'pointer' }}>
                 {activePost.autor.nome}
               </span>
               <span className="dot" />
@@ -378,7 +361,7 @@ export default function PostDetailsModal({ open, onClose, post: initialPost }: P
             >
               <span className="ico-up" aria-hidden />
               <span>{activePost.metrica.upvotes}</span>
-            </button>          
+            </button>
             <button className="btn com" type="button" onClick={openReplyForPost}>
               <span className="ico-com" aria-hidden />
               <span>{activePost.metrica.comentarios}</span>
@@ -621,7 +604,7 @@ function CommentNode({
           {c.autor.iniciais}
         </div>
         <div className="author">
-          <span 
+          <span
             className="nome"
             onClick={(e) => {
               e.stopPropagation();

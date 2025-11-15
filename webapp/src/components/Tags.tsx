@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from "react";
-import "../styles/Tags.css";
-import { tagService, TagResponseDTO } from "../services/tagService";
+import React, { useState, useEffect } from 'react';
+import '../styles/Tags.css';
+import { tagService, TagResponseDTO } from '../services/tagService';
 
 interface TagsProps {
   value: string[];
@@ -9,7 +9,7 @@ interface TagsProps {
 }
 
 const Tags: React.FC<TagsProps> = ({ value, onChange, maxTags = 10 }) => {
-  const [input, setInput] = useState("");
+  const [input, setInput] = useState('');
   const [suggestedTags, setSuggestedTags] = useState<TagResponseDTO[]>([]);
   const [loadingSuggestions, setLoadingSuggestions] = useState(false);
 
@@ -38,11 +38,11 @@ const Tags: React.FC<TagsProps> = ({ value, onChange, maxTags = 10 }) => {
 
   const addTag = () => {
     const tagName = input.trim();
-    
+
     if (!tagName) return;
-    
+
     if (value.includes(tagName)) {
-      setInput("");
+      setInput('');
       return;
     }
 
@@ -52,7 +52,7 @@ const Tags: React.FC<TagsProps> = ({ value, onChange, maxTags = 10 }) => {
     }
 
     onChange([...value, tagName]);
-    setInput("");
+    setInput('');
   };
 
   const removeTag = (tagToRemove: string) => {
@@ -61,7 +61,7 @@ const Tags: React.FC<TagsProps> = ({ value, onChange, maxTags = 10 }) => {
 
   const addSuggestedTag = (tagName: string) => {
     if (value.includes(tagName)) return;
-    
+
     if (value.length >= maxTags) {
       alert(`Você pode adicionar no máximo ${maxTags} tags`);
       return;
@@ -81,7 +81,7 @@ const Tags: React.FC<TagsProps> = ({ value, onChange, maxTags = 10 }) => {
           value={input}
           onChange={(e) => setInput(e.target.value)}
           onKeyDown={(e) => {
-            if (e.key === "Enter") {
+            if (e.key === 'Enter') {
               e.preventDefault();
               addTag();
             }
@@ -96,7 +96,7 @@ const Tags: React.FC<TagsProps> = ({ value, onChange, maxTags = 10 }) => {
       {value.length > 0 && (
         <>
           <p className="tags-info">
-            {value.length} {value.length === 1 ? 'tag selecionada' : 'tags selecionadas'} 
+            {value.length} {value.length === 1 ? 'tag selecionada' : 'tags selecionadas'}
             {maxTags && ` (máximo: ${maxTags})`}
           </p>
           <div className="tags-list">

@@ -11,40 +11,39 @@ const API_CONFIG = {
     REFRESH: '/usuarios/refresh',
     USUARIOS_RANKING: '/usuarios/ranking',
     USUARIOS_DETALHES: '/usuarios/detalhes',
-    
+
     // Posts
     POSTS: '/posts',
     POSTS_FEED: '/posts/feed',
     POSTS_BUSCAR: '/posts/buscar',
-    
+
     // Tags
     TAGS: '/tags',
     TAGS_POPULAR: '/tags/popular',
-    
+
     // Conquistas
     CONQUISTAS: '/conquistas',
     CONQUISTAS_CAMPO: '/conquistas/campo',
-    
+
     // Workshops
     WORKSHOPS: '/workshops',
-    
+
     // Imagem
     IMAGEM_UPLOAD: '/imagem/upload',
     IMAGEM_DELETE: '/imagem/delete',
     IMAGEM_UPDATE: '/imagem/update',
-    
+
     // Comentários
     COMENTARIOS: '/comentarios',
     COMENTARIOS_POST: '/comentarios/post',
     COMENTARIOS_RESPOSTAS: '/comentarios/:id/respostas',
     COMENTARIOS_USUARIO: '/comentarios/usuario',
-    
+
     // Votos
     VOTOS: '/votos',
 
     // Inscrições
     INSCRICOES: '/inscricoes',
-
   },
   TIMEOUT: 30000,
 };

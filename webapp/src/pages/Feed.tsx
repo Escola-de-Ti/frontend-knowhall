@@ -23,41 +23,24 @@ import { usuarioService, RankingUsuarioDTO } from '../services/usuarioService';
 
 export default function Feed() {
   const navigate = useNavigate();
-  
-  const { 
-    posts, 
-    loading, 
-    error, 
-    hasMore, 
-    orderBy,
-    loadMore, 
-    refresh, 
-    updatePost,
-    setOrderBy 
-  } = useFeed(10);
+
+  const { posts, loading, error, hasMore, orderBy, loadMore, refresh, updatePost, setOrderBy } =
+    useFeed(10);
 
   const observerTarget = useRef<HTMLDivElement>(null);
-
   const [workshops, setWorkshops] = useState<WorkshopItem[]>([]);
   const [workshopsLoading, setWorkshopsLoading] = useState(true);
   const [workshopsError, setWorkshopsError] = useState<string | null>(null);
-
   const [rankingList, setRankingList] = useState<RankingUsuarioDTO[]>([]);
   const [rankingLoading, setRankingLoading] = useState(true);
   const [rankingError, setRankingError] = useState<string | null>(null);
-
   const [open, setOpen] = useState(false);
   const [current, setCurrent] = useState<PostDetails | null>(null);
-  const [comments, setComments] = useState<PostCommentModel[]>([]);
-
-  // Estado para controlar o menu de filtros
+  const [, setComments] = useState<PostCommentModel[]>([]);
   const [filterMenuOpen, setFilterMenuOpen] = useState(false);
 
   const transformWorkshopToItem = (workshop: WorkshopResponseDTO): WorkshopItem => {
-    const duracao = workshopService.calcularDuracao(
-      workshop.dataInicio,
-      workshop.dataTermino
-    );
+    const duracao = workshopService.calcularDuracao(workshop.dataInicio, workshop.dataTermino);
 
     const dataFormatada = workshopService.formatarData(workshop.dataInicio);
 
@@ -82,9 +65,7 @@ export default function Feed() {
 
         const workshopsFuturos = response
           .filter((w) => new Date(w.dataInicio) > new Date())
-          .sort((a, b) => 
-            new Date(a.dataInicio).getTime() - new Date(b.dataInicio).getTime()
-          )
+          .sort((a, b) => new Date(a.dataInicio).getTime() - new Date(b.dataInicio).getTime())
           .slice(0, 4);
 
         const workshopsFormatados = workshopsFuturos.map(transformWorkshopToItem);
@@ -106,19 +87,18 @@ export default function Feed() {
       try {
         setRankingLoading(true);
         setRankingError(null);
-        
-        const response = await usuarioService.buscarRanking();
-        
-        setRankingList(response.rankingList.slice(0, 10)); 
 
+        const response = await usuarioService.buscarRanking();
+
+        setRankingList(response.rankingList.slice(0, 10));
       } catch (err: any) {
-        console.error("Erro ao carregar ranking:", err);
-        setRankingError("Não foi possível carregar o ranking.");
+        console.error('Erro ao carregar ranking:', err);
+        setRankingError('Não foi possível carregar o ranking.');
       } finally {
         setRankingLoading(false);
       }
     }
-    
+
     carregarRanking();
   }, []);
 
@@ -192,7 +172,7 @@ export default function Feed() {
     setCurrent(post);
     setComments(cmts);
     setOpen(true);
-  };
+  }
 
   const handleObserver = useCallback(
     (entries: IntersectionObserverEntry[]) => {
@@ -260,7 +240,10 @@ export default function Feed() {
               Carregando workshops...
             </div>
           ) : workshopsError ? (
-            <div className="ws-panel" style={{ padding: '20px', color: 'red', textAlign: 'center' }}>
+            <div
+              className="ws-panel"
+              style={{ padding: '20px', color: 'red', textAlign: 'center' }}
+            >
               {workshopsError}
             </div>
           ) : workshops.length > 0 ? (
@@ -345,29 +328,25 @@ export default function Feed() {
           {rankingLoading && (
             <div className="rk-panel" style={{ padding: '20px', textAlign: 'center' }}>
               Carregando ranking...
-            </div> 
+            </div>
           )}
-          
+
           {rankingError && (
-            <div className="rk-panel" style={{ padding: '20px', color: 'red', textAlign: 'center' }}>
+            <div
+              className="rk-panel"
+              style={{ padding: '20px', color: 'red', textAlign: 'center' }}
+            >
               {rankingError}
             </div>
           )}
 
           {!rankingLoading && !rankingError && (
-            <RankingList 
-              users={rankingList} 
-              onVerMais={handleVerMaisRanking}
-            />
+            <RankingList users={rankingList} onVerMais={handleVerMaisRanking} />
           )}
         </aside>
       </main>
 
-      <PostDetailsModal
-        open={open}
-        onClose={handleCloseModal}
-        post={current}
-      />
+      <PostDetailsModal open={open} onClose={handleCloseModal} post={current} />
     </div>
   );
 }

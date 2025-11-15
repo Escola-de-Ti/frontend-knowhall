@@ -10,11 +10,7 @@ interface RequestOptions extends RequestInit {
 }
 
 class ApiService {
-
-  async request<T>(
-    endpoint: string,
-    options: RequestOptions = {}
-  ): Promise<T> {
+  async request<T>(endpoint: string, options: RequestOptions = {}): Promise<T> {
     const { requiresAuth = true, isRetry = false, headers = {}, ...restOptions } = options;
 
     const config: RequestInit = {
@@ -64,31 +60,28 @@ class ApiService {
 
       if (!response.ok) {
         const errorData = await response.json().catch(() => ({}));
-        
+
         const errorMessage = errorData.message || `Erro na requisição: ${response.status}`;
-        
+
         toast.error(errorMessage);
 
-      // Status 204 (No Content) não retorna corpo
-      if (response.status === 204) {
-        return undefined as T;
-      }
+        if (response.status === 204) {
+          return undefined as T;
+        }
         throw new Error(errorMessage);
       }
 
-        return response.json();
+      return response.json();
+    } catch (error: any) {
+      if (error instanceof TypeError && error.message === 'Failed to fetch') {
+        const networkMsg = 'Sem conexão com o servidor. Verifique sua internet.';
+        toast.error(networkMsg);
+        throw new Error(networkMsg);
+      }
 
-      } catch (error: any) {
-        if (error instanceof TypeError && error.message === 'Failed to fetch') {
-          const networkMsg = 'Sem conexão com o servidor. Verifique sua internet.';
-          toast.error(networkMsg);
-          throw new Error(networkMsg);
-        }
-
-        throw error;
+      throw error;
     }
   }
-
 
   get<T>(endpoint: string, requiresAuth = true): Promise<T> {
     return this.request<T>(endpoint, { method: 'GET', requiresAuth });

@@ -57,11 +57,7 @@ export default function Post({ post, onMoreClick, onVote }: Props) {
         </div>
 
         <div className="post-meta">
-          <strong 
-            className="post-autor" 
-            onClick={handleAutorClick}
-            style={{ cursor: 'pointer' }}
-          >
+          <strong className="post-autor" onClick={handleAutorClick} style={{ cursor: 'pointer' }}>
             {post.autor.nome}
           </strong>
           <div className="post-sub">

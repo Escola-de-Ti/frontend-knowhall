@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useState, FormEvent, ChangeEvent } from 'react';
 import SlideLogin from '../components/SlideLogin';
 import '../styles/Cadastro.css';
@@ -115,7 +116,6 @@ const Cadastro: React.FC = () => {
     setLoading(true);
 
     try {
-      // Prepara os dados para envio
       const payload: UsuarioCreateDTO = {
         email: formData.email,
         cpf: removeMask(formData.cpf),
@@ -125,7 +125,6 @@ const Cadastro: React.FC = () => {
         tipoUsuario: 'ALUNO',
       };
 
-      // Chama o service para criar o usuário
       const usuario = await usuarioService.criar(payload);
 
       console.log('Usuário cadastrado com sucesso:', usuario);
@@ -164,13 +163,9 @@ const Cadastro: React.FC = () => {
             <h1 className="kh-title">Crie sua Conta!</h1>
             <SlideLogin />
 
-            {successMessage && (
-              <div className="success-message">{successMessage}</div>
-            )}
+            {successMessage && <div className="success-message">{successMessage}</div>}
 
-            {errors.geral && (
-              <div className="error-message">{errors.geral}</div>
-            )}
+            {errors.geral && <div className="error-message">{errors.geral}</div>}
 
             <form onSubmit={handleSubmit} className="kh-form">
               <div className="kh-grid">
@@ -267,9 +262,7 @@ const Cadastro: React.FC = () => {
                     onChange={handleChange}
                     disabled={loading}
                   />
-                  {errors.confirmarSenha && (
-                    <span className="error">{errors.confirmarSenha}</span>
-                  )}
+                  {errors.confirmarSenha && <span className="error">{errors.confirmarSenha}</span>}
                 </div>
               </div>
 

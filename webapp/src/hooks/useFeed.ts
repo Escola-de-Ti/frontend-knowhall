@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { postService, PostFeedDTO, FeedRequestParams } from '../services/postService';
 
@@ -27,34 +28,37 @@ export function useFeed(pageSize: number = 10): UseFeedReturn {
 
   const loadingRef = useRef(false);
 
-  const loadInitial = useCallback(async (currentOrderBy: OrderByOption) => {
-    if (loadingRef.current) return;
+  const loadInitial = useCallback(
+    async (currentOrderBy: OrderByOption) => {
+      if (loadingRef.current) return;
 
-    loadingRef.current = true;
-    setLoading(true);
-    setError(null);
+      loadingRef.current = true;
+      setLoading(true);
+      setError(null);
 
-    try {
-      const params: FeedRequestParams = { 
-        pageSize,
-        orderBy: currentOrderBy 
-      };
-      const response = await postService.getFeed(params);
+      try {
+        const params: FeedRequestParams = {
+          pageSize,
+          orderBy: currentOrderBy,
+        };
+        const response = await postService.getFeed(params);
 
-      setPosts(response.posts);
-      setHasMore(response.hasMore);
+        setPosts(response.posts);
+        setHasMore(response.hasMore);
 
-      lastPostIdRef.current = response.lastPostId;
-      lastScoreRef.current = response.lastScore;
-    } catch (err: any) {
-      console.error('Erro ao carregar feed:', err);
-      setError(err.message || 'Erro ao carregar posts');
-      setHasMore(false);
-    } finally {
-      setLoading(false);
-      loadingRef.current = false;
-    }
-  }, [pageSize]);
+        lastPostIdRef.current = response.lastPostId;
+        lastScoreRef.current = response.lastScore;
+      } catch (err: any) {
+        console.error('Erro ao carregar feed:', err);
+        setError(err.message || 'Erro ao carregar posts');
+        setHasMore(false);
+      } finally {
+        setLoading(false);
+        loadingRef.current = false;
+      }
+    },
+    [pageSize]
+  );
 
   const loadMore = useCallback(async () => {
     if (loadingRef.current || !hasMore) return;
@@ -106,18 +110,21 @@ export function useFeed(pageSize: number = 10): UseFeedReturn {
     );
   }, []);
 
-  const setOrderBy = useCallback((newOrderBy: OrderByOption) => {
-    setOrderByState(newOrderBy);
-    lastPostIdRef.current = undefined;
-    lastScoreRef.current = undefined;
-    setPosts([]);
-    setHasMore(true);
-    loadInitial(newOrderBy);
-  }, [loadInitial]);
+  const setOrderBy = useCallback(
+    (newOrderBy: OrderByOption) => {
+      setOrderByState(newOrderBy);
+      lastPostIdRef.current = undefined;
+      lastScoreRef.current = undefined;
+      setPosts([]);
+      setHasMore(true);
+      loadInitial(newOrderBy);
+    },
+    [loadInitial]
+  );
 
   useEffect(() => {
     loadInitial(orderBy);
-  }, []); // Apenas na montagem inicial
+  }, []);
 
   return {
     posts,

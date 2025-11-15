@@ -32,7 +32,7 @@ export default function PerfilPosts({ idUsuario }: Props) {
         day: '2-digit',
         month: '2-digit',
         year: 'numeric',
-        });
+    });
 
     return (
         <section className="atividades-container" aria-labelledby="posts-title">
@@ -68,9 +68,7 @@ export default function PerfilPosts({ idUsuario }: Props) {
                 <div className="atividade-info">
                     <span>👍 {post.totalUpVotes}</span>
                     {post.tags && post.tags.length > 0 && (
-                    <span className="tags-info">
-                        {post.tags.map(tag => tag.name).join(', ')}
-                    </span>
+                    <span className="tags-info">{post.tags.map((tag) => tag.name).join(', ')}</span>
                     )}
                 </div>
                 </article>

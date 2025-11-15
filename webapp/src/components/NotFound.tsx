@@ -1,10 +1,10 @@
-import React from "react"
-import { useNavigate } from "react-router-dom"
-import NavBar from "../components/NavBar"
-import "../styles/NotFound.css"
+import React from 'react';
+import { useNavigate } from 'react-router-dom';
+import NavBar from '../components/NavBar';
+import '../styles/NotFound.css';
 
 export default function NotFound() {
-  const navigate = useNavigate()
+  const navigate = useNavigate();
 
   return (
     <>
@@ -21,7 +21,7 @@ export default function NotFound() {
               <span className="ico-back" />
               Voltar
             </button>
-            <button className="nf-btn" onClick={() => navigate("/feed")}>
+            <button className="nf-btn" onClick={() => navigate('/feed')}>
               <span className="ico-home" />
               Ir para o Feed
             </button>
@@ -29,5 +29,5 @@ export default function NotFound() {
         </section>
       </main>
     </>
-  )
+  );
 }

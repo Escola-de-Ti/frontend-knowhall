@@ -7,4 +7,7 @@ export const setTokens = (access: string, refresh?: string) => {
 };
 export const getAccessToken = () => localStorage.getItem(AT);
 export const getRefreshToken = () => localStorage.getItem(RT);
-export const clearTokens = () => { localStorage.removeItem(AT); localStorage.removeItem(RT); };
+export const clearTokens = () => {
+  localStorage.removeItem(AT);
+  localStorage.removeItem(RT);
+};

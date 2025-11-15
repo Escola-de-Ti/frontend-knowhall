@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { apiService } from './apiService';
 import API_CONFIG from '../config/api.config';
 
@@ -26,7 +27,7 @@ interface UsuarioUpdateDTO {
 }
 
 interface UsuarioResponseDTO {
-  id: string; 
+  id: string;
   email: string;
   nome: string;
   biografia?: string;
@@ -89,7 +90,6 @@ interface TokenResponseDTO {
 }
 
 class UsuarioService {
-
   async criar(dados: UsuarioCreateDTO): Promise<UsuarioResponseDTO> {
     try {
       const response = await apiService.post<UsuarioResponseDTO>(
@@ -106,9 +106,7 @@ class UsuarioService {
 
   async listar(): Promise<UsuarioResponseDTO[]> {
     try {
-      const response = await apiService.get<UsuarioResponseDTO[]>(
-        API_CONFIG.ENDPOINTS.USUARIOS
-      );
+      const response = await apiService.get<UsuarioResponseDTO[]>(API_CONFIG.ENDPOINTS.USUARIOS);
       return response;
     } catch (error: any) {
       console.error('Erro ao listar usuários:', error);
@@ -143,9 +141,7 @@ class UsuarioService {
 
   async deletar(id: string): Promise<void> {
     try {
-      await apiService.delete<void>(
-        `${API_CONFIG.ENDPOINTS.USUARIOS}/${id}`
-      );
+      await apiService.delete<void>(`${API_CONFIG.ENDPOINTS.USUARIOS}/${id}`);
     } catch (error: any) {
       console.error('Erro ao deletar usuário:', error);
       throw error;
@@ -192,14 +188,14 @@ class UsuarioService {
 }
 
 export const usuarioService = new UsuarioService();
-export type { 
-  UsuarioCreateDTO, 
-  UsuarioUpdateDTO, 
+export type {
+  UsuarioCreateDTO,
+  UsuarioUpdateDTO,
   UsuarioResponseDTO,
   RankingUsuarioDTO,
   RankingResponseDTO,
   TagDTO,
   UsuarioDetalhesDTO,
   RefreshTokenDTO,
-  TokenResponseDTO
+  TokenResponseDTO,
 };

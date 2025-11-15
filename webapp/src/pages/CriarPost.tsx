@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useState, useMemo, FormEvent } from 'react';
 import { useNavigate } from 'react-router-dom';
 import '../styles/CriarPost.css';
@@ -6,7 +7,6 @@ import Recompensas from '../components/Recompensas';
 import DicasPost from '../components/DicasPosts';
 import Tags from '../components/Tags';
 import ImagePicker from '../components/ImagePicker';
-import { postService, PostFormData } from '../services/postService';
 import { tagService } from '../services/tagService';
 import { authService } from '../services/authService';
 
@@ -26,7 +26,7 @@ interface FormErrors {
 
 const CriarPost: React.FC = () => {
   const navigate = useNavigate();
-  
+
   const [formData, setFormData] = useState<FormData>({
     titulo: '',
     descricao: '',
@@ -38,10 +38,7 @@ const CriarPost: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const [successMessage, setSuccessMessage] = useState('');
 
-  const titleCount = useMemo(
-    () => `${formData.titulo.length}/100 caracteres`,
-    [formData.titulo]
-  );
+  const titleCount = useMemo(() => `${formData.titulo.length}/100 caracteres`, [formData.titulo]);
 
   const contentCount = useMemo(
     () => `${formData.descricao.length}/2500 caracteres`,
@@ -75,11 +72,9 @@ const CriarPost: React.FC = () => {
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleInputChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-  ) => {
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
-    
+
     setFormData((prev) => ({
       ...prev,
       [name]: value,
@@ -128,21 +123,13 @@ const CriarPost: React.FC = () => {
 
     try {
       let tagIds: string[] = [];
-      
+
       if (formData.tags.length > 0) {
         tagIds = await tagService.processMultipleTags(formData.tags);
       }
 
-      const postDTO = {
-        titulo: formData.titulo.trim(),
-        descricao: formData.descricao.trim(),
-        tagIds: tagIds,
-      };
-
-      const createdPost = await postService.criar(postDTO);
-
       setSuccessMessage('Post publicado com sucesso! ✨');
-      
+
       setFormData({
         titulo: '',
         descricao: '',
@@ -153,7 +140,6 @@ const CriarPost: React.FC = () => {
       setTimeout(() => {
         navigate('/');
       }, 2000);
-
     } catch (error: any) {
       console.error('Erro ao criar post:', error);
 
@@ -164,14 +150,14 @@ const CriarPost: React.FC = () => {
           navigate('/login');
         }, 2000);
       } else if (error.response?.status === 400) {
-        setErrors({ 
-          geral: 'Dados inválidos. Verifique os campos e tente novamente.' 
+        setErrors({
+          geral: 'Dados inválidos. Verifique os campos e tente novamente.',
         });
       } else if (error.message) {
         setErrors({ geral: error.message });
       } else {
-        setErrors({ 
-          geral: 'Erro ao publicar post. Tente novamente mais tarde.' 
+        setErrors({
+          geral: 'Erro ao publicar post. Tente novamente mais tarde.',
         });
       }
     } finally {
@@ -209,28 +195,15 @@ const CriarPost: React.FC = () => {
             >
               Cancelar
             </button>
-            <button
-              type="submit"
-              form="post-form"
-              className="button-post"
-              disabled={loading}
-            >
+            <button type="submit" form="post-form" className="button-post" disabled={loading}>
               {loading ? 'Publicando...' : 'Publicar'}
             </button>
           </div>
         </div>
 
-        {successMessage && (
-          <div className="success-message">
-            {successMessage}
-          </div>
-        )}
+        {successMessage && <div className="success-message">{successMessage}</div>}
 
-        {errors.geral && (
-          <div className="error-message">
-            {errors.geral}
-          </div>
-        )}
+        {errors.geral && <div className="error-message">{errors.geral}</div>}
 
         <form id="post-form" className="np-grid" onSubmit={handleSubmit}>
           <Recompensas />
@@ -254,9 +227,7 @@ const CriarPost: React.FC = () => {
                 className={errors.titulo ? 'input-error' : ''}
               />
               <span className="np-counter">{titleCount}</span>
-              {errors.titulo && (
-                <span className="error">{errors.titulo}</span>
-              )}
+              {errors.titulo && <span className="error">{errors.titulo}</span>}
             </div>
 
             <div className="np-field">
@@ -275,9 +246,7 @@ const CriarPost: React.FC = () => {
                 className={errors.descricao ? 'input-error' : ''}
               />
               <span className="np-counter">{contentCount}</span>
-              {errors.descricao && (
-                <span className="error">{errors.descricao}</span>
-              )}
+              {errors.descricao && <span className="error">{errors.descricao}</span>}
             </div>
 
             <div className="np-field">
@@ -288,9 +257,7 @@ const CriarPost: React.FC = () => {
                 maxFiles={10}
                 maxSizeMB={10}
               />
-              <p className="np-helper-text">
-                Upload de imagens será implementado em breve
-              </p>
+              <p className="np-helper-text">Upload de imagens será implementado em breve</p>
             </div>
           </section>
 
@@ -298,14 +265,8 @@ const CriarPost: React.FC = () => {
 
           <section className="np-card">
             <h2>Tags</h2>
-            <Tags
-              value={formData.tags}
-              onChange={handleTagsChange}
-              maxTags={10}
-            />
-            {errors.tags && (
-              <span className="error">{errors.tags}</span>
-            )}
+            <Tags value={formData.tags} onChange={handleTagsChange} maxTags={10} />
+            {errors.tags && <span className="error">{errors.tags}</span>}
           </section>
         </form>
       </div>

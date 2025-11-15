@@ -47,7 +47,9 @@ export async function getMyUser() {
 }
 
 export async function getUsuarioDetalhes(id: number) {
-  return await apiService.get<UsuarioDetalhesDTO>(`${API_CONFIG.ENDPOINTS.USUARIOS_DETALHES}/${id}`);
+  return await apiService.get<UsuarioDetalhesDTO>(
+    `${API_CONFIG.ENDPOINTS.USUARIOS_DETALHES}/${id}`
+  );
 }
 
 export async function updateUsuario(id: number, payload: Partial<UsuarioDTO>) {
@@ -55,10 +57,12 @@ export async function updateUsuario(id: number, payload: Partial<UsuarioDTO>) {
 }
 
 export async function getConquistasDoUsuario(usuarioId: number) {
-  return await apiService.get<Array<{
-    id: number;
-    titulo: string;
-    descricao?: string;
-    tipo: string;
-  }>>(`${API_CONFIG.ENDPOINTS.USUARIOS}/${usuarioId}/conquistas`);
+  return await apiService.get<
+    Array<{
+      id: number;
+      titulo: string;
+      descricao?: string;
+      tipo: string;
+    }>
+  >(`${API_CONFIG.ENDPOINTS.USUARIOS}/${usuarioId}/conquistas`);
 }

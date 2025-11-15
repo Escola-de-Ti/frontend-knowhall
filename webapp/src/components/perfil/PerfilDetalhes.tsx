@@ -20,9 +20,6 @@ type PerfilDetalhesProps = {
 export default function PerfilDetalhes({
   id_usuario,
   email,
-  cpf,
-  telefone,
-  telefone2,
   nome,
   biografia,
   id_imagem_perfil,
