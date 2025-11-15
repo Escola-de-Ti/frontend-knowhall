@@ -8,11 +8,15 @@ import {
 } from '../services/workshopService';
 import { authService } from '../services/authService';
 import { inscricaoService } from '../services/inscricaoService';
+import { usuarioService } from '../services/usuarioService';
 import { useNotification } from '../contexts/NotificationContext';
 import NavBar from '../components/NavBar';
 import '../styles/Workshops.css';
+import '../styles/FilterMenu.css';
 
 type Tab = 'disponiveis' | 'inscritos' | 'meus';
+
+type TipoUsuario = 'ALUNO' | 'INSTRUTOR' | 'ADMINISTRADOR';
 
 interface UiWorkshop {
   id: number;
@@ -20,6 +24,8 @@ interface UiWorkshop {
   description: string;
   mentor: { name: string; id: number };
   date: string;
+  rawDate: string;
+  rawEndDate: string;
   startTime: string;
   endTime: string;
   durationHours: number;
@@ -27,6 +33,118 @@ interface UiWorkshop {
   tokens?: number;
   rating?: number;
   meetLink?: string;
+}
+
+interface WorkshopFilterState {
+  startDate: string;
+  endDate: string;
+  minTokens: string;
+  maxTokens: string;
+}
+
+interface WorkshopFilterMenuProps {
+  isOpen: boolean;
+  onClose: () => void;
+  filters: WorkshopFilterState;
+  onChange: (next: WorkshopFilterState) => void;
+  onClear: () => void;
+}
+
+function WorkshopFilterMenu({
+  isOpen,
+  onClose,
+  filters,
+  onChange,
+  onClear,
+}: WorkshopFilterMenuProps) {
+  if (!isOpen) return null;
+
+  const handleChange =
+    (field: keyof WorkshopFilterState) => (e: React.ChangeEvent<HTMLInputElement>) => {
+      onChange({ ...filters, [field]: e.target.value });
+    };
+
+  const handleClear = () => {
+    onClear();
+    onClose();
+  };
+
+  const handleApply = () => {
+    onClose();
+  };
+
+  return (
+    <>
+      <div className="filter-menu-overlay" onClick={onClose} />
+      <div className="filter-menu wk-filter-menu">
+        <div className="filter-option wk-filter-header">
+          <span>Filtros de Workshops</span>
+        </div>
+
+        <div className="filter-option">
+          <div className="wk-filter-group">
+            <span className="wk-filter-label">Data inicial</span>
+            <input
+              type="date"
+              className="wk-filter-input"
+              value={filters.startDate}
+              onChange={handleChange('startDate')}
+            />
+          </div>
+        </div>
+
+        <div className="filter-option">
+          <div className="wk-filter-group">
+            <span className="wk-filter-label">Data final</span>
+            <input
+              type="date"
+              className="wk-filter-input"
+              value={filters.endDate}
+              onChange={handleChange('endDate')}
+            />
+          </div>
+        </div>
+
+        <div className="filter-option">
+          <div className="wk-filter-group">
+            <span className="wk-filter-label">Tokens mínimos</span>
+            <input
+              type="number"
+              min={0}
+              className="wk-filter-input"
+              value={filters.minTokens}
+              onChange={handleChange('minTokens')}
+            />
+          </div>
+        </div>
+
+        <div className="filter-option">
+          <div className="wk-filter-group">
+            <span className="wk-filter-label">Tokens máximos</span>
+            <input
+              type="number"
+              min={0}
+              className="wk-filter-input"
+              value={filters.maxTokens}
+              onChange={handleChange('maxTokens')}
+            />
+          </div>
+        </div>
+
+        <button type="button" className="filter-option wk-filter-clear" onClick={handleClear}>
+          Limpar filtros
+        </button>
+
+        <button
+          type="button"
+          className="filter-option active wk-filter-apply"
+          onClick={handleApply}
+        >
+          Aplicar
+        </button>
+      </div>
+    </>
+  );
 }
 
 const PAGE_SIZE = 6;
@@ -38,6 +156,8 @@ function mapToUi(w: WorkshopResponseDTO): UiWorkshop {
     description: w.descricao?.descricao ?? '',
     mentor: { name: w.instrutorNome, id: w.instrutorId },
     date: workshopService.formatarData(w.dataInicio),
+    rawDate: w.dataInicio,
+    rawEndDate: w.dataTermino,
     startTime: workshopService.formatarHora(w.dataInicio),
     endTime: workshopService.formatarHora(w.dataTermino),
     durationHours: workshopService.calcularDuracao(w.dataInicio, w.dataTermino),
@@ -48,7 +168,7 @@ function mapToUi(w: WorkshopResponseDTO): UiWorkshop {
   };
 }
 
-function getStatusChipLabel(status: WorkshopStatus): string {
+function getStatusChipLabelInscritos(status: WorkshopStatus): string {
   switch (status) {
     case 'CONCLUIDO':
       return 'Concluído';
@@ -60,26 +180,127 @@ function getStatusChipLabel(status: WorkshopStatus): string {
   }
 }
 
+function isWorkshopExpired(w: UiWorkshop): boolean {
+  const end = new Date(w.rawEndDate);
+  if (Number.isNaN(end.getTime())) return false;
+  return end.getTime() < Date.now() && (w.status === 'ABERTO' || w.status === 'EM_ANDAMENTO');
+}
+
+function getStatusChipLabelList(w: UiWorkshop, isInscritos: boolean): string {
+  if (isInscritos) return getStatusChipLabelInscritos(w.status);
+
+  if (isWorkshopExpired(w)) return 'Expirado';
+
+  switch (w.status) {
+    case 'ABERTO':
+      return 'Disponível';
+    case 'EM_ANDAMENTO':
+      return 'Em andamento';
+    case 'CONCLUIDO':
+      return 'Concluído';
+    default:
+      return w.status;
+  }
+}
+
+function getStatusChipClass(w: UiWorkshop, isInscritos: boolean): string {
+  if (isInscritos) return w.status === 'CONCLUIDO' ? 'ok' : 'info';
+
+  if (isWorkshopExpired(w)) return 'warn';
+  if (w.status === 'CONCLUIDO') return 'ok';
+  if (w.status === 'EM_ANDAMENTO') return 'info';
+  if (w.status === 'ABERTO') return 'info';
+
+  return 'info';
+}
+
 export default function Workshops() {
   const [tab, setTab] = useState<Tab>('disponiveis');
-  const [data, setData] = useState<UiWorkshop[]>([]);
+  const [allData, setAllData] = useState<UiWorkshop[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [page, setPage] = useState(1);
   const [inscrevendoId, setInscrevendoId] = useState<number | null>(null);
 
+  const [isFilterOpen, setIsFilterOpen] = useState(false);
+  const [filters, setFilters] = useState<WorkshopFilterState>({
+    startDate: '',
+    endDate: '',
+    minTokens: '',
+    maxTokens: '',
+  });
+
+  const [tipoUsuario, setTipoUsuario] = useState<TipoUsuario | null>(null);
+  const [usuarioId, setUsuarioId] = useState<number | null>(null);
+
   const navigate = useNavigate();
   const { addNotification } = useNotification();
 
+  useEffect(() => {
+    let mounted = true;
+
+    async function loadTipoUsuario() {
+      try {
+        const email = authService.getUserEmail();
+
+        if (!email) {
+          if (mounted) {
+            setTipoUsuario('ALUNO');
+            setUsuarioId(null);
+          }
+          return;
+        }
+
+        const usuarios = await usuarioService.listar();
+        if (!mounted) return;
+
+        const usuario = usuarios.find(
+          (u) => u.email && u.email.toLowerCase() === email.toLowerCase()
+        );
+
+        const rawTipo = (usuario?.tipoUsuario || '').toUpperCase();
+        let tipo: TipoUsuario = 'ALUNO';
+
+        if (rawTipo === 'INSTRUTOR') tipo = 'INSTRUTOR';
+        else if (rawTipo === 'ADMINISTRADOR') tipo = 'ADMINISTRADOR';
+
+        setTipoUsuario(tipo);
+
+        const idNumber = usuario ? Number(usuario.id) : NaN;
+        setUsuarioId(Number.isNaN(idNumber) ? null : idNumber);
+      } catch (e) {
+        console.error('Erro ao buscar tipo do usuário:', e);
+        if (mounted) {
+          setTipoUsuario('ALUNO');
+          setUsuarioId(null);
+        }
+      }
+    }
+
+    loadTipoUsuario();
+
+    return () => {
+      mounted = false;
+    };
+  }, []);
+
+  const isInstrutor = tipoUsuario === 'INSTRUTOR';
+  const isAdmin = tipoUsuario === 'ADMINISTRADOR';
+
+  const canCreateWorkshop = !!tipoUsuario && (isInstrutor || isAdmin);
+  const canSeeMeusTab = !!tipoUsuario && (isInstrutor || isAdmin);
+
   const emptyMessage = useMemo(() => {
-    if (tab === 'inscritos') {
-      return 'Você ainda não está inscrito em nenhum workshop.';
-    }
-    if (tab === 'meus') {
-      return 'Você ainda não criou nenhum workshop.';
-    }
+    if (tab === 'inscritos') return 'Você ainda não está inscrito em nenhum workshop.';
+    if (tab === 'meus') return 'Você ainda não criou nenhum workshop.';
     return 'Nenhum workshop disponível no momento.';
   }, [tab]);
+
+  useEffect(() => {
+    if (!canSeeMeusTab && tab === 'meus') {
+      setTab('disponiveis');
+    }
+  }, [canSeeMeusTab, tab]);
 
   useEffect(() => {
     let mounted = true;
@@ -93,20 +314,12 @@ export default function Workshops() {
 
         if (tab === 'disponiveis') {
           workshops = await workshopService.listarPorStatus('ABERTO');
-        } else if (tab === 'meus') {
-          const instrutorId = authService.getInstrutorId();
-
-          if (instrutorId != null) {
-            workshops = await workshopService.buscarPorInstrutor(instrutorId);
-          } else {
-            console.warn(
-              'Não foi possível identificar o instrutor pelo token. Carregando todos e tentando filtrar pelo nome.'
-            );
+        } else if (tab === 'meus' && canSeeMeusTab) {
+          if (usuarioId != null) {
             const todos = await workshopService.listar();
-            const nomeInstrutor = authService.getUsuarioNome();
-            workshops = nomeInstrutor
-              ? todos.filter((w) => w.instrutorNome === nomeInstrutor)
-              : todos;
+            workshops = todos.filter((w) => w.instrutorId === usuarioId);
+          } else {
+            workshops = [];
           }
         } else if (tab === 'inscritos') {
           const inscricoes = await inscricaoService.listarMinhas();
@@ -124,7 +337,7 @@ export default function Workshops() {
         }
 
         if (!mounted) return;
-        setData(workshops.map(mapToUi));
+        setAllData(workshops.map(mapToUi));
         setPage(1);
       } catch (e: any) {
         if (!mounted) return;
@@ -132,36 +345,75 @@ export default function Workshops() {
         const resp = e?.response?.data;
         const msg = resp?.message || resp?.error || e?.message || 'Erro ao carregar workshops';
         setError(msg);
-        setData([]);
+        setAllData([]);
       } finally {
         if (mounted) setLoading(false);
       }
     }
 
-    load();
+    if (tipoUsuario !== null) {
+      load();
+    }
 
     return () => {
       mounted = false;
     };
-  }, [tab]);
+  }, [tab, canSeeMeusTab, tipoUsuario, usuarioId]);
 
   useEffect(() => {
     setPage(1);
-  }, [tab]);
+  }, [tab, filters.startDate, filters.endDate, filters.minTokens, filters.maxTokens]);
 
-  const totalPages = Math.max(1, Math.ceil(data.length / PAGE_SIZE));
+  const filtered = useMemo(() => {
+    let list = [...allData];
+    const { startDate, endDate, minTokens, maxTokens } = filters;
+
+    if (startDate) {
+      const start = new Date(`${startDate}T00:00:00`);
+      list = list.filter((w) => {
+        const d = new Date(w.rawDate);
+        return !Number.isNaN(d.getTime()) && d >= start;
+      });
+    }
+
+    if (endDate) {
+      const end = new Date(`${endDate}T23:59:59`);
+      list = list.filter((w) => {
+        const d = new Date(w.rawDate);
+        return !Number.isNaN(d.getTime()) && d <= end;
+      });
+    }
+
+    if (minTokens !== '') {
+      const min = Number(minTokens);
+      if (!Number.isNaN(min)) {
+        list = list.filter((w) => (w.tokens ?? 0) >= min);
+      }
+    }
+
+    if (maxTokens !== '') {
+      const max = Number(maxTokens);
+      if (!Number.isNaN(max)) {
+        list = list.filter((w) => (w.tokens ?? 0) <= max);
+      }
+    }
+
+    return list;
+  }, [allData, filters]);
+
+  const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
 
   const paginated = useMemo(() => {
     const start = (page - 1) * PAGE_SIZE;
-    return data.slice(start, start + PAGE_SIZE);
-  }, [data, page]);
+    return filtered.slice(start, start + PAGE_SIZE);
+  }, [filtered, page]);
 
-  const activeIdx = tab === 'disponiveis' ? 0 : tab === 'inscritos' ? 1 : 2;
+  const activeIdx = tab === 'disponiveis' ? 0 : tab === 'inscritos' ? 1 : canSeeMeusTab ? 2 : 0;
   const isInscritos = tab === 'inscritos';
   const isMeus = tab === 'meus';
 
-  const showEmpty = !loading && !error && data.length === 0;
-  const showContent = !loading && !error && data.length > 0;
+  const showEmpty = !loading && !error && filtered.length === 0;
+  const showContent = !loading && !error && filtered.length > 0;
 
   async function handleInscrever(w: UiWorkshop) {
     try {
@@ -206,6 +458,23 @@ export default function Workshops() {
     }
   }
 
+  function handleVerInscritos(w: UiWorkshop) {
+    navigate(`/workshops/${w.id}/inscritos`);
+  }
+
+  function handleOpenFilters() {
+    setIsFilterOpen(true);
+  }
+
+  function handleClearFilters() {
+    setFilters({
+      startDate: '',
+      endDate: '',
+      minTokens: '',
+      maxTokens: '',
+    });
+  }
+
   return (
     <>
       <NavBar />
@@ -223,18 +492,24 @@ export default function Workshops() {
             </div>
 
             <div className="wk-actions">
-              <button className="wk-filter" type="button">
+              <button
+                className={`wk-filter ${isFilterOpen ? 'is-open' : ''}`}
+                type="button"
+                onClick={handleOpenFilters}
+              >
                 <span className="ico-filter" />
                 Filtros
               </button>
-              <button
-                className="wk-create"
-                type="button"
-                onClick={() => navigate('/criar-workshop/')}
-              >
-                <span className="ico-plus" />
-                Criar Workshop
-              </button>
+              {canCreateWorkshop && (
+                <button
+                  className="wk-create"
+                  type="button"
+                  onClick={() => navigate('/criar-workshop/')}
+                >
+                  <span className="ico-plus" />
+                  Criar Workshop
+                </button>
+              )}
             </div>
           </div>
         </div>
@@ -256,13 +531,15 @@ export default function Workshops() {
             >
               Inscritos
             </button>
-            <button
-              className={`wk-tab ${activeIdx === 2 ? 'is-active' : ''}`}
-              onClick={() => setTab('meus')}
-              type="button"
-            >
-              Meus Workshops
-            </button>
+            {canSeeMeusTab && (
+              <button
+                className={`wk-tab ${activeIdx === 2 ? 'is-active' : ''}`}
+                onClick={() => setTab('meus')}
+                type="button"
+              >
+                Meus Workshops
+              </button>
+            )}
           </div>
         </div>
 
@@ -275,7 +552,9 @@ export default function Workshops() {
           <>
             <div className={`wk-grid ${isInscritos ? 'is-enrolled' : ''}`}>
               {paginated.map((w) => {
-                const statusLabel = getStatusChipLabel(w.status);
+                const statusLabel = getStatusChipLabelList(w, isInscritos);
+                const statusClass = getStatusChipClass(w, isInscritos);
+                const expired = isWorkshopExpired(w);
 
                 return (
                   <article
@@ -286,23 +565,19 @@ export default function Workshops() {
                   >
                     <header className="wk-row">
                       <h2 className="wk-card-title">{w.title}</h2>
+
                       {typeof w.tokens === 'number' && !isInscritos && (
                         <span className="wk-chip-tokens">{w.tokens} tokens</span>
                       )}
-                      {isInscritos && (
-                        <span
-                          className={`wk-chip-status ${w.status === 'CONCLUIDO' ? 'ok' : 'info'}`}
-                        >
-                          {statusLabel}
-                        </span>
-                      )}
+
+                      <span className={`wk-chip-status ${statusClass}`}>{statusLabel}</span>
                     </header>
 
                     <p className="wk-desc">{w.description}</p>
 
                     {!isInscritos && (
                       <>
-                        <div 
+                        <div
                           className="wk-mentor"
                           onClick={() => navigate(`/perfil/${w.mentor.id}`)}
                           style={{ cursor: 'pointer' }}
@@ -328,12 +603,6 @@ export default function Workshops() {
                             <span className="wk-ico wk-time" />
                             <span>{w.durationHours}h</span>
                           </div>
-                          <div className="wk-meta-item">
-                            <span className="wk-ico wk-clock" />
-                            <span>
-                              {w.startTime} - {w.endTime}
-                            </span>
-                          </div>
                         </div>
 
                         {!isMeus ? (
@@ -341,12 +610,16 @@ export default function Workshops() {
                             <button
                               className="wk-cta"
                               type="button"
-                              disabled={inscrevendoId === w.id}
+                              disabled={inscrevendoId === w.id || expired}
                               onClick={() => handleInscrever(w)}
                             >
                               <span className="wk-cta-ico" />
                               <span>
-                                {inscrevendoId === w.id ? 'Inscrevendo...' : 'Inscreva-se'}
+                                {expired
+                                  ? 'Encerrado'
+                                  : inscrevendoId === w.id
+                                    ? 'Inscrevendo...'
+                                    : 'Inscreva-se'}
                               </span>
                             </button>
                           </div>
@@ -359,6 +632,14 @@ export default function Workshops() {
                             >
                               <span className="ico-edit" />
                               Editar Configurações
+                            </button>
+                            <button
+                              className="wk-btn-edit"
+                              type="button"
+                              onClick={() => handleVerInscritos(w)}
+                            >
+                              <span className="ico-users" />
+                              Ver inscritos
                             </button>
                           </div>
                         )}
@@ -420,6 +701,14 @@ export default function Workshops() {
           </>
         )}
       </div>
+
+      <WorkshopFilterMenu
+        isOpen={isFilterOpen}
+        onClose={() => setIsFilterOpen(false)}
+        filters={filters}
+        onChange={setFilters}
+        onClear={handleClearFilters}
+      />
     </>
   );
 }
