@@ -11,7 +11,9 @@ export type EditarPerfilPayload = {
   nivel?: number;
 };
 
-const BASE_URL = import.meta.env.VITE_API_BASE_URL?.replace(/\/$/, '') || 'http://localhost:8080';
+import API_CONFIG from '../config/api.config';
+
+const BASE_URL = `${API_CONFIG.BASE_URL}${API_CONFIG.API_PREFIX}`;
 
 function clean<T extends object>(obj: T, keepEmpty: string[] = []): T {
   const o: Record<string, unknown> = {};

@@ -32,8 +32,6 @@ export default function PerfilHistorico({
   const fmt = (n: number | null | undefined) => (n ?? 0).toLocaleString('pt-BR');
   const rankStr = `#${String(ranking || 0).padStart(2, '0')}`;
   
-  console.log('PerfilHistorico - ranking recebido:', ranking);
-
   return (
     <section className="history-container" aria-labelledby="history-title">
       <header className="history-header">

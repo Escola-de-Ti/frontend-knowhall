@@ -1,7 +1,5 @@
-const REACT_APP_API_BASE_URL = 'http://localhost:8080';
-
 const API_CONFIG = {
-  BASE_URL: REACT_APP_API_BASE_URL || 'http://localhost:8080',
+  BASE_URL: import.meta.env.VITE_API_URL || 'http://localhost:8080',
   API_PREFIX: '/api',
   ENDPOINTS: {
     // Usuários
@@ -55,6 +53,14 @@ const API_CONFIG = {
  */
 export const buildApiUrl = (endpoint: string): string => {
   return `${API_CONFIG.BASE_URL}${API_CONFIG.API_PREFIX}${endpoint}`;
+};
+
+/**
+ * Retorna a URL base completa da API
+ * @returns URL base (ex: 'http://localhost:8080/api')
+ */
+export const getApiBaseUrl = (): string => {
+  return `${API_CONFIG.BASE_URL}${API_CONFIG.API_PREFIX}`;
 };
 
 export default API_CONFIG;
