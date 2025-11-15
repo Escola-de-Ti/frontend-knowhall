@@ -102,36 +102,32 @@ const Perfil: React.FC = () => {
       <NavBar />
       <div className="perfil-wrap">
         <div className="perfil-grid">
-          <div className="perfil-card perfil-detalhes-card">
-            <PerfilDetalhes
-              id_usuario={user?.id!}
-              email={user?.email || ''}
-              nome={usuarioDetalhes.nome}
-              biografia={usuarioDetalhes.biografia}
-              id_imagem_perfil={usuarioDetalhes.imagemUrl}
-              status_usuario="ATIVO"
-              tipo_usuario="PADRAO"
-              interesses={usuarioDetalhes.tags.map((tag) => tag.name)}
-              onEditar={isOwnProfile ? () => navigate('/perfil/editar-perfil') : undefined}
-              onInteresseClick={() => {}}
-            />
-          </div>
-          <div className="perfil-card perfil-historico-card">
-            <PerfilHistorico
-              nivel={usuarioDetalhes.nivel}
-              tokens={usuarioDetalhes.tokens}
-              ranking={usuarioDetalhes.posicaoRanking}
-              xpAtual={usuarioDetalhes.xp}
-              xpNecessario={1000}
-              progresso={Math.round((usuarioDetalhes.xp / 1000) * 100)}
-              posts={usuarioDetalhes.qtdPosts}
-              upvotes={usuarioDetalhes.qtdUpVotes + usuarioDetalhes.qtdSuperVotes}
-              comentarios={usuarioDetalhes.qtdComentarios}
-              workshops={usuarioDetalhes.qtdWorkshops}
-              medalSrc="/medalhaHistorico.png"
-              isOwnProfile={isOwnProfile}
-            />
-          </div>
+          <PerfilDetalhes
+            id_usuario={user?.id!}
+            email={user?.email || ''}
+            nome={usuarioDetalhes.nome}
+            biografia={usuarioDetalhes.biografia}
+            id_imagem_perfil={usuarioDetalhes.imagemUrl}
+            status_usuario="ATIVO"
+            tipo_usuario="PADRAO"
+            interesses={usuarioDetalhes.tags.map((tag) => tag.name)}
+            onEditar={isOwnProfile ? () => navigate('/perfil/editar-perfil') : undefined}
+            onInteresseClick={() => {}}
+          />
+          <PerfilHistorico
+            nivel={usuarioDetalhes.nivel}
+            tokens={usuarioDetalhes.tokens}
+            ranking={usuarioDetalhes.posicaoRanking}
+            xpAtual={usuarioDetalhes.xp}
+            xpNecessario={1000}
+            progresso={Math.round((usuarioDetalhes.xp / 1000) * 100)}
+            posts={usuarioDetalhes.qtdPosts}
+            upvotes={usuarioDetalhes.qtdUpVotes + usuarioDetalhes.qtdSuperVotes}
+            comentarios={usuarioDetalhes.qtdComentarios}
+            workshops={usuarioDetalhes.qtdWorkshops}
+            medalSrc="/medalhaHistorico.png"
+            isOwnProfile={isOwnProfile}
+          />
         </div>
 
         <div className="perfil-slide">
