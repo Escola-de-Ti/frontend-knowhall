@@ -1,0 +1,145 @@
+.filter-menu-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+  backdrop-filter: blur(2px);
+  -webkit-backdrop-filter: blur(2px);
+  z-index: 40;
+}
+
+.filter-menu.wk-filter-menu {
+  position: fixed;
+  top: 96px;
+  right: 40px;
+  width: 340px;
+  max-height: calc(100vh - 140px);
+  padding: 18px 18px 14px;
+  border-radius: 20px;
+  background: #151218;
+  border: 1px solid #b57fff55;
+  box-shadow:
+    0 0 0 1px #7f68fd33,
+    0 0 40px #7f68fd66;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  z-index: 50;
+  font-family: 'Manrope', sans-serif;
+  animation: wkFilterMenuIn 0.18s ease-out;
+}
+
+@keyframes wkFilterMenuIn {
+  from {
+    opacity: 0;
+    transform: translateY(-6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.wk-filter.is-open {
+  background: #2e244f;
+  border-color: #b57fff88;
+  box-shadow:
+    0 0 0 3px #7f68fd33,
+    0 0 24px #7f68fd44;
+}
+
+/* opções */
+
+.filter-option {
+  width: 100%;
+}
+
+.wk-filter-header {
+  margin-bottom: 4px;
+}
+
+.wk-filter-header span {
+  font-weight: 800;
+  font-size: 15px;
+  color: #f4f0ff;
+}
+
+.wk-filter-group {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.wk-filter-label {
+  font-size: 13px;
+  font-weight: 600;
+  color: #b9b4ff;
+}
+
+.wk-filter-input {
+  height: 38px;
+  padding: 0 10px;
+  border-radius: 10px;
+  border: 1px solid #373546;
+  background: #1d1b27;
+  color: #f4f4f4;
+  font-size: 13px;
+}
+
+.wk-filter-input::placeholder {
+  color: #77738f;
+}
+
+.wk-filter-input:focus {
+  outline: none;
+  border-color: #b57fff;
+  box-shadow: 0 0 0 1px #b57fff55;
+}
+
+.wk-filter-clear,
+.wk-filter-apply {
+  height: 40px;
+  border-radius: 12px;
+  border: 0;
+  font-weight: 800;
+  font-size: 14px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.wk-filter-clear {
+  margin-top: 4px;
+  background: transparent;
+  color: #f4f4f4;
+  border: 1px solid #3b384c;
+}
+
+.wk-filter-clear:hover {
+  background: #262335;
+}
+
+.wk-filter-apply {
+  margin-top: 6px;
+  background: linear-gradient(90deg, #6ea2ff 0%, #b07bff 50%, #f08e90 100%);
+  color: #0e0e0e;
+  box-shadow:
+    0 10px 24px #7f68fd33,
+    0 2px 0 #0000002b inset;
+}
+
+.wk-filter-apply:active {
+  transform: translateY(1px);
+  box-shadow:
+    0 6px 18px #7f68fd33,
+    0 1px 0 #0000002b inset;
+}
+
+@media (max-width: 900px) {
+  .filter-menu.wk-filter-menu {
+    top: 90px;
+    right: 16px;
+    left: 16px;
+    width: auto;
+  }
+}

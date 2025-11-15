@@ -12,7 +12,7 @@ import { usuarioService } from '../services/usuarioService';
 import { useNotification } from '../contexts/NotificationContext';
 import NavBar from '../components/NavBar';
 import '../styles/Workshops.css';
-import '../styles/FilterMenu.css';
+import '../styles/FilterWorkshop.css';
 
 type Tab = 'disponiveis' | 'inscritos' | 'meus';
 
