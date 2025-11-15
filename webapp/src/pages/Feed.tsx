@@ -10,6 +10,7 @@ import PostDetailsModal, {
   PostDetails,
   PostCommentModel,
 } from '../components/feed/PostDetailsModal';
+import FilterMenu, { OrderByOption } from '../components/feed/FilterMenu';
 import { workshopService, WorkshopResponseDTO } from '../services/workshopService';
 
 import { useFeed } from '../hooks/useFeed';
@@ -22,7 +23,17 @@ import { usuarioService, RankingUsuarioDTO } from '../services/usuarioService';
 export default function Feed() {
   const navigate = useNavigate();
   
-  const { posts, loading, error, hasMore, loadMore, refresh, updatePost } = useFeed(10);
+  const { 
+    posts, 
+    loading, 
+    error, 
+    hasMore, 
+    orderBy,
+    loadMore, 
+    refresh, 
+    updatePost,
+    setOrderBy 
+  } = useFeed(10);
 
   const observerTarget = useRef<HTMLDivElement>(null);
 
@@ -37,6 +48,9 @@ export default function Feed() {
   const [open, setOpen] = useState(false);
   const [current, setCurrent] = useState<PostDetails | null>(null);
   const [comments, setComments] = useState<PostCommentModel[]>([]);
+
+  // Estado para controlar o menu de filtros
+  const [filterMenuOpen, setFilterMenuOpen] = useState(false);
 
   const transformWorkshopToItem = (workshop: WorkshopResponseDTO): WorkshopItem => {
     const duracao = workshopService.calcularDuracao(
@@ -177,7 +191,7 @@ export default function Feed() {
     setCurrent(post);
     setComments(cmts);
     setOpen(true);
-  }
+  };
 
   const handleObserver = useCallback(
     (entries: IntersectionObserverEntry[]) => {
@@ -219,6 +233,14 @@ export default function Feed() {
     navigate('/workshops');
   };
 
+  const toggleFilterMenu = () => {
+    setFilterMenuOpen((prev) => !prev);
+  };
+
+  const handleOrderChange = (newOrder: OrderByOption) => {
+    setOrderBy(newOrder);
+  };
+
   return (
     <div className="feed-page">
       <NavBar />
@@ -251,10 +273,17 @@ export default function Feed() {
 
         <section className="feed-center">
           <div className="feed-filters-bar">
-            <button className="btn-filter" type="button" onClick={() => {}}>
+            <button className="btn-filter" type="button" onClick={toggleFilterMenu}>
               <span className="ico-filter" aria-hidden />
               <span className="lbl-filter">Filtros</span>
             </button>
+
+            <FilterMenu
+              isOpen={filterMenuOpen}
+              onClose={() => setFilterMenuOpen(false)}
+              currentOrder={orderBy}
+              onOrderChange={handleOrderChange}
+            />
           </div>
 
           {error && (

@@ -1,14 +1,18 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { postService, PostFeedDTO, FeedRequestParams } from '../services/postService';
 
+export type OrderByOption = 'RELEVANCE' | 'UPVOTES_DESC' | 'UPVOTES_ASC' | 'DATE_DESC' | 'DATE_ASC';
+
 interface UseFeedReturn {
   posts: PostFeedDTO[];
   loading: boolean;
   error: string | null;
   hasMore: boolean;
+  orderBy: OrderByOption;
   loadMore: () => void;
   refresh: () => void;
-  updatePost: (postId: string, updates: Partial<PostFeedDTO>) => void; 
+  updatePost: (postId: string, updates: Partial<PostFeedDTO>) => void;
+  setOrderBy: (order: OrderByOption) => void;
 }
 
 export function useFeed(pageSize: number = 10): UseFeedReturn {
@@ -16,13 +20,14 @@ export function useFeed(pageSize: number = 10): UseFeedReturn {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [hasMore, setHasMore] = useState(true);
+  const [orderBy, setOrderByState] = useState<OrderByOption>('RELEVANCE');
 
   const lastPostIdRef = useRef<string | undefined>(undefined);
   const lastScoreRef = useRef<number | undefined>(undefined);
 
   const loadingRef = useRef(false);
 
-  const loadInitial = useCallback(async () => {
+  const loadInitial = useCallback(async (currentOrderBy: OrderByOption) => {
     if (loadingRef.current) return;
 
     loadingRef.current = true;
@@ -30,13 +35,15 @@ export function useFeed(pageSize: number = 10): UseFeedReturn {
     setError(null);
 
     try {
-      const params: FeedRequestParams = { pageSize };
+      const params: FeedRequestParams = { 
+        pageSize,
+        orderBy: currentOrderBy 
+      };
       const response = await postService.getFeed(params);
 
       setPosts(response.posts);
       setHasMore(response.hasMore);
 
-      // Atualiza refs para próxima página
       lastPostIdRef.current = response.lastPostId;
       lastScoreRef.current = response.lastScore;
     } catch (err: any) {
@@ -49,9 +56,6 @@ export function useFeed(pageSize: number = 10): UseFeedReturn {
     }
   }, [pageSize]);
 
-  /**
-   * Carrega a próxima página do feed
-   */
   const loadMore = useCallback(async () => {
     if (loadingRef.current || !hasMore) return;
 
@@ -64,15 +68,14 @@ export function useFeed(pageSize: number = 10): UseFeedReturn {
         pageSize,
         lastPostId: lastPostIdRef.current,
         lastScore: lastScoreRef.current,
+        orderBy,
       };
 
       const response = await postService.getFeed(params);
 
-      // Adiciona novos posts aos existentes
       setPosts((prev) => [...prev, ...response.posts]);
       setHasMore(response.hasMore);
 
-      // Atualiza refs para próxima página
       lastPostIdRef.current = response.lastPostId;
       lastScoreRef.current = response.lastScore;
     } catch (err: any) {
@@ -82,41 +85,49 @@ export function useFeed(pageSize: number = 10): UseFeedReturn {
       setLoading(false);
       loadingRef.current = false;
     }
-  }, [hasMore, pageSize]);
+  }, [hasMore, pageSize, orderBy]);
 
   const refresh = useCallback(() => {
     lastPostIdRef.current = undefined;
     lastScoreRef.current = undefined;
     setPosts([]);
     setHasMore(true);
-    loadInitial();
-  }, [loadInitial]);
+    loadInitial(orderBy);
+  }, [loadInitial, orderBy]);
 
   const updatePost = useCallback((postId: string, updates: Partial<PostFeedDTO>) => {
-    console.log(postId)
     setPosts((prevPosts) =>
       prevPosts.map((post) => {
-        if (post.id == postId) {
-            return { ...post, ...updates };
+        if (post.id === postId) {
+          return { ...post, ...updates };
         }
-        console.log(post)
         return post;
       })
     );
   }, []);
 
-  // Carrega feed inicial ao montar o componente
-  useEffect(() => {
-    loadInitial();
+  const setOrderBy = useCallback((newOrderBy: OrderByOption) => {
+    setOrderByState(newOrderBy);
+    lastPostIdRef.current = undefined;
+    lastScoreRef.current = undefined;
+    setPosts([]);
+    setHasMore(true);
+    loadInitial(newOrderBy);
   }, [loadInitial]);
+
+  useEffect(() => {
+    loadInitial(orderBy);
+  }, []); // Apenas na montagem inicial
 
   return {
     posts,
     loading,
     error,
     hasMore,
+    orderBy,
     loadMore,
     refresh,
-    updatePost, // ← NOVO: Expõe função de atualização
+    updatePost,
+    setOrderBy,
   };
 }
