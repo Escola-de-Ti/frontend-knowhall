@@ -9,6 +9,8 @@ import Tags from '../components/Tags';
 import ImagePicker from '../components/ImagePicker';
 import { tagService } from '../services/tagService';
 import { authService } from '../services/authService';
+import { postService } from '../services/postService';
+import { imagemService } from '../services/imagemService';
 
 interface FormData {
   titulo: string;
@@ -122,10 +124,29 @@ const CriarPost: React.FC = () => {
     setLoading(true);
 
     try {
-      let tagIds: string[] = [];
+      let tagIds: number[] = [];
 
       if (formData.tags.length > 0) {
         tagIds = await tagService.processMultipleTags(formData.tags);
+      }
+
+      const postData = {
+        titulo: formData.titulo,
+        descricao: formData.descricao,
+        tagIds: tagIds.map(id => id.toString()),
+      };
+
+      const postCriado = await postService.criar(postData);
+
+      if (formData.imagens.length > 0) {
+        const uploadPromises = formData.imagens.map(imagem =>
+          imagemService.upload(imagem, {
+            type: 'POST',
+            id_type: Number(postCriado.id),
+          })
+        );
+
+        await Promise.all(uploadPromises);
       }
 
       setSuccessMessage('Post publicado com sucesso! ✨');
@@ -250,14 +271,13 @@ const CriarPost: React.FC = () => {
             </div>
 
             <div className="np-field">
-              <label>Imagens (em breve)</label>
+              <label>Imagens (máximo 3)</label>
               <ImagePicker
                 value={formData.imagens}
                 onChange={handleImagesChange}
-                maxFiles={10}
+                maxFiles={3}
                 maxSizeMB={10}
               />
-              <p className="np-helper-text">Upload de imagens será implementado em breve</p>
             </div>
           </section>
 
