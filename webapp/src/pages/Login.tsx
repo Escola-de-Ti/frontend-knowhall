@@ -71,8 +71,6 @@ const Login: React.FC = () => {
     try {
       await authService.login(formData.login, formData.senha);
 
-      console.log('Login realizado com sucesso!');
-
       window.location.href = '/feed';
     } catch (error: any) {
       console.error('Erro ao fazer login:', error);

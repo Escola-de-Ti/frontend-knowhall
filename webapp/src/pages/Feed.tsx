@@ -207,7 +207,6 @@ export default function Feed() {
   };
 
   const handleVerMaisRanking = () => {
-    console.log("Clicou em 'Ver mais' no ranking");
   };
 
   const handleVerMaisWorkshops = () => {

@@ -158,10 +158,6 @@ export default function EditarWorkshop() {
       },
     };
 
-    console.log('Payload PATCH /workshops:', {
-      id: workshopId,
-      body: payload,
-    });
 
     try {
       setSaving(true);
@@ -177,7 +173,6 @@ export default function EditarWorkshop() {
       navigate('/workshops');
     } catch (e: any) {
       const resp = e?.response?.data;
-      console.log('Erro ao atualizar workshop:', {
         status: e?.response?.status,
         data: resp,
       });

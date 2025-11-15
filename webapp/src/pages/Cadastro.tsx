@@ -127,8 +127,6 @@ const Cadastro: React.FC = () => {
 
       const usuario = await usuarioService.criar(payload);
 
-      console.log('Usuário cadastrado com sucesso:', usuario);
-
       setSuccessMessage('Cadastro realizado com sucesso! Redirecionando...');
 
       setFormData({
