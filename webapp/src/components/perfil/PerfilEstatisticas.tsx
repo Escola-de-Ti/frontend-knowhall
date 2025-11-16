@@ -21,7 +21,7 @@ type PerfilEstatisticasProps = {
   idUsuario: number;
   estatisticasIniciais?: {
     contrib: ContribuicaoStats;
-    tokens: TokenStats;
+    tokens?: TokenStats;
   };
 };
 
@@ -86,27 +86,29 @@ export default function PerfilEstatisticas({ idUsuario, estatisticasIniciais }: 
         </ul>
       </div>
 
-      <div className="stats-card">
-        <h3>Histórico de Tokens</h3>
-        <ul className="stats-list">
-          <li>
-            <span>Tokens Ganhos (Total)</span>
-            <strong className="c-green">+{tokens ? n(tokens.ganhos_total) : '--'}</strong>
-          </li>
-          <li>
-            <span>Tokens Gastos (Total)</span>
-            <strong className="c-red">-{tokens ? n(tokens.gastos_total) : '--'}</strong>
-          </li>
-          <li>
-            <span>Saldo Atual</span>
-            <strong className="c-pink">{tokens ? n(tokens.saldo_atual) : '--'}</strong>
-          </li>
-          <li>
-            <span>Total de Transações</span>
-            <strong className="c-green">{tokens ? n(tokens.total_transacoes) : '--'}</strong>
-          </li>
-        </ul>
-      </div>
+      {tokens && (
+        <div className="stats-card">
+          <h3>Histórico de Tokens</h3>
+          <ul className="stats-list">
+            <li>
+              <span>Tokens Ganhos (Total)</span>
+              <strong className="c-green">+{n(tokens.ganhos_total)}</strong>
+            </li>
+            <li>
+              <span>Tokens Gastos (Total)</span>
+              <strong className="c-red">-{n(tokens.gastos_total)}</strong>
+            </li>
+            <li>
+              <span>Saldo Atual</span>
+              <strong className="c-pink">{n(tokens.saldo_atual)}</strong>
+            </li>
+            <li>
+              <span>Total de Transações</span>
+              <strong className="c-green">{n(tokens.total_transacoes)}</strong>
+            </li>
+          </ul>
+        </div>
+      )}
     </section>
   );
 }

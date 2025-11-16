@@ -68,8 +68,11 @@ const Perfil: React.FC = () => {
           }
         }
 
-        // Carregar detalhes, posts, comentários e estatísticas em paralelo
-        const [dados, postsData, comentariosData, resumoData] = await Promise.all([
+        // Determinar se deve carregar resumo de transações (apenas para próprio perfil)
+        const isSelf = !id || (loggedUser?.id === userId);
+        
+        // Carregar detalhes, posts, comentários em paralelo
+        const [dados, postsData, comentariosData] = await Promise.all([
           getUsuarioDetalhes(userId),
           postService.buscarPorUsuario(userId.toString()).catch(err => {
             console.error('Erro ao carregar posts:', err);
@@ -78,33 +81,43 @@ const Perfil: React.FC = () => {
           comentarioService.listarPorUsuario(userId).catch(err => {
             console.error('Erro ao carregar comentários:', err);
             return [];
-          }),
-          buscarResumoTransacoes().catch(err => {
-            console.error('Erro ao carregar resumo de transações:', err);
-            return null;
           })
         ]);
+        
+        // Carregar resumo de transações apenas se for o próprio perfil
+        let resumoData = null;
+        if (isSelf) {
+          resumoData = await buscarResumoTransacoes().catch(err => {
+            console.error('Erro ao carregar resumo de transações:', err);
+            return null;
+          });
+        }
 
         setUsuarioDetalhes(dados);
         setPosts(postsData);
         setComentarios(comentariosData);
         
+        // Sempre criar as estatísticas de contribuição
+        const estatisticasData: any = {
+          contrib: {
+            posts: dados.qtdPosts,
+            comentarios: dados.qtdComentarios,
+            upvotesDados: dados.qtdUpVotes + dados.qtdSuperVotes,
+            workshops: dados.qtdWorkshops,
+          }
+        };
+        
+        // Adicionar tokens apenas se for o próprio perfil e houver dados
         if (resumoData) {
-          setEstatisticas({
-            contrib: {
-              posts: dados.qtdPosts,
-              comentarios: dados.qtdComentarios,
-              upvotesDados: dados.qtdUpVotes + dados.qtdSuperVotes,
-              workshops: dados.qtdWorkshops,
-            },
-            tokens: {
-              ganhos_total: resumoData.totalRecebido,
-              gastos_total: resumoData.totalGasto,
-              saldo_atual: resumoData.saldoAtual,
-              total_transacoes: resumoData.totalTransacoes,
-            },
-          });
+          estatisticasData.tokens = {
+            ganhos_total: resumoData.totalRecebido,
+            gastos_total: resumoData.totalGasto,
+            saldo_atual: resumoData.saldoAtual,
+            total_transacoes: resumoData.totalTransacoes,
+          };
         }
+        
+        setEstatisticas(estatisticasData);
       } catch (err: any) {
         console.error('Erro ao carregar detalhes do usuário:', err);
         setError(err?.message || 'Não foi possível carregar os dados do perfil.');
