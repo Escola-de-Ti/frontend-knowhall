@@ -185,6 +185,18 @@ class UsuarioService {
       throw error;
     }
   }
+
+  async buscarPorNome(nome: string): Promise<RankingUsuarioDTO[]> {
+    try {
+      const response = await apiService.get<RankingUsuarioDTO[]>(
+        `${API_CONFIG.ENDPOINTS.USUARIOS}/buscar?nome=${encodeURIComponent(nome)}`
+      );
+      return response;
+    } catch (error: any) {
+      console.error('Erro ao buscar usuários por nome:', error);
+      throw error;
+    }
+  }
 }
 
 export const usuarioService = new UsuarioService();
