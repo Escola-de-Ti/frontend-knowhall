@@ -673,7 +673,7 @@ function CommentNode({
 }) {
   const isReplyingHere = replyTarget === c.id;
   const hasReplies = c.respostas && c.respostas.length > 0;
-  const canLoadReplies = !c.repliesLoaded && !hasReplies;
+  const canLoadReplies = !c.repliesLoaded && !hasReplies && depth < 2;
   const canReply = depth < 2;
 
   return (
