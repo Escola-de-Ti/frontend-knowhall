@@ -7,6 +7,7 @@ import { editarPerfil } from '../services/editar.perfil.service';
 import { getMyUser } from '../services/perfil.service';
 import { imagemService } from '../services/imagemService';
 import { tagService } from '../services/tagService';
+import { phoneMask } from '../utils/masks';
 
 type TagComId = {
   id: number;
@@ -219,13 +220,33 @@ export default function EditarPerfil() {
       await editarPerfil(payload, token);
 
       if (file) {
-        if (idImagemPerfil) {
-          await imagemService.atualizar(idImagemPerfil, file);
-        } else {
-          await imagemService.upload(file, {
-            type: 'PERFIL',
-            id_type: userData.id,
-          });
+        try {
+          if (idImagemPerfil) {
+            // Tenta atualizar a imagem existente
+            await imagemService.atualizar(idImagemPerfil, file);
+          } else {
+            // Cria uma nova imagem se não existir
+            const novaImagem = await imagemService.upload(file, {
+              type: 'USUARIO'
+            });
+            if (novaImagem) {
+              setIdImagemPerfil(novaImagem.id);
+            }
+          }
+        } catch (imageError) {
+          console.error('Erro ao atualizar imagem, tentando criar nova:', imageError);
+          // Se falhar ao atualizar, tenta criar uma nova
+          try {
+            const novaImagem = await imagemService.upload(file, {
+              type: 'USUARIO'
+            });
+            if (novaImagem) {
+              setIdImagemPerfil(novaImagem.id);
+            }
+          } catch (uploadError) {
+            console.error('Erro ao criar nova imagem:', uploadError);
+            throw new Error('Não foi possível salvar a imagem do perfil.');
+          }
         }
       }
 
@@ -270,7 +291,7 @@ export default function EditarPerfil() {
         <section className="ep-card ep-avatar-card">
           <div className="ep-card-title">Foto de Perfil</div>
           <div className="ep-avatar-row">
-            <div className="ep-avatar">
+            <div className="ep-avatar" onClick={handleUploadClick}>
               {preview ? (
                 <img src={preview} alt="avatar" className="ep-avatar-img" />
               ) : imagemPerfilUrl ? (
@@ -336,8 +357,9 @@ export default function EditarPerfil() {
               <input
                 className={`ep-input ${errors.telefone ? 'ep-input-err' : ''}`}
                 value={telefone}
-                onChange={(e) => setTelefone(e.target.value)}
+                onChange={(e) => setTelefone(phoneMask(e.target.value))}
                 placeholder="(00) 00000-0000"
+                maxLength={15}
                 disabled={profileLoading || loading}
               />
               {errors.telefone && <small className="ep-error">{errors.telefone}</small>}
