@@ -214,3 +214,16 @@
 .ws-more:hover {
   box-shadow: 0 0 0 2px #7d72e32a inset;
 }
+
+.ws-empty {
+  text-align: center;
+  padding: 30px 20px;
+  color: #888;
+  font-family: 'Manrope', sans-serif;
+}
+
+.ws-empty p {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 500;
+}

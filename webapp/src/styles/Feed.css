@@ -1,3 +1,4 @@
+/* src/styles/Feed.css - Completo */
 @import url('https://fonts.googleapis.com/css2?family=Geologica:wght@600;700;800;900&family=Manrope:wght@400;500;600;700;800&display=swap');
 
 :root {
@@ -119,8 +120,7 @@
   height: 18px;
   flex-shrink: 0;
   background: linear-gradient(90deg, var(--btn-post-text-faded1), var(--btn-post-text-faded2));
-  mask: url('data:image/svg+xml;utf8,\
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="%23000" d="M11 5a1 1 0 0 1 2 0v6h6a1 1 0 1 1 0 2h-6v6a1 1 0 1 1-2 0v-6H5a1 1 0 1 1 0-2h6z"/></svg>')
+  mask: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="%23000" d="M11 5a1 1 0 0 1 2 0v6h6a1 1 0 1 1 0 2h-6v6a1 1 0 1 1-2 0v-6H5a1 1 0 1 1 0-2h6z"/></svg>')
     no-repeat center/contain;
 }
 
@@ -176,9 +176,110 @@
   height: 18px;
   flex-shrink: 0;
   background: linear-gradient(90deg, var(--btn-filter-text-faded1), var(--btn-filter-text-faded2));
-  mask: url('data:image/svg+xml;utf8,\
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="%23000" d="M3 5h18l-7 8v5a1 1 0 0 1-.553.894l-3 1.5A1 1 0 0 1 9 19v-6z"/></svg>')
+  mask: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="%23000" d="M3 5h18l-7 8v5a1 1 0 0 1-.553.894l-3 1.5A1 1 0 0 1 9 19v-6z"/></svg>')
     no-repeat center/contain;
+}
+
+/* Novos estilos para estados de loading/erro/vazio */
+.ws-panel,
+.rk-panel {
+  background: var(--panel-bg);
+  border: 1px solid var(--panel-bd);
+  border-radius: 12px;
+  padding: 20px;
+}
+
+.error-panel {
+  border-color: rgba(255, 100, 100, 0.3);
+  background: rgba(255, 100, 100, 0.05);
+}
+
+.empty-panel {
+  text-align: center;
+}
+
+.error-text {
+  color: #ff6b6b;
+  margin: 0;
+  font-size: 14px;
+  font-family: 'Manrope', sans-serif;
+  line-height: 1.5;
+}
+
+.empty-text {
+  color: #888;
+  margin: 0;
+  font-size: 14px;
+  font-family: 'Manrope', sans-serif;
+}
+
+.error-message {
+  background: rgba(255, 100, 100, 0.1);
+  border: 1px solid rgba(255, 100, 100, 0.3);
+  border-radius: 12px;
+  padding: 20px;
+  text-align: center;
+}
+
+.error-message p {
+  color: #ff6b6b;
+  margin: 0 0 12px;
+  font-size: 15px;
+  font-family: 'Manrope', sans-serif;
+}
+
+.btn-retry {
+  padding: 8px 16px;
+  background: rgba(255, 100, 100, 0.15);
+  border: 1px solid rgba(255, 100, 100, 0.4);
+  border-radius: 8px;
+  color: #ff6b6b;
+  font-weight: 600;
+  font-size: 14px;
+  font-family: 'Geologica', 'Manrope', sans-serif;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-retry:hover {
+  background: rgba(255, 100, 100, 0.2);
+  border-color: rgba(255, 100, 100, 0.5);
+  transform: translateY(-1px);
+}
+
+.empty-state {
+  text-align: center;
+  padding: 60px 20px;
+  background: var(--panel-bg);
+  border: 1px solid var(--panel-bd);
+  border-radius: 12px;
+}
+
+.empty-state p {
+  color: #888;
+  margin: 0;
+  font-size: 16px;
+  font-family: 'Manrope', sans-serif;
+}
+
+.observer-target {
+  min-height: 20px;
+  margin: 20px 0;
+}
+
+.feed-end {
+  text-align: center;
+  padding: 30px 20px;
+  color: #666;
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+  margin-top: 10px;
+}
+
+.feed-end p {
+  font-size: 15px;
+  margin: 0;
+  font-weight: 600;
+  font-family: 'Manrope', sans-serif;
 }
 
 @media (max-width: 1220px) {
@@ -198,4 +299,23 @@
   .feed-filters-bar {
     justify-content: flex-start;
   }
+}
+
+@media (max-width: 768px) {
+  .feed-container {
+    padding: 0 16px;
+  }
+}
+
+.ws-error,
+.rk-error {
+  color: #ff8888 !important;
+  background: rgba(255, 100, 100, 0.05);
+  border-radius: 8px;
+  padding: 20px;
+}
+
+.ws-error p,
+.rk-error p {
+  color: #ff8888 !important;
 }

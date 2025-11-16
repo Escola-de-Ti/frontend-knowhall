@@ -45,41 +45,53 @@ export default function RankingList({ users, onVerMais }: Props) {
         </div>
       </header>
 
-      <ul className="rk-list">
-        {users.map((u) => {
-          const pos = u.posicao;
-          const topClass = pos <= 3 ? `rk-top rk-${pos}` : '';
+      {users.length === 0 ? (
+        <div className="rk-empty">
+          <p>Nenhum usuário no ranking ainda</p>
+        </div>
+      ) : (
+        <ul className="rk-list">
+          {users.map((u) => {
+            const pos = u.posicao;
+            const topClass = pos <= 3 ? `rk-top rk-${pos}` : '';
 
-          return (
-            <li 
-              key={u.posicao} 
-              className={`rk-item ${topClass}`}
-              onClick={() => handleUserClick(u.id)}
-              style={{ cursor: 'pointer' }}
-            >
-              
-              <span className="rk-pos">{pos}</span>
+            return (
+              <li
+                key={u.posicao}
+                className={`rk-item ${topClass}`}
+                onClick={() => handleUserClick(u.id)}
+                style={{ cursor: 'pointer' }}
+              >
+                <span className="rk-pos">{pos}</span>
 
-              <div className="rk-avatar">{gerarIniciais(u.nome)}</div>
+                <div className="rk-avatar">{gerarIniciais(u.nome)}</div>
 
-              <div className="rk-main">
-                <strong className="rk-name" title={u.nome}>
-                  {u.nome}
-                </strong>
+                <div className="rk-main">
+                  <strong className="rk-name" title={u.nome}>
+                    {u.nome}
+                  </strong>
 
-                <div className="rk-badges">
-                  <span className="pill level-pill">Nvl. {u.nivel}</span>
+                  <div className="rk-badges">
+                    <span className="pill level-pill">Nvl. {u.nivel}</span>
 
-                  <span className="pill token-pill">
-                    <img src="/token_ico.svg" alt="" className="rk-token-ico" />
-                    <span className="rk-token-val">{formatarXP(u.qntdXp)}</span>
-                  </span>
+                    <span className="pill token-pill">
+                      <img src="/token_ico.svg" alt="" className="rk-token-ico" />
+                      <span className="rk-token-val">{formatarXP(u.qntdXp)}</span>
+                    </span>
+                  </div>
                 </div>
-              </div>
-            </li>
-          );
-        })}
-      </ul>
+              </li>
+            );
+          })}
+        </ul>
+      )}
+
+      {onVerMais && users.length > 0 && (
+        <button className="rk-more" onClick={onVerMais}>
+          <span className="rk-more-plus">+</span>
+          <span className="rk-more-text">Ver mais</span>
+        </button>
+      )}
     </aside>
   );
 }

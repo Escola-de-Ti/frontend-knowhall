@@ -12,6 +12,8 @@ import PostDetailsModal, {
   PostCommentModel,
 } from '../components/feed/PostDetailsModal';
 import FilterMenu, { OrderByOption } from '../components/feed/FilterMenu';
+import Loading from '../components/Loading';
+import { useLoading } from '../contexts/LoadingContext';
 import { workshopService, WorkshopResponseDTO } from '../services/workshopService';
 
 import { useFeed } from '../hooks/useFeed';
@@ -23,6 +25,7 @@ import { usuarioService, RankingUsuarioDTO } from '../services/usuarioService';
 
 export default function Feed() {
   const navigate = useNavigate();
+  const { showLoading, hideLoading } = useLoading();
 
   const { posts, loading, error, hasMore, orderBy, loadMore, refresh, updatePost, setOrderBy } =
     useFeed(10);
@@ -41,9 +44,7 @@ export default function Feed() {
 
   const transformWorkshopToItem = (workshop: WorkshopResponseDTO): WorkshopItem => {
     const duracao = workshopService.calcularDuracao(workshop.dataInicio, workshop.dataTermino);
-
     const dataFormatada = workshopService.formatarData(workshop.dataInicio);
-
     const vagas = workshop.capacidade ? `${workshop.capacidade} vagas` : 'Ilimitado';
 
     return {
@@ -143,35 +144,41 @@ export default function Feed() {
     }
   };
 
-  function openPost(id: number) {
-    const postApi = posts.find((p) => parseInt(p.id) === id);
-    if (!postApi) return;
+  async function openPost(id: number) {
+    showLoading('Carregando post...');
+    
+    try {
+      const postApi = posts.find((p) => parseInt(p.id) === id);
+      if (!postApi) return;
 
-    const post: PostDetails = {
-      id,
-      titulo: postApi.titulo,
-      corpo: postApi.descricao,
-      autor: {
-        id: parseInt(postApi.usuarioId),
-        nome: postApi.nomeUsuario,
-        iniciais: getInitials(postApi.nomeUsuario),
-        nivel: 10,
-      },
-      tags: postApi.tags.map((tag) => tag.name),
-      metrica: {
-        upvotes: postApi.totalUpVotes,
-        supervotes: 0,
-        comentarios: 0,
-      },
-      tempo: getRelativeTime(postApi.dataCriacao),
-      jaVotou: postApi.jaVotou,
-    };
+      const post: PostDetails = {
+        id,
+        titulo: postApi.titulo,
+        corpo: postApi.descricao,
+        autor: {
+          id: parseInt(postApi.usuarioId),
+          nome: postApi.nomeUsuario,
+          iniciais: getInitials(postApi.nomeUsuario),
+          nivel: 10,
+        },
+        tags: postApi.tags.map((tag) => tag.name),
+        metrica: {
+          upvotes: postApi.totalUpVotes,
+          supervotes: 0,
+          comentarios: 0,
+        },
+        tempo: getRelativeTime(postApi.dataCriacao),
+        jaVotou: postApi.jaVotou,
+      };
 
-    const cmts: PostCommentModel[] = [];
+      const cmts: PostCommentModel[] = [];
 
-    setCurrent(post);
-    setComments(cmts);
-    setOpen(true);
+      setCurrent(post);
+      setComments(cmts);
+      setOpen(true);
+    } finally {
+      hideLoading();
+    }
   }
 
   const handleObserver = useCallback(
@@ -207,6 +214,7 @@ export default function Feed() {
   };
 
   const handleVerMaisRanking = () => {
+    navigate('/ranking');
   };
 
   const handleVerMaisWorkshops = () => {
@@ -228,34 +236,36 @@ export default function Feed() {
       <main className="feed-container">
         <aside className="feed-left">
           <div className="feed-left-head">
-            <button className="btn-create" type="button" onClick={handleCriarPost}>              
+            <button className="btn-create" type="button" onClick={handleCriarPost}>
               <span className="lbl-grad">Criar Post</span>
             </button>
           </div>
 
           {workshopsLoading ? (
-            <div className="ws-panel" style={{ padding: '20px', textAlign: 'center' }}>
-              Carregando workshops...
+            <div className="ws-panel">
+              <Loading size="sm" message="Carregando workshops..." />
             </div>
           ) : workshopsError ? (
-            <div
-              className="ws-panel"
-              style={{ padding: '20px', color: 'red', textAlign: 'center' }}
-            >
-              {workshopsError}
+            <div className="ws-panel">
+              <header className="ws-head">
+                <span className="ws-ico" aria-hidden />
+                <div className="ws-txt">
+                  <h3>Workshops</h3>
+                  <p>Fique atento às novidades da semana!</p>
+                </div>
+              </header>
+              <div className="ws-empty ws-error">
+                <p>{workshopsError}</p>
+              </div>
             </div>
-          ) : workshops.length > 0 ? (
-            <WorkshopList itens={workshops} onVerMais={handleVerMaisWorkshops} />
           ) : (
-            <div className="ws-panel" style={{ padding: '20px', textAlign: 'center' }}>
-              Nenhum workshop disponível no momento.
-            </div>
+            <WorkshopList itens={workshops} onVerMais={handleVerMaisWorkshops} />
           )}
         </aside>
 
         <section className="feed-center">
           <div className="feed-filters-bar">
-            <button className="btn-filter" type="button" onClick={toggleFilterMenu}>              
+            <button className="btn-filter" type="button" onClick={toggleFilterMenu}>
               <span className="lbl-filter">Ordenar</span>
             </button>
 
@@ -268,16 +278,9 @@ export default function Feed() {
           </div>
 
           {error && (
-            <div className="error-message" style={{ margin: '20px 0', textAlign: 'center' }}>
-              {error}
-              <button
-                onClick={refresh}
-                style={{
-                  marginLeft: '10px',
-                  padding: '5px 10px',
-                  cursor: 'pointer',
-                }}
-              >
+            <div className="error-message">
+              <p>{error}</p>
+              <button className="btn-retry" onClick={refresh}>
                 Tentar novamente
               </button>
             </div>
@@ -294,50 +297,48 @@ export default function Feed() {
             ))}
 
             {loading && posts.length === 0 && (
-              <div style={{ textAlign: 'center', padding: '40px' }}>
-                <p>Carregando posts...</p>
-              </div>
+              <Loading message="Carregando posts..." />
             )}
 
             {!loading && posts.length === 0 && !error && (
-              <div style={{ textAlign: 'center', padding: '40px' }}>
+              <div className="empty-state">
                 <p>Nenhum post encontrado.</p>
               </div>
             )}
           </div>
 
-          <div ref={observerTarget} style={{ height: '20px', margin: '20px 0' }}>
+          <div ref={observerTarget} className="observer-target">
             {loading && posts.length > 0 && (
-              <div style={{ textAlign: 'center' }}>
-                <p>Carregando mais posts...</p>
-              </div>
+              <Loading size="md" message="Carregando mais posts..." />
             )}
           </div>
 
           {!hasMore && posts.length > 0 && (
-            <div style={{ textAlign: 'center', padding: '20px', color: '#888' }}>
+            <div className="feed-end">
               <p>Você chegou ao fim! 🎉</p>
             </div>
           )}
         </section>
 
         <aside className="feed-right">
-          {rankingLoading && (
-            <div className="rk-panel" style={{ padding: '20px', textAlign: 'center' }}>
-              Carregando ranking...
+          {rankingLoading ? (
+            <div className="rk-panel">
+              <Loading size="sm" message="Carregando ranking..." />
             </div>
-          )}
-
-          {rankingError && (
-            <div
-              className="rk-panel"
-              style={{ padding: '20px', color: 'red', textAlign: 'center' }}
-            >
-              {rankingError}
+          ) : rankingError ? (
+            <div className="rk-panel">
+              <header className="rk-head">
+                <span className="rk-trophy" aria-hidden />
+                <div className="rk-headtxt">
+                  <h3>Top 10 Ranking</h3>
+                  <p>Os melhores desenvolvedores da comunidade</p>
+                </div>
+              </header>
+              <div className="rk-empty rk-error">
+                <p>{rankingError}</p>
+              </div>
             </div>
-          )}
-
-          {!rankingLoading && !rankingError && (
+          ) : (
             <RankingList users={rankingList} onVerMais={handleVerMaisRanking} />
           )}
         </aside>

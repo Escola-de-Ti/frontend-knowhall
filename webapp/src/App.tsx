@@ -1,3 +1,4 @@
+// src/App.tsx - Completo
 import React, { JSX } from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import { Toaster } from 'react-hot-toast';
@@ -15,11 +16,12 @@ import Workshops from './pages/Workshops';
 import HistoricoTransacoes from './pages/HistoricoTransacoes';
 import { NotificationProvider } from './contexts/NotificationContext';
 import { UserProvider } from './contexts/UserContext';
+import { LoadingProvider } from './contexts/LoadingContext';
 import EditarWorkshop from './pages/EditarWorkshop';
-import WorkshopParticipantes from './pages/WorkshopParticipantes'; // 🔹 NOVO IMPORT
+import WorkshopParticipantes from './pages/WorkshopParticipantes';
 
 function isAuth() {
-  const basic = import.meta.env.VITE_API_USER;
+  const basic = true;
   const token = localStorage.getItem('kh_access_token');
   return !!token && !!basic;
 }
@@ -57,121 +59,123 @@ function App() {
           },
         }}
       />
-      <NotificationProvider>
-        <UserProvider>
-          <Routes>
-            <Route
-              path="/login"
-              element={
-                <PublicRoute>
-                  <Login />
-                </PublicRoute>
-              }
-            />
-            <Route
-              path="/cadastro"
-              element={
-                <PublicRoute>
-                  <Cadastro />
-                </PublicRoute>
-              }
-            />
+      <LoadingProvider>
+        <NotificationProvider>
+          <UserProvider>
+            <Routes>
+              <Route
+                path="/login"
+                element={
+                  <PublicRoute>
+                    <Login />
+                  </PublicRoute>
+                }
+              />
+              <Route
+                path="/cadastro"
+                element={
+                  <PublicRoute>
+                    <Cadastro />
+                  </PublicRoute>
+                }
+              />
 
-            <Route
-              path="/criar-post"
-              element={
-                <PrivateRoute>
-                  <CriarPost />
-                </PrivateRoute>
-              }
-            />
-            <Route
-              path="/criar-workshop"
-              element={
-                <PrivateRoute>
-                  <CriarWorkshop />
-                </PrivateRoute>
-              }
-            />
-            <Route
-              path="/workshops/:id/editar"
-              element={
-                <PrivateRoute>
-                  <EditarWorkshop />
-                </PrivateRoute>
-              }
-            />
-            <Route
-              path="/workshops/:id/inscritos"
-              element={
-                <PrivateRoute>
-                  <WorkshopParticipantes />
-                </PrivateRoute>
-              }
-            />
+              <Route
+                path="/criar-post"
+                element={
+                  <PrivateRoute>
+                    <CriarPost />
+                  </PrivateRoute>
+                }
+              />
+              <Route
+                path="/criar-workshop"
+                element={
+                  <PrivateRoute>
+                    <CriarWorkshop />
+                  </PrivateRoute>
+                }
+              />
+              <Route
+                path="/workshops/:id/editar"
+                element={
+                  <PrivateRoute>
+                    <EditarWorkshop />
+                  </PrivateRoute>
+                }
+              />
+              <Route
+                path="/workshops/:id/inscritos"
+                element={
+                  <PrivateRoute>
+                    <WorkshopParticipantes />
+                  </PrivateRoute>
+                }
+              />
 
-            <Route
-              path="/perfil"
-              element={
-                <PrivateRoute>
-                  <Perfil />
-                </PrivateRoute>
-              }
-            />
-            <Route
-              path="/perfil/:id"
-              element={
-                <PrivateRoute>
-                  <Perfil />
-                </PrivateRoute>
-              }
-            />
-            <Route
-              path="/feed"
-              element={
-                <PrivateRoute>
-                  <Feed />
-                </PrivateRoute>
-              }
-            />
-            <Route
-              path="/perfil/editar-perfil"
-              element={
-                <PrivateRoute>
-                  <EditarPerfil />
-                </PrivateRoute>
-              }
-            />
-            <Route
-              path="/ranking"
-              element={
-                <PrivateRoute>
-                  <Ranking />
-                </PrivateRoute>
-              }
-            />
-            <Route
-              path="/workshops"
-              element={
-                <PrivateRoute>
-                  <Workshops />
-                </PrivateRoute>
-              }
-            />
-            <Route
-              path="/historico-transacoes"
-              element={
-                <PrivateRoute>
-                  <HistoricoTransacoes />
-                </PrivateRoute>
-              }
-            />
+              <Route
+                path="/perfil"
+                element={
+                  <PrivateRoute>
+                    <Perfil />
+                  </PrivateRoute>
+                }
+              />
+              <Route
+                path="/perfil/:id"
+                element={
+                  <PrivateRoute>
+                    <Perfil />
+                  </PrivateRoute>
+                }
+              />
+              <Route
+                path="/feed"
+                element={
+                  <PrivateRoute>
+                    <Feed />
+                  </PrivateRoute>
+                }
+              />
+              <Route
+                path="/perfil/editar-perfil"
+                element={
+                  <PrivateRoute>
+                    <EditarPerfil />
+                  </PrivateRoute>
+                }
+              />
+              <Route
+                path="/ranking"
+                element={
+                  <PrivateRoute>
+                    <Ranking />
+                  </PrivateRoute>
+                }
+              />
+              <Route
+                path="/workshops"
+                element={
+                  <PrivateRoute>
+                    <Workshops />
+                  </PrivateRoute>
+                }
+              />
+              <Route
+                path="/historico-transacoes"
+                element={
+                  <PrivateRoute>
+                    <HistoricoTransacoes />
+                  </PrivateRoute>
+                }
+              />
 
-            <Route path="/" element={home} />
-            <Route path="*" element={<NotFound />} />
-          </Routes>
-        </UserProvider>
-      </NotificationProvider>
+              <Route path="/" element={home} />
+              <Route path="*" element={<NotFound />} />
+            </Routes>
+          </UserProvider>
+        </NotificationProvider>
+      </LoadingProvider>
     </>
   );
 }
