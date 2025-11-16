@@ -36,6 +36,7 @@ export type UsuarioDetalhesDTO = {
   qtdWorkshops: number;
   imagemUrl: string;
   posicaoRanking: number;
+  xpProximoNivel: number;
 };
 
 export async function getUsuario(id: number) {

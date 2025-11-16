@@ -8,6 +8,7 @@ type PerfilHistoricoProps = {
   ranking?: number;
   xpAtual: number;
   xpNecessario: number;
+  xpProximoNivel: number;
   progresso: number;
   posts?: number;
   upvotes?: number;
@@ -21,6 +22,8 @@ export default function PerfilHistorico({
   nivel,
   tokens,
   ranking,
+  xpAtual,
+  xpProximoNivel,
   posts,
   upvotes,
   comentarios,
@@ -57,6 +60,29 @@ export default function PerfilHistorico({
       <div className="history-chips">
         <span className="chip chip-level">Nvl. {nivel}</span>
         {tokens != null && <span className="chip chip-tokens">T {fmt(tokens)}</span>}
+      </div>
+
+      <div className="xp-progress-bar">
+        <div className="xp-info">
+          <div className="xp-labels">
+            <span className="xp-current">Nível {nivel}</span>
+            <span className="xp-next">Nível {nivel + 1}</span>
+          </div>
+          <div className="xp-numbers">
+            <span className="xp-value">{xpAtual.toLocaleString('pt-BR')} XP</span>
+            <span className="xp-remaining">{xpProximoNivel.toLocaleString('pt-BR')} XP restantes</span>
+          </div>
+        </div>
+        <div className="xp-bar-container">
+          <div 
+            className="xp-bar-fill" 
+            style={{
+              width: `${Math.min(100, (xpAtual / (xpAtual + xpProximoNivel)) * 100)}%`
+            }}
+          >
+            <div className="xp-bar-glow"></div>
+          </div>
+        </div>
       </div>
 
       <div className="kpis">

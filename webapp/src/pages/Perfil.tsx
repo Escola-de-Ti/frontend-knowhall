@@ -172,6 +172,7 @@ const Perfil: React.FC = () => {
             ranking={usuarioDetalhes.posicaoRanking}
             xpAtual={usuarioDetalhes.xp}
             xpNecessario={1000}
+            xpProximoNivel={usuarioDetalhes.xpProximoNivel}
             progresso={Math.round((usuarioDetalhes.xp / 1000) * 100)}
             posts={usuarioDetalhes.qtdPosts}
             upvotes={usuarioDetalhes.qtdUpVotes + usuarioDetalhes.qtdSuperVotes}

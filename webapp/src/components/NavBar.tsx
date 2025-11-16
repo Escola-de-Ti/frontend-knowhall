@@ -130,13 +130,6 @@ export default function NavBar() {
             <span className="token-val">{userData?.qntdToken?.toLocaleString('pt-BR') || '0'}</span>
           </button>
           <div className="notif-wrap">
-            <button
-              className="notif-btn"
-              aria-label="Notificações"
-              onClick={() => setNotifOpen((v) => !v)}
-            >
-              <span className="bell" aria-hidden />
-            </button>
             <NotificationMenu
               open={notifOpen}
               onClose={() => setNotifOpen(false)}
