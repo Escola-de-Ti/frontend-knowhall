@@ -12,6 +12,7 @@ type Atividade = {
 type Props = {
   idUsuario?: number;
   isOwnProfile?: boolean;
+  comentariosIniciais?: ComentarioUsuarioDTO[];
 };
 
 const labelTipo: Record<Atividade['tipo'], string> = {
@@ -21,16 +22,27 @@ const labelTipo: Record<Atividade['tipo'], string> = {
   VOTO: 'Voto',
 };
 
-export default function PerfilAtividades({ idUsuario = 1, isOwnProfile = false }: Props) {
+export default function PerfilAtividades({ idUsuario = 1, isOwnProfile = false, comentariosIniciais }: Props) {
   const [itens, setItens] = useState<Atividade[]>([]);
   const [openMenu, setOpenMenu] = useState<number | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(!comentariosIniciais);
   const [editando, setEditando] = useState<number | null>(null);
   const [textoEditado, setTextoEditado] = useState('');
   const [deletando, setDeletando] = useState<number | null>(null);
-  const [comentarios, setComentarios] = useState<ComentarioUsuarioDTO[]>([]);
+  const [comentarios, setComentarios] = useState<ComentarioUsuarioDTO[]>(comentariosIniciais || []);
 
   useEffect(() => {
+    if (comentariosIniciais) {
+      const atividadesComentarios: Atividade[] = comentariosIniciais.map((comentario) => ({
+        id: comentario.comentarioId,
+        tipo: 'COMENTARIO' as const,
+        data: comentario.dataCriacao,
+        snippet: comentario.texto,
+      }));
+      setItens(atividadesComentarios);
+      return;
+    }
+
     const carregarComentarios = async () => {
       if (!idUsuario) return;
 

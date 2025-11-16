@@ -13,6 +13,8 @@ import NavBar from '../components/NavBar';
 import Loading from '../components/Loading';
 import { getUsuario, getUsuarioDetalhes, getMyUser, type UsuarioDetalhesDTO, UsuarioDTO } from '../services/perfil.service';
 import { useUser } from '../contexts/UserContext';
+import { postService, type PostResponseDTO } from '../services/postService';
+import { comentarioService, type ComentarioUsuarioDTO } from '../services/comentarios.service';
 
 const Perfil: React.FC = () => {
   const navigate = useNavigate();
@@ -24,6 +26,8 @@ const Perfil: React.FC = () => {
   const [user, setUser] = useState<UsuarioDTO | null>(null);
   const [isOwnProfile, setIsOwnProfile] = useState(false);
   const { user: loggedUser } = useUser();
+  const [posts, setPosts] = useState<PostResponseDTO[]>([]);
+  const [comentarios, setComentarios] = useState<ComentarioUsuarioDTO[]>([]);
 
   useEffect(() => {
     const carregarDadosUsuario = async () => {
@@ -31,8 +35,10 @@ const Perfil: React.FC = () => {
         setLoading(true);
         setError(null);
 
+        let userId: number;
+
         if (id) {
-          const userId = parseInt(id);
+          userId = parseInt(id);
           
           // Verifica se é o próprio perfil usando o contexto
           const isSelf = loggedUser?.id === userId;
@@ -53,6 +59,7 @@ const Perfil: React.FC = () => {
           // Se não tiver ID, usa os dados do contexto
           if (loggedUser) {
             setUser(loggedUser);
+            userId = loggedUser.id;
             setIsOwnProfile(true);
             const dados = await getUsuarioDetalhes(loggedUser.id);
             setUsuarioDetalhes(dados);
@@ -60,11 +67,27 @@ const Perfil: React.FC = () => {
             // Fallback caso o contexto ainda não tenha carregado
             const userData = await getMyUser();
             setUser(userData);
+            userId = userData.id;
             setIsOwnProfile(true);
             const dados = await getUsuarioDetalhes(userData.id);
             setUsuarioDetalhes(dados);
           }
         }
+
+        // Carregar posts, comentários e estatísticas em paralelo
+        const [postsData, comentariosData] = await Promise.all([
+          postService.buscarPorUsuario(userId.toString()).catch(err => {
+            console.error('Erro ao carregar posts:', err);
+            return [];
+          }),
+          comentarioService.listarPorUsuario(userId).catch(err => {
+            console.error('Erro ao carregar comentários:', err);
+            return [];
+          })
+        ]);
+
+        setPosts(postsData);
+        setComentarios(comentariosData);
       } catch (err: any) {
         console.error('Erro ao carregar detalhes do usuário:', err);
         setError(err?.message || 'Não foi possível carregar os dados do perfil.');
@@ -137,9 +160,9 @@ const Perfil: React.FC = () => {
           />
         </div>
 
-        {aba === 'Posts' && <PerfilPosts idUsuario={user?.id!} isOwnProfile={isOwnProfile} />}
+        {aba === 'Posts' && <PerfilPosts idUsuario={user?.id!} isOwnProfile={isOwnProfile} postsIniciais={posts} />}
         {aba === 'Comentários' && (
-          <PerfilAtividades idUsuario={user?.id!} isOwnProfile={isOwnProfile} />
+          <PerfilAtividades idUsuario={user?.id!} isOwnProfile={isOwnProfile} comentariosIniciais={comentarios} />
         )}
         {aba === 'Estatísticas' && <PerfilEstatisticas idUsuario={user?.id!} />}
       </div>
