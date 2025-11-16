@@ -1,8 +1,8 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import '../styles/Ranking.css';
 import NavBar from '../components/NavBar';
+import Loading from '../components/Loading';
 import { FaTrophy, FaStar } from 'react-icons/fa';
 import { usuarioService, RankingUsuarioDTO } from '../services/usuarioService';
 
@@ -52,23 +52,19 @@ export default function Ranking() {
 
   if (loading) {
     return (
-      <div className="ranking-page">
+      <>
         <NavBar />
-        <div className="ranking-container" style={{ textAlign: 'center', paddingTop: '100px' }}>
-          <p>Carregando ranking...</p>
-        </div>
-      </div>
+        <Loading fullscreen message="Carregando ranking..." />
+      </>
     );
   }
 
   if (error) {
     return (
-      <div className="ranking-page">
+      <>
         <NavBar />
-        <div className="ranking-container" style={{ textAlign: 'center', paddingTop: '100px' }}>
-          <p style={{ color: 'red' }}>{error}</p>
-        </div>
-      </div>
+        <Loading fullscreen message={error} />
+      </>
     );
   }
 
