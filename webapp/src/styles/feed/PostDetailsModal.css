@@ -138,11 +138,32 @@
 }
 
 .level-pill {
-  display: none;
+  display: inline-flex;
+  align-items: center;
+  padding: 3px 10px;
+  background: rgba(79, 209, 197, 0.15);
+  border: 1px solid rgba(79, 209, 197, 0.3);
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 600;
+  color: #4fd1c5;
+  font-family: Geologica, Manrope, sans-serif;
+  white-space: nowrap;
 }
 
-.level-text {
-  display: none;
+.level-pill-comment {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 8px;
+  background: rgba(79, 209, 197, 0.15);
+  border: 1px solid rgba(79, 209, 197, 0.3);
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 600;
+  color: #4fd1c5;
+  font-family: Geologica, Manrope, sans-serif;
+  white-space: nowrap;
+  margin-left: 6px;
 }
 
 .kh-modal-body {
@@ -428,6 +449,7 @@
   color: #999;
   font-size: 12px;
   font-weight: 400;
+  margin-left: 6px;
 }
 
 .comment-text {
@@ -786,6 +808,11 @@
   .comment-actions .btn.sm.up {
     padding: 6px 9px;
     font-size: 12px;
+  }
+  .level-pill,
+  .level-pill-comment {
+    font-size: 11px;
+    padding: 2px 7px;
   }
 }
 
