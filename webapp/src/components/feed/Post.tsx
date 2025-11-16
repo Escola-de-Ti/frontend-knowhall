@@ -61,8 +61,7 @@ export default function Post({ post, onMoreClick, onVote }: Props) {
             {post.autor.nome}
           </strong>
           <div className="post-sub">
-            <span className="post-time">{post.tempo}</span>
-            <span className="dot" />
+            <span className="post-time">{post.tempo}</span>            
           </div>
         </div>
       </header>

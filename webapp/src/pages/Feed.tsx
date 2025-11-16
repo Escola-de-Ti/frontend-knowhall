@@ -140,7 +140,6 @@ export default function Feed() {
       });
     } catch (error: any) {
       console.error('Erro ao votar:', error);
-      alert(error.message || 'Erro ao processar voto. Tente novamente.');
     }
   };
 

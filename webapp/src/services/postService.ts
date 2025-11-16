@@ -67,6 +67,7 @@ export interface ComentarioResponseDTO {
   id: number;
   postId: number;
   usuarioId: number;
+  nivel: number
   usuarioNome: string;
   texto: string;
   totalUpVotes: number;
@@ -85,6 +86,7 @@ export interface ImagemPostDetalhesDTO {
 export interface PostDetalhesDTO {
   id: number;
   usuarioId: number;
+  nivel: number
   usuarioNome: string;
   titulo: string;
   descricao: string;

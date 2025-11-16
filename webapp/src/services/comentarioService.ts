@@ -15,6 +15,7 @@ export interface ComentarioResponseDTO {
   totalSuperVotes: number;
   comentarioPaiId: number | null;
   dataCriacao: string;
+  nivel: number
 }
 
 export interface ComentarioPaginadoResponseDTO {

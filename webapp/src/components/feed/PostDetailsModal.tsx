@@ -1,5 +1,3 @@
-/* PostDetailsModal.tsx - Com limite de 2 níveis */
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import '../../styles/feed/PostDetailsModal.css';
@@ -86,7 +84,7 @@ export default function PostDetailsModal({ open, onClose, post: initialPost }: P
             id: data.usuarioId,
             nome: data.usuarioNome,
             iniciais: getInitials(data.usuarioNome),
-            nivel: 10,
+            nivel: data.nivel,
           },
           tags: data.tags.map((t) => t.name),
           metrica: {
@@ -150,7 +148,7 @@ export default function PostDetailsModal({ open, onClose, post: initialPost }: P
         id: dto.usuarioId,
         nome: dto.usuarioNome,
         iniciais: getInitials(dto.usuarioNome),
-        nivel: 1,
+        nivel: dto.nivel,
       },
       texto: dto.texto,
       tempo: getRelativeTime(dto.dataCriacao),
@@ -344,7 +342,9 @@ export default function PostDetailsModal({ open, onClose, post: initialPost }: P
               <span className="autor" onClick={handleAutorClick} style={{ cursor: 'pointer' }}>
                 {activePost.autor.nome}
               </span>
-              <span className="dot" />
+              <span className="dot"/>
+              <span className="level-pill">Nvl. {activePost.autor.nivel}</span>
+              <span className="dot"/>
               <span className="tempo">{activePost.tempo}</span>
             </div>
           </div>
@@ -703,6 +703,7 @@ function CommentNode({
               >
                 {c.autor.nome}
               </span>
+              <span className="level-pill-comment">Nvl. {c.autor.nivel}</span>
               <span className="tempo">{c.tempo}</span>
             </div>
           </div>
