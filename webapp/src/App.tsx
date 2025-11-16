@@ -1,10 +1,8 @@
-// src/App.tsx - Completo
 import React, { JSX } from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import { Toaster } from 'react-hot-toast';
 
-import Login from './pages/Login';
-import Cadastro from './pages/Cadastro';
+import Auth from './pages/Auth';
 import CriarPost from './pages/CriarPost';
 import CriarWorkshop from './pages/CriarWorkshop';
 import Perfil from './pages/Perfil';
@@ -28,7 +26,7 @@ function isAuth() {
 
 function PrivateRoute({ children }: { children: JSX.Element }) {
   if (!isAuth()) {
-    return <Navigate to="/login" replace />;
+    return <Navigate to="/auth" replace />;
   }
   return children;
 }
@@ -41,7 +39,7 @@ function PublicRoute({ children }: { children: JSX.Element }) {
 }
 
 function App() {
-  const home = isAuth() ? <Navigate to="/feed" replace /> : <Navigate to="/login" replace />;
+  const home = isAuth() ? <Navigate to="/feed" replace /> : <Navigate to="/auth" replace />;
 
   return (
     <>
@@ -64,20 +62,20 @@ function App() {
           <UserProvider>
             <Routes>
               <Route
-                path="/login"
+                path="/auth"
                 element={
                   <PublicRoute>
-                    <Login />
+                    <Auth />
                   </PublicRoute>
                 }
               />
               <Route
+                path="/login"
+                element={<Navigate to="/auth" replace />}
+              />
+              <Route
                 path="/cadastro"
-                element={
-                  <PublicRoute>
-                    <Cadastro />
-                  </PublicRoute>
-                }
+                element={<Navigate to="/auth" replace />}
               />
 
               <Route
