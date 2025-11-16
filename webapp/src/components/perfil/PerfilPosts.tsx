@@ -5,11 +5,12 @@ import { postService, type PostResponseDTO } from '../../services/postService';
 type Props = { 
   idUsuario: number;
   isOwnProfile?: boolean;
+  postsIniciais?: PostResponseDTO[];
 };
 
-export default function PerfilPosts({ idUsuario, isOwnProfile = false }: Props) {
-    const [posts, setPosts] = useState<PostResponseDTO[]>([]);
-    const [loading, setLoading] = useState(true);
+export default function PerfilPosts({ idUsuario, isOwnProfile = false, postsIniciais }: Props) {
+    const [posts, setPosts] = useState<PostResponseDTO[]>(postsIniciais || []);
+    const [loading, setLoading] = useState(!postsIniciais);
     const [openMenu, setOpenMenu] = useState<string | null>(null);
     const [editando, setEditando] = useState<string | null>(null);
     const [tituloEditado, setTituloEditado] = useState('');
@@ -17,6 +18,8 @@ export default function PerfilPosts({ idUsuario, isOwnProfile = false }: Props) 
     const [deletando, setDeletando] = useState<string | null>(null);
 
     useEffect(() => {
+        if (postsIniciais) return;
+        
         const carregarPosts = async () => {
         if (!idUsuario) return;
         
@@ -33,7 +36,7 @@ export default function PerfilPosts({ idUsuario, isOwnProfile = false }: Props) 
         };
 
         carregarPosts();
-    }, [idUsuario]);
+    }, [idUsuario, postsIniciais]);
 
     useEffect(() => {
         const handleClickOutside = (e: MouseEvent) => {

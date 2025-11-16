@@ -13,6 +13,9 @@ import NavBar from '../components/NavBar';
 import Loading from '../components/Loading';
 import { getUsuario, getUsuarioDetalhes, getMyUser, type UsuarioDetalhesDTO, UsuarioDTO } from '../services/perfil.service';
 import { useUser } from '../contexts/UserContext';
+import { postService, type PostResponseDTO } from '../services/postService';
+import { comentarioService, type ComentarioUsuarioDTO } from '../services/comentarios.service';
+import { buscarResumoTransacoes } from '../services/historicoService';
 
 const Perfil: React.FC = () => {
   const navigate = useNavigate();
@@ -24,6 +27,12 @@ const Perfil: React.FC = () => {
   const [user, setUser] = useState<UsuarioDTO | null>(null);
   const [isOwnProfile, setIsOwnProfile] = useState(false);
   const { user: loggedUser } = useUser();
+  const [posts, setPosts] = useState<PostResponseDTO[]>([]);
+  const [comentarios, setComentarios] = useState<ComentarioUsuarioDTO[]>([]);
+  const [estatisticas, setEstatisticas] = useState<{
+    contrib: { posts: number; comentarios: number; upvotesDados: number; workshops: number };
+    tokens: { ganhos_total: number; gastos_total: number; saldo_atual: number; total_transacoes: number };
+  } | null>(null);
 
   useEffect(() => {
     const carregarDadosUsuario = async () => {
@@ -31,39 +40,70 @@ const Perfil: React.FC = () => {
         setLoading(true);
         setError(null);
 
+        let userId: number;
+
         if (id) {
-          const userId = parseInt(id);
+          userId = parseInt(id);
           
           // Verifica se é o próprio perfil usando o contexto
           const isSelf = loggedUser?.id === userId;
           setIsOwnProfile(isSelf);
           
-          // Se for o próprio perfil, usa os dados do contexto
+          // Se for o próprio perfil, usa os dados do contexto para email
           if (isSelf && loggedUser) {
             setUser(loggedUser);
-          } else {
-            // Se for perfil de outro usuário, busca os dados
-            const userData = await getUsuario(userId);
-            setUser(userData);
           }
-
-          const dados = await getUsuarioDetalhes(userId);
-          setUsuarioDetalhes(dados);
         } else {
-          // Se não tiver ID, usa os dados do contexto
+          // Se não tiver ID na URL, usa o usuário logado
           if (loggedUser) {
             setUser(loggedUser);
+            userId = loggedUser.id;
             setIsOwnProfile(true);
-            const dados = await getUsuarioDetalhes(loggedUser.id);
-            setUsuarioDetalhes(dados);
           } else {
             // Fallback caso o contexto ainda não tenha carregado
             const userData = await getMyUser();
             setUser(userData);
+            userId = userData.id;
             setIsOwnProfile(true);
-            const dados = await getUsuarioDetalhes(userData.id);
-            setUsuarioDetalhes(dados);
           }
+        }
+
+        // Carregar detalhes, posts, comentários e estatísticas em paralelo
+        const [dados, postsData, comentariosData, resumoData] = await Promise.all([
+          getUsuarioDetalhes(userId),
+          postService.buscarPorUsuario(userId.toString()).catch(err => {
+            console.error('Erro ao carregar posts:', err);
+            return [];
+          }),
+          comentarioService.listarPorUsuario(userId).catch(err => {
+            console.error('Erro ao carregar comentários:', err);
+            return [];
+          }),
+          buscarResumoTransacoes().catch(err => {
+            console.error('Erro ao carregar resumo de transações:', err);
+            return null;
+          })
+        ]);
+
+        setUsuarioDetalhes(dados);
+        setPosts(postsData);
+        setComentarios(comentariosData);
+        
+        if (resumoData) {
+          setEstatisticas({
+            contrib: {
+              posts: dados.qtdPosts,
+              comentarios: dados.qtdComentarios,
+              upvotesDados: dados.qtdUpVotes + dados.qtdSuperVotes,
+              workshops: dados.qtdWorkshops,
+            },
+            tokens: {
+              ganhos_total: resumoData.totalRecebido,
+              gastos_total: resumoData.totalGasto,
+              saldo_atual: resumoData.saldoAtual,
+              total_transacoes: resumoData.totalTransacoes,
+            },
+          });
         }
       } catch (err: any) {
         console.error('Erro ao carregar detalhes do usuário:', err);
@@ -137,11 +177,11 @@ const Perfil: React.FC = () => {
           />
         </div>
 
-        {aba === 'Posts' && <PerfilPosts idUsuario={user?.id!} isOwnProfile={isOwnProfile} />}
+        {aba === 'Posts' && <PerfilPosts idUsuario={user?.id!} isOwnProfile={isOwnProfile} postsIniciais={posts} />}
         {aba === 'Comentários' && (
-          <PerfilAtividades idUsuario={user?.id!} isOwnProfile={isOwnProfile} />
+          <PerfilAtividades idUsuario={user?.id!} isOwnProfile={isOwnProfile} comentariosIniciais={comentarios} />
         )}
-        {aba === 'Estatísticas' && <PerfilEstatisticas idUsuario={user?.id!} />}
+        {aba === 'Estatísticas' && <PerfilEstatisticas idUsuario={user?.id!} estatisticasIniciais={estatisticas || undefined} />}
       </div>
     </div>
   );
