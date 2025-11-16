@@ -3,7 +3,11 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import '../styles/CriarWorkshop.css';
 import NavBar from '../components/NavBar';
-import { workshopService, type WorkshopResponseDTO } from '../services/workshopService';
+import {
+  workshopService,
+  type WorkshopResponseDTO,
+  type WorkshopUpdateDTO,
+} from '../services/workshopService';
 import { useNotification } from '../contexts/NotificationContext';
 
 function isValidUrl(url: string) {
@@ -15,20 +19,73 @@ function isValidUrl(url: string) {
   }
 }
 
+function maskBrDate(raw: string) {
+  const digits = raw.replace(/\D/g, '').slice(0, 8);
+  if (digits.length <= 2) return digits;
+  if (digits.length <= 4) return `${digits.slice(0, 2)}/${digits.slice(2)}`;
+  return `${digits.slice(0, 2)}/${digits.slice(2, 4)}/${digits.slice(4)}`;
+}
+
+function parseBrDate(value?: string): Date | null {
+  if (!value) return null;
+  const clean = value.trim();
+  const parts = clean.split('/');
+  if (parts.length !== 3) return null;
+
+  const [dStr, mStr, yStr] = parts;
+  const day = Number(dStr);
+  const month = Number(mStr);
+  const year = Number(yStr);
+
+  if (
+    Number.isNaN(day) ||
+    Number.isNaN(month) ||
+    Number.isNaN(year) ||
+    day <= 0 ||
+    month <= 0 ||
+    month > 12
+  ) {
+    return null;
+  }
+
+  const dt = new Date(year, month - 1, day);
+  if (dt.getFullYear() !== year || dt.getMonth() !== month - 1 || dt.getDate() !== day) {
+    return null;
+  }
+
+  return dt;
+}
+
+function isoToBrDate(iso?: string | null): string {
+  if (!iso) return '';
+  const [datePart] = iso.split('T');
+  if (!datePart) return '';
+  const [year, month, day] = datePart.split('-');
+  if (!year || !month || !day) return '';
+  return `${day.padStart(2, '0')}/${month.padStart(2, '0')}/${year}`;
+}
+
+function toIsoDayFromBr(date: string, end?: boolean): string | undefined {
+  const dt = parseBrDate(date);
+  if (!dt) return undefined;
+  const year = dt.getFullYear();
+  const month = String(dt.getMonth() + 1).padStart(2, '0');
+  const day = String(dt.getDate()).padStart(2, '0');
+  const base = `${year}-${month}-${day}`;
+  return `${base}${end ? 'T23:59:59' : 'T00:00:00'}`;
+}
+
 function calcDurationDays(start?: string, end?: string) {
-  if (!start || !end) return null;
-  const s = new Date(start + 'T00:00:00').getTime();
-  const e = new Date(end + 'T00:00:00').getTime();
-  if (Number.isNaN(s) || Number.isNaN(e) || e < s) return null;
-  const days = Math.round((e - s) / 86_400_000) + 1;
-  return days === 1 ? '1 dia' : `${days} dias`;
+  const s = parseBrDate(start);
+  const e = parseBrDate(end);
+  if (!s || !e || e < s) return null;
+  const diffDays = Math.round((e.getTime() - s.getTime()) / 86_400_000) + 1;
+  return diffDays === 1 ? '1 dia' : `${diffDays} dias`;
 }
 
 function fmtDate(d?: string) {
   if (!d) return '-';
-  const dt = new Date(d + 'T00:00:00');
-  if (Number.isNaN(dt.getTime())) return '-';
-  return dt.toLocaleDateString('pt-BR');
+  return d;
 }
 
 export default function EditarWorkshop() {
@@ -68,16 +125,21 @@ export default function EditarWorkshop() {
     [dataInicio, dataTermino]
   );
 
+  const startDateObj = parseBrDate(dataInicio);
+  const endDateObj = parseBrDate(dataTermino);
+
   const fieldErrors = {
     titulo: !titulo ? 'Obrigatório' : '',
     tema: !tema ? 'Obrigatório' : '',
     descricao: !descricaoTxt ? 'Obrigatório' : '',
-    dataInicio: !dataInicio ? 'Obrigatório' : '',
+    dataInicio: !dataInicio ? 'Obrigatório' : !startDateObj ? 'Data inválida' : '',
     dataTermino: !dataTermino
       ? 'Obrigatório'
-      : dataInicio && new Date(dataTermino) < new Date(dataInicio)
-        ? 'dataFinal deve ser igual ou após dataInicio'
-        : '',
+      : !endDateObj
+        ? 'Data inválida'
+        : startDateObj && endDateObj && endDateObj < startDateObj
+          ? 'dataFinal deve ser igual ou após dataInicio'
+          : '',
     linkMeet: !linkMeet ? 'Obrigatório' : !isValidUrl(linkMeet) ? 'URL inválida' : '',
     custo: custo === '' ? 'Obrigatório' : Number(custo) < 0 ? 'Não pode ser negativo' : '',
     capacidade: capacidade === '' ? 'Obrigatório' : '',
@@ -110,8 +172,8 @@ export default function EditarWorkshop() {
         setLinkMeet(wk.linkMeet ?? '');
         setCusto(wk.custo != null ? String(wk.custo) : '');
         setCapacidade(wk.capacidade != null ? String(wk.capacidade) : '');
-        setDataInicio(wk.dataInicio ? wk.dataInicio.slice(0, 10) : '');
-        setDataTermino(wk.dataTermino ? wk.dataTermino.slice(0, 10) : '');
+        setDataInicio(isoToBrDate(wk.dataInicio));
+        setDataTermino(isoToBrDate(wk.dataTermino));
       } catch (e: any) {
         const resp = e?.response?.data;
         const msg = resp?.message || resp?.error || e?.message || 'Erro ao carregar workshop';
@@ -150,18 +212,29 @@ export default function EditarWorkshop() {
       return;
     }
 
-    const payload = {
+    const inicioIso = toIsoDayFromBr(dataInicio, false);
+    const terminoIso = toIsoDayFromBr(dataTermino, true);
+
+    const custoNum = Number(custo);
+    const capacidadeNum = Number(capacidade);
+
+    if (Number.isNaN(custoNum) || Number.isNaN(capacidadeNum)) {
+      setErrorGlobal('Custo e capacidade devem ser numéricos');
+      return;
+    }
+
+    const payload: WorkshopUpdateDTO = {
       titulo,
+      linkMeet,
+      dataInicio: inicioIso,
+      dataTermino: terminoIso,
+      custo: custoNum,
+      capacidade: capacidadeNum,
       descricao: {
         tema,
         descricao: descricaoTxt,
       },
     };
-
-    console.log('Payload PATCH /workshops:', {
-      id: workshopId,
-      body: payload,
-    });
 
     try {
       setSaving(true);
@@ -351,10 +424,13 @@ export default function EditarWorkshop() {
                 <label htmlFor="dataInicio">Data de início *</label>
                 <input
                   id="dataInicio"
-                  type="date"
+                  type="text"
+                  inputMode="numeric"
+                  maxLength={10}
                   value={dataInicio}
-                  onChange={(e) => setDataInicio(e.target.value)}
+                  onChange={(e) => setDataInicio(maskBrDate(e.target.value))}
                   onBlur={() => markTouched('dataInicio')}
+                  placeholder="dd/mm/aaaa"
                   aria-invalid={!!(touched.dataInicio && fieldErrors.dataInicio)}
                 />
                 {touched.dataInicio && fieldErrors.dataInicio && (
@@ -370,11 +446,13 @@ export default function EditarWorkshop() {
                 <label htmlFor="dataTermino">Data final *</label>
                 <input
                   id="dataTermino"
-                  type="date"
+                  type="text"
+                  inputMode="numeric"
+                  maxLength={10}
                   value={dataTermino}
-                  min={dataInicio || undefined}
-                  onChange={(e) => setDataTermino(e.target.value)}
+                  onChange={(e) => setDataTermino(maskBrDate(e.target.value))}
                   onBlur={() => markTouched('dataTermino')}
+                  placeholder="dd/mm/aaaa"
                   aria-invalid={!!(touched.dataTermino && fieldErrors.dataTermino)}
                 />
                 {touched.dataTermino && fieldErrors.dataTermino && (

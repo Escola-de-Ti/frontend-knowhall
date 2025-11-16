@@ -6,9 +6,57 @@ import NavBar from '../components/NavBar';
 import { workshopService } from '../services/workshopService';
 import { useNotification } from '../contexts/NotificationContext';
 
-function toIsoDay(date: string, end?: boolean) {
-  if (!date) return date;
-  return end ? `${date}T23:59:59` : `${date}T00:00:00`;
+function maskDate(value: string) {
+  const digits = value.replace(/\D/g, '').slice(0, 8); // ddmmYYYY
+  const len = digits.length;
+
+  if (len <= 2) return digits;
+  if (len <= 4) return `${digits.slice(0, 2)}/${digits.slice(2)}`;
+  return `${digits.slice(0, 2)}/${digits.slice(2, 4)}/${digits.slice(4)}`;
+}
+
+function parseMaskedDate(value?: string): Date | null {
+  if (!value) return null;
+  const parts = value.split('/');
+  if (parts.length !== 3) return null;
+
+  const [dayStr, monthStr, yearStr] = parts;
+  if (yearStr.length !== 4) return null;
+
+  const day = Number(dayStr);
+  const month = Number(monthStr);
+  const year = Number(yearStr);
+
+  if (Number.isNaN(day) || Number.isNaN(month) || Number.isNaN(year)) return null;
+
+  const date = new Date(year, month - 1, day);
+
+  if (
+    date.getFullYear() !== year ||
+    date.getMonth() !== month - 1 ||
+    date.getDate() !== day
+  ) {
+    return null;
+  }
+
+  return date;
+}
+
+function toIsoDate(masked: string): string | null {
+  const date = parseMaskedDate(masked);
+  if (!date) return null;
+
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const day = String(date.getDate()).padStart(2, '0');
+
+  return `${year}-${month}-${day}`;
+}
+
+function toIsoDay(masked: string, end?: boolean): string | null {
+  const iso = toIsoDate(masked);
+  if (!iso) return null;
+  return end ? `${iso}T23:59:59` : `${iso}T00:00:00`;
 }
 
 function isValidUrl(url: string) {
@@ -21,19 +69,29 @@ function isValidUrl(url: string) {
 }
 
 function calcDurationDays(start?: string, end?: string) {
-  if (!start || !end) return null;
-  const s = new Date(start + 'T00:00:00').getTime();
-  const e = new Date(end + 'T00:00:00').getTime();
-  if (Number.isNaN(s) || Number.isNaN(e) || e < s) return null;
+  const startDate = parseMaskedDate(start);
+  const endDate = parseMaskedDate(end);
+  if (!startDate || !endDate || endDate < startDate) return null;
+
+  const s = Date.UTC(
+    startDate.getFullYear(),
+    startDate.getMonth(),
+    startDate.getDate()
+  );
+  const e = Date.UTC(
+    endDate.getFullYear(),
+    endDate.getMonth(),
+    endDate.getDate()
+  );
+
   const days = Math.round((e - s) / 86_400_000) + 1;
   return days === 1 ? '1 dia' : `${days} dias`;
 }
 
-function fmtDate(d?: string) {
-  if (!d) return '-';
-  const dt = new Date(d + 'T00:00:00');
-  if (Number.isNaN(dt.getTime())) return '-';
-  return dt.toLocaleDateString('pt-BR');
+function fmtDate(masked?: string) {
+  if (!masked) return '-';
+  // se for inválida, ainda assim mostra o que o usuário digitou
+  return masked;
 }
 
 export default function CriarWorkshop() {
@@ -62,25 +120,49 @@ export default function CriarWorkshop() {
     capacidade: false,
   });
 
-  const titleCount = useMemo(() => `${titulo.length}/100 Caracteres`, [titulo]);
-  const descCount = useMemo(() => `${descricaoTxt.length}/1000 Caracteres`, [descricaoTxt]);
+  const titleCount = useMemo(
+    () => `${titulo.length}/100 Caracteres`,
+    [titulo]
+  );
+  const descCount = useMemo(
+    () => `${descricaoTxt.length}/1000 Caracteres`,
+    [descricaoTxt]
+  );
   const duracao = useMemo(
     () => calcDurationDays(dataInicio, dataTermino),
     [dataInicio, dataTermino]
   );
 
+  const startDateObj = parseMaskedDate(dataInicio);
+  const endDateObj = parseMaskedDate(dataTermino);
+
   const fieldErrors = {
     titulo: !titulo ? 'Obrigatório' : '',
     tema: !tema ? 'Obrigatório' : '',
     descricao: !descricaoTxt ? 'Obrigatório' : '',
-    dataInicio: !dataInicio ? 'Obrigatório' : '',
+    dataInicio: !dataInicio
+      ? 'Obrigatório'
+      : !startDateObj
+        ? 'Data inválida'
+        : '',
     dataTermino: !dataTermino
       ? 'Obrigatório'
-      : dataInicio && new Date(dataTermino) < new Date(dataInicio)
-        ? 'dataFinal deve ser igual ou após dataInicio'
+      : !endDateObj
+        ? 'Data inválida'
+        : startDateObj && endDateObj && endDateObj < startDateObj
+          ? 'dataFinal deve ser igual ou após dataInicio'
+          : '',
+    linkMeet: !linkMeet
+      ? 'Obrigatório'
+      : !isValidUrl(linkMeet)
+        ? 'URL inválida'
         : '',
-    linkMeet: !linkMeet ? 'Obrigatório' : !isValidUrl(linkMeet) ? 'URL inválida' : '',
-    custo: custo === '' ? 'Obrigatório' : Number(custo) < 0 ? 'Não pode ser negativo' : '',
+    custo:
+      custo === ''
+        ? 'Obrigatório'
+        : Number(custo) < 0
+          ? 'Não pode ser negativo'
+          : '',
     capacidade: capacidade === '' ? 'Obrigatório' : '',
   };
 
@@ -109,6 +191,11 @@ export default function CriarWorkshop() {
 
     const inicioIso = toIsoDay(dataInicio, false);
     const terminoIso = toIsoDay(dataTermino, true);
+
+    if (!inicioIso || !terminoIso) {
+      setErrorGlobal('Datas inválidas, verifique os campos.');
+      return;
+    }
 
     const custoNum = Number(custo);
     const capacidadeNum = Number(capacidade);
@@ -179,7 +266,11 @@ export default function CriarWorkshop() {
       <div className="ws-container">
         <div className="ws-header">
           <div className="ws-header-left">
-            <button type="button" className="ws-btn-back" onClick={() => navigate(-1)}>
+            <button
+              type="button"
+              className="ws-btn-back"
+              onClick={() => navigate(-1)}
+            >
               <span className="ws-ico-back" />
               Voltar
             </button>
@@ -191,13 +282,17 @@ export default function CriarWorkshop() {
           </div>
 
           <div className="ws-actions">
-            <button type="button" className="ws-btn-cancel" onClick={resetForm}>
+            <button
+              type="button"
+              className="ws-btn-cancel"
+              onClick={resetForm}
+            >
               Cancelar
             </button>
             <button
               type="button"
               className="ws-btn-save"
-              disabled={loading || hasErrors}
+              disabled={loading}
               onClick={onSubmit}
             >
               {loading ? 'Salvando...' : 'Publicar'}
@@ -213,11 +308,15 @@ export default function CriarWorkshop() {
               <ul className="ws-summary-list">
                 <li className="ws-summary-row">
                   <span className="ws-summary-label">Título</span>
-                  <span className="ws-chip ws-blue-chip">{titulo || '-'}</span>
+                  <span className="ws-chip ws-blue-chip">
+                    {titulo || '-'}
+                  </span>
                 </li>
                 <li className="ws-summary-row">
                   <span className="ws-summary-label">Tema</span>
-                  <span className="ws-chip ws-pink-chip">{tema || '-'}</span>
+                  <span className="ws-chip ws-pink-chip">
+                    {tema || '-'}
+                  </span>
                 </li>
                 <li className="ws-summary-row">
                   <span className="ws-summary-label">Período</span>
@@ -229,19 +328,27 @@ export default function CriarWorkshop() {
                 </li>
                 <li className="ws-summary-row">
                   <span className="ws-summary-label">Duração</span>
-                  <span className="ws-chip ws-green-chip">{duracao ?? '-'}</span>
+                  <span className="ws-chip ws-green-chip">
+                    {duracao ?? '-'}
+                  </span>
                 </li>
                 <li className="ws-summary-row">
                   <span className="ws-summary-label">Custo</span>
-                  <span className="ws-chip">{custo !== '' ? `${custo} tokens` : '-'}</span>
+                  <span className="ws-chip">
+                    {custo !== '' ? `${custo} tokens` : '-'}
+                  </span>
                 </li>
                 <li className="ws-summary-row">
                   <span className="ws-summary-label">Capacidade</span>
-                  <span className="ws-chip">{capacidade !== '' ? capacidade : '-'}</span>
+                  <span className="ws-chip">
+                    {capacidade !== '' ? capacidade : '-'}
+                  </span>
                 </li>
                 <li className="ws-summary-row">
                   <span className="ws-summary-label">Link Meet</span>
-                  <span className="ws-chip">{linkMeet ? 'Pronto' : '-'}</span>
+                  <span className="ws-chip">
+                    {linkMeet ? 'Pronto' : '-'}
+                  </span>
                 </li>
               </ul>
             </section>
@@ -251,13 +358,19 @@ export default function CriarWorkshop() {
           <section className="ws-card ws-center">
             <h2 className="ws-title-gradient">Conteúdo do Workshop</h2>
 
-            <div className={`ws-field ${touched.titulo && fieldErrors.titulo ? 'ws-invalid' : ''}`}>
+            <div
+              className={`ws-field ${
+                touched.titulo && fieldErrors.titulo ? 'ws-invalid' : ''
+              }`}
+            >
               <label htmlFor="titulo">Título *</label>
               <div className="ws-input-wrap">
                 <input
                   id="titulo"
                   value={titulo}
-                  onChange={(e) => setTitulo(e.target.value.slice(0, 100))}
+                  onChange={(e) =>
+                    setTitulo(e.target.value.slice(0, 100))
+                  }
                   onBlur={() => markTouched('titulo')}
                   placeholder="Ex: Spring Boot Avançado: Performance e Escalabilidade"
                   maxLength={100}
@@ -266,12 +379,18 @@ export default function CriarWorkshop() {
                 <span className="ws-counter">{titleCount}</span>
               </div>
               {touched.titulo && fieldErrors.titulo && (
-                <span className="ws-field-error">{fieldErrors.titulo}</span>
+                <span className="ws-field-error">
+                  {fieldErrors.titulo}
+                </span>
               )}
             </div>
 
             <div className="ws-row-2">
-              <div className={`ws-field ${touched.tema && fieldErrors.tema ? 'ws-invalid' : ''}`}>
+              <div
+                className={`ws-field ${
+                  touched.tema && fieldErrors.tema ? 'ws-invalid' : ''
+                }`}
+              >
                 <label htmlFor="tema">Tema *</label>
                 <input
                   id="tema"
@@ -282,13 +401,17 @@ export default function CriarWorkshop() {
                   aria-invalid={!!(touched.tema && fieldErrors.tema)}
                 />
                 {touched.tema && fieldErrors.tema && (
-                  <span className="ws-field-error">{fieldErrors.tema}</span>
+                  <span className="ws-field-error">
+                    {fieldErrors.tema}
+                  </span>
                 )}
               </div>
 
               <div
                 className={`ws-field ${
-                  touched.linkMeet && fieldErrors.linkMeet ? 'ws-invalid' : ''
+                  touched.linkMeet && fieldErrors.linkMeet
+                    ? 'ws-invalid'
+                    : ''
                 }`}
               >
                 <label htmlFor="linkMeet">Link do Google Meet *</label>
@@ -299,10 +422,14 @@ export default function CriarWorkshop() {
                   onChange={(e) => setLinkMeet(e.target.value)}
                   onBlur={() => markTouched('linkMeet')}
                   placeholder="https://meet.google.com/abc-defg-hij"
-                  aria-invalid={!!(touched.linkMeet && fieldErrors.linkMeet)}
+                  aria-invalid={
+                    !!(touched.linkMeet && fieldErrors.linkMeet)
+                  }
                 />
                 {touched.linkMeet && fieldErrors.linkMeet && (
-                  <span className="ws-field-error">{fieldErrors.linkMeet}</span>
+                  <span className="ws-field-error">
+                    {fieldErrors.linkMeet}
+                  </span>
                 )}
               </div>
             </div>
@@ -310,46 +437,73 @@ export default function CriarWorkshop() {
             <div className="ws-row-2 ws-dates">
               <div
                 className={`ws-field ${
-                  touched.dataInicio && fieldErrors.dataInicio ? 'ws-invalid' : ''
+                  touched.dataInicio && fieldErrors.dataInicio
+                    ? 'ws-invalid'
+                    : ''
                 }`}
               >
                 <label htmlFor="dataInicio">Data de início *</label>
                 <input
                   id="dataInicio"
-                  type="date"
+                  type="text"
                   value={dataInicio}
-                  onChange={(e) => setDataInicio(e.target.value)}
+                  onChange={(e) =>
+                    setDataInicio(maskDate(e.target.value))
+                  }
                   onBlur={() => markTouched('dataInicio')}
-                  aria-invalid={!!(touched.dataInicio && fieldErrors.dataInicio)}
+                  placeholder="dd/mm/aaaa"
+                  aria-invalid={
+                    !!(touched.dataInicio && fieldErrors.dataInicio)
+                  }
                 />
+                <span className="ws-field-hint">
+                  Formato: dd/mm/aaaa
+                </span>
                 {touched.dataInicio && fieldErrors.dataInicio && (
-                  <span className="ws-field-error">{fieldErrors.dataInicio}</span>
+                  <span className="ws-field-error">
+                    {fieldErrors.dataInicio}
+                  </span>
                 )}
               </div>
 
               <div
                 className={`ws-field ${
-                  touched.dataTermino && fieldErrors.dataTermino ? 'ws-invalid' : ''
+                  touched.dataTermino && fieldErrors.dataTermino
+                    ? 'ws-invalid'
+                    : ''
                 }`}
               >
                 <label htmlFor="dataTermino">Data final *</label>
                 <input
                   id="dataTermino"
-                  type="date"
+                  type="text"
                   value={dataTermino}
-                  min={dataInicio || undefined}
-                  onChange={(e) => setDataTermino(e.target.value)}
+                  onChange={(e) =>
+                    setDataTermino(maskDate(e.target.value))
+                  }
                   onBlur={() => markTouched('dataTermino')}
-                  aria-invalid={!!(touched.dataTermino && fieldErrors.dataTermino)}
+                  placeholder="dd/mm/aaaa"
+                  aria-invalid={
+                    !!(touched.dataTermino && fieldErrors.dataTermino)
+                  }
                 />
+                <span className="ws-field-hint">
+                  Formato: dd/mm/aaaa
+                </span>
                 {touched.dataTermino && fieldErrors.dataTermino && (
-                  <span className="ws-field-error">{fieldErrors.dataTermino}</span>
+                  <span className="ws-field-error">
+                    {fieldErrors.dataTermino}
+                  </span>
                 )}
               </div>
             </div>
 
             <div className="ws-row-2">
-              <div className={`ws-field ${touched.custo && fieldErrors.custo ? 'ws-invalid' : ''}`}>
+              <div
+                className={`ws-field ${
+                  touched.custo && fieldErrors.custo ? 'ws-invalid' : ''
+                }`}
+              >
                 <label htmlFor="custo">Custo (tokens) *</label>
                 <input
                   id="custo"
@@ -360,14 +514,22 @@ export default function CriarWorkshop() {
                   onBlur={() => markTouched('custo')}
                   aria-invalid={!!(touched.custo && fieldErrors.custo)}
                 />
+                <span className="ws-field-hint">
+                  Esse valor é debitado do aluno e creditado ao
+                  instrutor.
+                </span>
                 {touched.custo && fieldErrors.custo && (
-                  <span className="ws-field-error">{fieldErrors.custo}</span>
+                  <span className="ws-field-error">
+                    {fieldErrors.custo}
+                  </span>
                 )}
               </div>
 
               <div
                 className={`ws-field ${
-                  touched.capacidade && fieldErrors.capacidade ? 'ws-invalid' : ''
+                  touched.capacidade && fieldErrors.capacidade
+                    ? 'ws-invalid'
+                    : ''
                 }`}
               >
                 <label htmlFor="capacidade">Capacidade *</label>
@@ -378,17 +540,26 @@ export default function CriarWorkshop() {
                   value={capacidade}
                   onChange={(e) => setCapacidade(e.target.value)}
                   onBlur={() => markTouched('capacidade')}
-                  aria-invalid={!!(touched.capacidade && fieldErrors.capacidade)}
+                  aria-invalid={
+                    !!(touched.capacidade && fieldErrors.capacidade)
+                  }
                 />
+                <span className="ws-field-hint">
+                  Quantidade máxima de participantes.
+                </span>
                 {touched.capacidade && fieldErrors.capacidade && (
-                  <span className="ws-field-error">{fieldErrors.capacidade}</span>
+                  <span className="ws-field-error">
+                    {fieldErrors.capacidade}
+                  </span>
                 )}
               </div>
             </div>
 
             <div
               className={`ws-field ${
-                touched.descricao && fieldErrors.descricao ? 'ws-invalid' : ''
+                touched.descricao && fieldErrors.descricao
+                  ? 'ws-invalid'
+                  : ''
               }`}
             >
               <label htmlFor="descricao">Descrição *</label>
@@ -396,30 +567,44 @@ export default function CriarWorkshop() {
                 <textarea
                   id="descricao"
                   value={descricaoTxt}
-                  onChange={(e) => setDescricaoTxt(e.target.value.slice(0, 1000))}
+                  onChange={(e) =>
+                    setDescricaoTxt(
+                      e.target.value.slice(0, 1000)
+                    )
+                  }
                   onBlur={() => markTouched('descricao')}
                   placeholder="Descreva o foco do workshop, pré-requisitos, público-alvo..."
                   rows={6}
                   maxLength={1000}
-                  aria-invalid={!!(touched.descricao && fieldErrors.descricao)}
+                  aria-invalid={
+                    !!(touched.descricao && fieldErrors.descricao)
+                  }
                 />
                 <span className="ws-counter">{descCount}</span>
               </div>
               {touched.descricao && fieldErrors.descricao && (
-                <span className="ws-field-error">{fieldErrors.descricao}</span>
+                <span className="ws-field-error">
+                  {fieldErrors.descricao}
+                </span>
               )}
             </div>
 
-            {errorGlobal && <div className="ws-alert ws-error">{errorGlobal}</div>}
+            {errorGlobal && (
+              <div className="ws-alert ws-error">{errorGlobal}</div>
+            )}
           </section>
 
           <aside className="ws-right">
             <section className="ws-card">
-              <h2 className="ws-title-gradient">Dicas para bons Workshops:</h2>
+              <h2 className="ws-title-gradient">
+                Dicas para bons Workshops:
+              </h2>
               <ul className="ws-tips-list">
                 <li>Use um título claro e descritivo</li>
                 <li>Defina bem o tema e o público-alvo</li>
-                <li>Inclua exemplos práticos ou código quando possível</li>
+                <li>
+                  Inclua exemplos práticos ou código quando possível
+                </li>
               </ul>
             </section>
           </aside>
