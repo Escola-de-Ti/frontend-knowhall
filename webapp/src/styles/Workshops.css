@@ -800,3 +800,34 @@
     text-align: right;
   }
 }
+
+.wk-enroll-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.wk-btn-cancel {
+  height: 36px;
+  padding: 0 12px;
+  border-radius: 10px;
+  border: 1px solid #e85b5b;
+  background: #3a2626;
+  color: #ffb6b6;
+  font-weight: 800;
+  font-family: 'Manrope', sans-serif;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  cursor: pointer;
+}
+
+.wk-btn-cancel:hover:not(:disabled) {
+  background: #4a2f2f;
+}
+
+.wk-btn-cancel:disabled {
+  opacity: 0.6;
+  cursor: default;
+}
