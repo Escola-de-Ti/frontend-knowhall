@@ -3,6 +3,7 @@ import React, { useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import '../styles/CriarWorkshop.css';
 import NavBar from '../components/NavBar';
+import Loading from '../components/Loading';
 import { workshopService } from '../services/workshopService';
 import { useNotification } from '../contexts/NotificationContext';
 
@@ -227,6 +228,17 @@ export default function CriarWorkshop() {
     setErrorGlobal(null);
   }
 
+  if (loading) {
+    return (
+      <>
+        <NavBar />
+        <div className="ws-container">
+          <Loading fullscreen message="Salvando workshop..." />
+        </div>
+      </>
+    );
+  }
+
   return (
     <>
       <NavBar />
@@ -250,7 +262,7 @@ export default function CriarWorkshop() {
               Cancelar
             </button>
             <button type="button" className="ws-btn-save" disabled={loading} onClick={onSubmit}>
-              {loading ? 'Salvando...' : 'Publicar'}
+              Publicar
             </button>
           </div>
 
