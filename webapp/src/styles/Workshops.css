@@ -15,7 +15,6 @@
 }
 
 .wk-wrap {
-  background: var(--bg);
   min-height: 100dvh;
   color: var(--text);
   padding: 18px 32px 40px;

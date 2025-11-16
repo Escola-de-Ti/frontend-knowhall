@@ -218,11 +218,6 @@ label {
   gap: 24px;
 }
 
-.ws-tags {
-  grid-column: 2;
-  margin-top: -4px;
-}
-
 .ws-card {
   background: var(--card);
   border: 1px solid var(--border);
@@ -369,43 +364,13 @@ label {
   color: #fecaca;
 }
 
-.ws-row-2 {
-  display: grid;
-  gap: 16px;
-}
-
-@media (min-width: 900px) {
-  .ws-row-2 {
-    grid-template-columns: 1fr 1fr;
-  }
-}
-
-.ws-dates {
-  gap: 18px;
-}
-
-@media (min-width: 900px) {
-  .ws-dates {
-    grid-template-columns: 1fr 1fr;
-  }
-}
-
-.ws-dates .ws-field label {
-  font-weight: 700;
-  color: #f0f0f0;
-}
-
-.ws-dates .ws-field input {
-  font-variant-numeric: tabular-nums;
-  letter-spacing: 0.02em;
-}
-
 .ws-summary {
   border: 2px solid transparent;
   border-radius: 20px;
   padding: 18px 22px 20px;
   background-image:
-    linear-gradient(var(--card), var(--card)), linear-gradient(180deg, var(--green), var(--pink));
+    linear-gradient(var(--card), var(--card)),
+    linear-gradient(180deg, var(--green), var(--pink));
   background-origin: padding-box, border-box;
   background-clip: padding-box, border-box;
   box-shadow:
@@ -485,10 +450,6 @@ label {
   line-height: 1.55;
 }
 
-.ws-card.ws-tags {
-  padding-top: 26px;
-}
-
 @media (max-width: 1100px) {
   .ws-grid {
     grid-template-columns: 1fr;
@@ -498,11 +459,6 @@ label {
   .ws-center,
   .ws-right {
     grid-column: auto;
-  }
-
-  .ws-tags {
-    grid-column: auto;
-    margin-top: 0;
   }
 
   .ws-left {
