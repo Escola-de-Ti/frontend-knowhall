@@ -49,9 +49,12 @@ const Perfil: React.FC = () => {
           const isSelf = loggedUser?.id === userId;
           setIsOwnProfile(isSelf);
           
-          // Se for o próprio perfil, usa os dados do contexto para email
+          // Busca os dados do usuário (para ter email e outras informações)
           if (isSelf && loggedUser) {
             setUser(loggedUser);
+          } else {
+            const userData = await getUsuario(userId);
+            setUser(userData);
           }
         } else {
           // Se não tiver ID na URL, usa o usuário logado
