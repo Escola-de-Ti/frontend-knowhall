@@ -197,6 +197,11 @@ function WorkshopFilterMenu({
 
 const PAGE_SIZE = 6;
 
+function truncate(text: string, max: number) {
+  if (!text) return '';
+  return text.length > max ? text.slice(0, max).trimEnd() + '…' : text;
+}
+
 function mapToUi(w: WorkshopResponseDTO): UiWorkshop {
   return {
     id: w.id,
@@ -737,7 +742,7 @@ export default function Workshops() {
                   >
                     <header className="wk-card-header">
                       <div className="wk-card-header-main">
-                        <h2 className="wk-card-title">{w.title}</h2>
+                        <h2 className="wk-card-title">{truncate(w.title, 40)}</h2>
                         {!isInscritos && showDescription && (
                           <p className="wk-desc">{w.description}</p>
                         )}
