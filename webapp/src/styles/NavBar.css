@@ -277,3 +277,96 @@
     display: none;
   }
 }
+
+.nav-search-wrapper {
+  flex: 1;
+  min-width: 240px;
+  position: relative;
+}
+
+.search-ico {
+  width: 18px;
+  height: 18px;
+  display: inline-block;
+  background-color: var(--muted);
+  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='11' cy='11' r='8'/%3E%3Cpath d='m21 21-4.35-4.35'/%3E%3C/svg%3E")
+    center/contain no-repeat;
+  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='11' cy='11' r='8'/%3E%3Cpath d='m21 21-4.35-4.35'/%3E%3C/svg%3E")
+    center/contain no-repeat;
+}
+
+.search-dropdown {
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 0;
+  right: 0;
+  background: var(--bg-2);
+  border: 1px solid var(--stroke);
+  border-radius: 12px;
+  max-height: 400px;
+  overflow-y: auto;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+  z-index: 100;
+}
+
+.search-result-item {
+  width: 100%;
+  padding: 12px 16px;
+  border: 0;
+  background: transparent;
+  color: var(--text);
+  text-align: left;
+  cursor: pointer;
+  transition: background 0.15s ease;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.search-result-item:last-child {
+  border-bottom: 0;
+}
+
+.search-result-item:hover {
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.search-user-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.search-user-name {
+  font-weight: 600;
+  font-size: 14px;
+  color: var(--text);
+}
+
+.search-user-stats {
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.search-loading,
+.search-empty {
+  padding: 16px;
+  text-align: center;
+  color: var(--muted);
+  font-size: 14px;
+}
+
+.search-dropdown::-webkit-scrollbar {
+  width: 8px;
+}
+
+.search-dropdown::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.search-dropdown::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 4px;
+}
+
+.search-dropdown::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.3);
+}

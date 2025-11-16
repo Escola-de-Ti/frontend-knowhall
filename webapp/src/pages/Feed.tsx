@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useState, useRef, useCallback, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import '../styles/Feed.css';
@@ -56,57 +55,63 @@ export default function Feed() {
     };
   };
 
-  useEffect(() => {
-    async function carregarWorkshops() {
-      try {
-        setWorkshopsLoading(true);
-        setWorkshopsError(null);
+  const carregarWorkshops = useCallback(async () => {
+    try {
+      setWorkshopsLoading(true);
+      setWorkshopsError(null);
 
-        const response = await workshopService.listarPorStatus('ABERTO');
+      const response = await workshopService.listarPorStatus('ABERTO');
 
-        const workshopsFuturos = response
-          .filter((w) => new Date(w.dataInicio) > new Date())
-          .sort((a, b) => new Date(a.dataInicio).getTime() - new Date(b.dataInicio).getTime())
-          .slice(0, 4);
+      const workshopsFuturos = response
+        .filter((w) => new Date(w.dataInicio) > new Date())
+        .sort((a, b) => new Date(a.dataInicio).getTime() - new Date(b.dataInicio).getTime())
+        .slice(0, 4);
 
-        const workshopsFormatados = workshopsFuturos.map(transformWorkshopToItem);
+      const workshopsFormatados = workshopsFuturos.map(transformWorkshopToItem);
 
-        setWorkshops(workshopsFormatados);
-      } catch (err: any) {
-        console.error('Erro ao carregar workshops:', err);
-        setWorkshopsError('Não foi possível carregar os workshops.');
-      } finally {
-        setWorkshopsLoading(false);
-      }
+      setWorkshops(workshopsFormatados);
+    } catch (err: any) {
+      console.error('Erro ao carregar workshops:', err);
+      setWorkshopsError('Não foi possível carregar os workshops.');
+    } finally {
+      setWorkshopsLoading(false);
     }
+  }, []);
 
+  const carregarRanking = useCallback(async () => {
+    try {
+      setRankingLoading(true);
+      setRankingError(null);
+
+      const response = await usuarioService.buscarRanking();
+
+      setRankingList(response.rankingList.slice(0, 10));
+    } catch (err: any) {
+      console.error('Erro ao carregar ranking:', err);
+      setRankingError('Não foi possível carregar o ranking.');
+    } finally {
+      setRankingLoading(false);
+    }
+  }, []);
+
+  const refreshAll = useCallback(() => {
+    refresh();
     carregarWorkshops();
-  }, []);
+    carregarRanking();
+  }, [refresh, carregarWorkshops, carregarRanking]);
 
   useEffect(() => {
-    async function carregarRanking() {
-      try {
-        setRankingLoading(true);
-        setRankingError(null);
+    carregarWorkshops();
+  }, [carregarWorkshops]);
 
-        const response = await usuarioService.buscarRanking();
-
-        setRankingList(response.rankingList.slice(0, 10));
-      } catch (err: any) {
-        console.error('Erro ao carregar ranking:', err);
-        setRankingError('Não foi possível carregar o ranking.');
-      } finally {
-        setRankingLoading(false);
-      }
-    }
-
+  useEffect(() => {
     carregarRanking();
-  }, []);
+  }, [carregarRanking]);
 
   const handleCloseModal = () => {
     setOpen(false);
     setCurrent(null);
-    refresh();
+    refreshAll();
   };
 
   const transformPostToModel = (post: PostFeedDTO): PostModel => {
@@ -279,7 +284,7 @@ export default function Feed() {
           {error && (
             <div className="error-message">
               <p>{error}</p>
-              <button className="btn-retry" onClick={refresh}>
+              <button className="btn-retry" onClick={refreshAll}>
                 Tentar novamente
               </button>
             </div>
