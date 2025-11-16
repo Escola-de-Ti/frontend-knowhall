@@ -1,22 +1,22 @@
 @import url('https://fonts.googleapis.com/css2?family=Geologica:wght@100..900&family=Manrope:wght@200..800&display=swap');
 
 :root {
-  --panel-bg: #373737;
-  --panel-bd: #545454;
-  --text: #fff;
-  --item-bg: #3f3f3f;
-  --item-bd: #6b6b6b;
-  --muted: #dcdcdc;
-  --dot: #ff6060;
-  --menu-bg: #2f2f2f;
-  --menu-bd: #6b6b6b;
+  --panel-bg: #1a1a1f;
+  --panel-bd: rgba(110, 247, 195, 0.2);
+  --text: #f5f5f5;
+  --item-bg: linear-gradient(135deg, #1a1a1f 0%, #252530 100%);
+  --item-bd: rgba(110, 247, 195, 0.2);
+  --muted: #e8e8e8;
+  --dot: #ff6ec7;
+  --menu-bg: #1a1a1f;
+  --menu-bd: rgba(110, 247, 195, 0.3);
 }
 
 .atividades-container {
-  background: var(--panel-bg);
+  background: linear-gradient(135deg, #1a1a1f 0%, #252530 100%);
   border: 2px solid var(--panel-bd);
   border-radius: 20px;
-  padding: 18px;
+  padding: 20px;
   color: var(--text);
   display: grid;
   gap: 16px;
@@ -27,6 +27,13 @@
     Segoe UI,
     Roboto,
     sans-serif;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(110, 247, 195, 0.1);
+  transition: all 0.3s ease;
+}
+
+.atividades-container:hover {
+  border-color: rgba(110, 247, 195, 0.3);
+  box-shadow: 0 12px 48px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(110, 247, 195, 0.2);
 }
 
 .atividades-head {
@@ -44,8 +51,10 @@
   height: 28px;
   display: grid;
   place-items: center;
-  border: 1.5px solid #ffffff36;
+  border: 2px solid rgba(110, 247, 195, 0.3);
   border-radius: 10px;
+  background: rgba(110, 247, 195, 0.05);
+  transition: all 0.3s ease;
 }
 
 .atividades-list {
@@ -63,6 +72,13 @@
   border-radius: 16px;
   padding: 16px;
   position: relative;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+  transition: all 0.3s ease;
+}
+
+.atividade-card:hover {
+  border-color: rgba(110, 247, 195, 0.4);
+  box-shadow: 0 8px 24px rgba(110, 247, 195, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.1);
 }
 
 .atividade-left {
@@ -76,7 +92,7 @@
   height: 10px;
   border-radius: 999px;
   background: var(--dot);
-  box-shadow: 0 0 0 2px #00000030;
+  box-shadow: 0 0 12px rgba(255, 110, 199, 0.6), 0 0 0 2px rgba(0, 0, 0, 0.3);
 }
 .atividade-meta {
   display: grid;
@@ -109,6 +125,25 @@
   font-size: 14px;
   color: var(--muted);
   white-space: nowrap;
+}
+
+.tags-info {
+  padding: 6px 12px;
+  border-radius: 999px;
+  background: linear-gradient(135deg, rgba(167, 139, 250, 0.1) 0%, rgba(139, 92, 246, 0.1) 100%);
+  color: #a78bfa;
+  border: 2px solid rgba(167, 139, 250, 0.3);
+  font-size: 13px;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 8px rgba(167, 139, 250, 0.15);
+}
+
+.tags-info:hover {
+  background: linear-gradient(135deg, rgba(167, 139, 250, 0.2) 0%, rgba(139, 92, 246, 0.2) 100%);
+  border-color: rgba(167, 139, 250, 0.5);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 16px rgba(167, 139, 250, 0.3);
 }
 
 .atividade-edit-area {
@@ -152,24 +187,27 @@
 }
 
 .edit-btn-save {
-  background: #ff6060;
-  border-color: #ff6060;
+  background: linear-gradient(135deg, #ff6ec7 0%, #8b5cf6 100%);
+  border-color: rgba(255, 110, 199, 0.5);
   color: #fff;
+  box-shadow: 0 4px 16px rgba(255, 110, 199, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.2);
 }
 
 .edit-btn-save:hover {
-  background: #ff4545;
-  border-color: #ff4545;
+  background: linear-gradient(135deg, #ff4db8 0%, #7c3aed 100%);
+  border-color: rgba(255, 110, 199, 0.7);
+  box-shadow: 0 6px 24px rgba(255, 110, 199, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.3);
 }
 
 .edit-btn-cancel {
   background: transparent;
-  border-color: var(--item-bd);
+  border-color: rgba(110, 247, 195, 0.3);
   color: #fff;
 }
 
 .edit-btn-cancel:hover {
-  background: #ffffff14;
+  background: rgba(110, 247, 195, 0.1);
+  border-color: rgba(110, 247, 195, 0.5);
 }
 
 .delete-modal-overlay {
@@ -186,12 +224,13 @@
 }
 
 .delete-modal {
-  background: var(--panel-bg);
-  border: 2px solid var(--panel-bd);
+  background: linear-gradient(135deg, #1a1a1f 0%, #252530 100%);
+  border: 2px solid rgba(110, 247, 195, 0.3);
   border-radius: 16px;
   padding: 24px;
   max-width: 400px;
   width: 90%;
+  box-shadow: 0 12px 48px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(110, 247, 195, 0.2);
 }
 
 .delete-modal h4 {
@@ -224,24 +263,27 @@
 }
 
 .delete-btn-confirm {
-  background: #ff4545;
-  border-color: #ff4545;
+  background: linear-gradient(135deg, #dc2626 0%, #f87171 100%);
+  border-color: rgba(220, 38, 38, 0.5);
   color: #fff;
+  box-shadow: 0 4px 16px rgba(220, 38, 38, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.2);
 }
 
 .delete-btn-confirm:hover {
-  background: #ff2020;
-  border-color: #ff2020;
+  background: linear-gradient(135deg, #b91c1c 0%, #dc2626 100%);
+  border-color: rgba(220, 38, 38, 0.7);
+  box-shadow: 0 6px 24px rgba(220, 38, 38, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.3);
 }
 
 .delete-btn-cancel {
   background: transparent;
-  border-color: var(--item-bd);
+  border-color: rgba(110, 247, 195, 0.3);
   color: #fff;
 }
 
 .delete-btn-cancel:hover {
-  background: #ffffff14;
+  background: rgba(110, 247, 195, 0.1);
+  border-color: rgba(110, 247, 195, 0.5);
 }
 
 .atividade-actions {
@@ -251,30 +293,34 @@
   width: 36px;
   height: 36px;
   border-radius: 10px;
-  border: 1px solid #ffffff22;
-  background: #0000001a;
+  border: 2px solid rgba(110, 247, 195, 0.2);
+  background: rgba(110, 247, 195, 0.05);
   color: #fff;
   font-size: 18px;
   line-height: 0;
   cursor: pointer;
+  transition: all 0.3s ease;
 }
 .kebab-btn:hover {
-  transform: translateY(-1px);
+  transform: translateY(-2px);
+  border-color: rgba(110, 247, 195, 0.4);
+  background: rgba(110, 247, 195, 0.1);
+  box-shadow: 0 4px 12px rgba(110, 247, 195, 0.2);
 }
 
 .kebab-menu {
   position: absolute;
   right: 0;
   top: 42px;
-  background: var(--menu-bg);
-  border: 1px solid var(--menu-bd);
+  background: linear-gradient(135deg, #1a1a1f 0%, #252530 100%);
+  border: 2px solid var(--menu-bd);
   border-radius: 12px;
   padding: 6px;
   display: grid;
   gap: 6px;
   min-width: 120px;
-  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.35);
-  z-index: 5;
+  box-shadow: 0 12px 48px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(110, 247, 195, 0.2);
+  z-index: 10;
 }
 .kebab-item {
   background: transparent;
@@ -286,9 +332,11 @@
   text-align: left;
   font-weight: 600;
   font-size: 14px;
+  transition: all 0.2s ease;
 }
 .kebab-item:hover {
-  background: #ffffff14;
+  background: rgba(110, 247, 195, 0.1);
+  color: #6ef7c3;
 }
 
 @media (max-width: 880px) {

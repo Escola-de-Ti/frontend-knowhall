@@ -1,22 +1,22 @@
 @import url('https://fonts.googleapis.com/css2?family=Geologica:wght@100..900&family=Manrope:wght@200..800&display=swap');
 
 :root {
-  --background: #373737;
-  --text-color: #ffffff;
-  --background-border: #656565;
-  --interest: #8476d9;
-  --button-fade-green: #55f5c9;
-  --button-fade-purple: #8478d9;
+  --background: #1a1a1f;
+  --text-color: #f5f5f5;
+  --background-border: rgba(110, 247, 195, 0.2);
+  --interest: #a78bfa;
+  --button-fade-green: #6ef7c3;
+  --button-fade-purple: #8b5cf6;
 }
 
 .perfil-details-container {
-  background: var(--background);
+  background: linear-gradient(135deg, #1a1a1f 0%, #252530 100%);
   border: 2px solid var(--background-border);
   border-radius: 20px;
-  padding: 28px;
+  padding: 24px;
   color: var(--text-color);
   display: grid;
-  gap: 20px;
+  gap: 18px;
   font-family:
     Manrope,
     system-ui,
@@ -24,6 +24,13 @@
     Segoe UI,
     Roboto,
     sans-serif;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(110, 247, 195, 0.1);
+  transition: all 0.3s ease;
+}
+
+.perfil-details-container:hover {
+  border-color: rgba(110, 247, 195, 0.3);
+  box-shadow: 0 12px 48px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(110, 247, 195, 0.2);
 }
 
 .perfil-head {
@@ -34,14 +41,22 @@
 }
 
 .perfil-avatar {
-  width: 120px;
-  height: 120px;
+  width: 100px;
+  height: 100px;
   border-radius: 999px;
-  background: radial-gradient(100% 100% at 30% 20%, #ffb7c8 0%, #f48fb1 45%, #e57373 100%);
+  background: radial-gradient(100% 100% at 30% 20%, #ff6ec7 0%, #8b5cf6 60%, #6366f1 100%);
   display: grid;
   place-items: center;
   overflow: hidden;
-  border: 2px solid rgba(255, 255, 255, 0.15);
+  border: 3px solid rgba(110, 247, 195, 0.3);
+  box-shadow: 0 8px 32px rgba(110, 247, 195, 0.2), inset 0 2px 0 rgba(255, 255, 255, 0.2);
+  transition: all 0.3s ease;
+}
+
+.perfil-avatar:hover {
+  border-color: rgba(110, 247, 195, 0.5);
+  box-shadow: 0 12px 48px rgba(110, 247, 195, 0.3), inset 0 2px 0 rgba(255, 255, 255, 0.3);
+  transform: scale(1.05);
 }
 .perfil-avatar img {
   width: 100%;
@@ -51,7 +66,7 @@
 .perfil-avatar span {
   font-family: Geologica, Manrope, sans-serif;
   font-weight: 800;
-  font-size: 42px;
+  font-size: 36px;
   color: #171717;
 }
 
@@ -78,23 +93,29 @@
   margin-top: 4px;
 }
 .perfil-edit-btn {
-  border: 0;
-  padding: 10px 16px;
+  border: 2px solid rgba(110, 247, 195, 0.3);
+  padding: 12px 20px;
   border-radius: 12px;
-  background: linear-gradient(90deg, var(--button-fade-green), var(--button-fade-purple));
-  color: #111;
+  background: linear-gradient(135deg, var(--button-fade-green) 0%, var(--button-fade-purple) 100%);
+  color: #0b0b0f;
   font-weight: 800;
+  font-size: 15px;
   font-family: Geologica, Manrope, sans-serif;
   cursor: pointer;
   box-shadow:
-    0 6px 22px rgba(132, 120, 217, 0.25),
-    0 3px 10px rgba(85, 245, 201, 0.18);
+    0 6px 24px rgba(110, 247, 195, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.3);
+  transition: all 0.3s ease;
 }
 .perfil-edit-btn:hover {
-  transform: translateY(-1px);
+  transform: translateY(-3px);
+  border-color: rgba(110, 247, 195, 0.5);
+  box-shadow:
+    0 8px 32px rgba(110, 247, 195, 0.4),
+    inset 0 1px 0 rgba(255, 255, 255, 0.4);
 }
 .perfil-edit-btn:active {
-  transform: translateY(0);
+  transform: translateY(-1px);
 }
 
 .perfil-interests h3 {
@@ -110,14 +131,20 @@
   gap: 10px;
 }
 .perfil-tag {
-  padding: 8px 12px;
+  padding: 8px 14px;
   border-radius: 999px;
-  background: transparent;
+  background: linear-gradient(135deg, rgba(167, 139, 250, 0.1) 0%, rgba(139, 92, 246, 0.1) 100%);
   color: var(--interest);
-  border: 1.5px solid var(--interest);
+  border: 2px solid rgba(167, 139, 250, 0.3);
   font-size: 14px;
+  font-weight: 600;
   cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 8px rgba(167, 139, 250, 0.15);
 }
 .perfil-tag:hover {
-  background: rgba(132, 118, 217, 0.12);
+  background: linear-gradient(135deg, rgba(167, 139, 250, 0.2) 0%, rgba(139, 92, 246, 0.2) 100%);
+  border-color: rgba(167, 139, 250, 0.5);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 16px rgba(167, 139, 250, 0.3);
 }

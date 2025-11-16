@@ -10,6 +10,7 @@ import PerfilSlide from '../components/perfil/PerfilSlide';
 import PerfilEstatisticas from '../components/perfil/PerfilEstatisticas';
 import PerfilPosts from '../components/perfil/PerfilPosts';
 import NavBar from '../components/NavBar';
+import Loading from '../components/Loading';
 import { getUsuario, getUsuarioDetalhes, getMyUser, type UsuarioDetalhesDTO, UsuarioDTO } from '../services/perfil.service';
 import { useUser } from '../contexts/UserContext';
 
@@ -79,9 +80,7 @@ const Perfil: React.FC = () => {
     return (
       <div className="perfil-page-container">
         <NavBar />
-        <div className="perfil-wrap">
-          <p>Carregando perfil...</p>
-        </div>
+        <Loading fullscreen message="Carregando perfil..." />
       </div>
     );
   }
@@ -102,36 +101,32 @@ const Perfil: React.FC = () => {
       <NavBar />
       <div className="perfil-wrap">
         <div className="perfil-grid">
-          <div className="perfil-card perfil-detalhes-card">
-            <PerfilDetalhes
-              id_usuario={user?.id!}
-              email={user?.email || ''}
-              nome={usuarioDetalhes.nome}
-              biografia={usuarioDetalhes.biografia}
-              id_imagem_perfil={usuarioDetalhes.imagemUrl}
-              status_usuario="ATIVO"
-              tipo_usuario="PADRAO"
-              interesses={usuarioDetalhes.tags.map((tag) => tag.name)}
-              onEditar={isOwnProfile ? () => navigate('/perfil/editar-perfil') : undefined}
-              onInteresseClick={() => {}}
-            />
-          </div>
-          <div className="perfil-card perfil-historico-card">
-            <PerfilHistorico
-              nivel={usuarioDetalhes.nivel}
-              tokens={usuarioDetalhes.tokens}
-              ranking={usuarioDetalhes.posicaoRanking}
-              xpAtual={usuarioDetalhes.xp}
-              xpNecessario={1000}
-              progresso={Math.round((usuarioDetalhes.xp / 1000) * 100)}
-              posts={usuarioDetalhes.qtdPosts}
-              upvotes={usuarioDetalhes.qtdUpVotes + usuarioDetalhes.qtdSuperVotes}
-              comentarios={usuarioDetalhes.qtdComentarios}
-              workshops={usuarioDetalhes.qtdWorkshops}
-              medalSrc="/medalhaHistorico.png"
-              isOwnProfile={isOwnProfile}
-            />
-          </div>
+          <PerfilDetalhes
+            id_usuario={user?.id!}
+            email={user?.email || ''}
+            nome={usuarioDetalhes.nome}
+            biografia={usuarioDetalhes.biografia}
+            id_imagem_perfil={usuarioDetalhes.imagemUrl}
+            status_usuario="ATIVO"
+            tipo_usuario="PADRAO"
+            interesses={usuarioDetalhes.tags.map((tag) => tag.name)}
+            onEditar={isOwnProfile ? () => navigate('/perfil/editar-perfil') : undefined}
+            onInteresseClick={() => {}}
+          />
+          <PerfilHistorico
+            nivel={usuarioDetalhes.nivel}
+            tokens={usuarioDetalhes.tokens}
+            ranking={usuarioDetalhes.posicaoRanking}
+            xpAtual={usuarioDetalhes.xp}
+            xpNecessario={1000}
+            progresso={Math.round((usuarioDetalhes.xp / 1000) * 100)}
+            posts={usuarioDetalhes.qtdPosts}
+            upvotes={usuarioDetalhes.qtdUpVotes + usuarioDetalhes.qtdSuperVotes}
+            comentarios={usuarioDetalhes.qtdComentarios}
+            workshops={usuarioDetalhes.qtdWorkshops}
+            medalSrc="/medalhaHistorico.png"
+            isOwnProfile={isOwnProfile}
+          />
         </div>
 
         <div className="perfil-slide">
@@ -142,7 +137,7 @@ const Perfil: React.FC = () => {
           />
         </div>
 
-        {aba === 'Posts' && <PerfilPosts idUsuario={user?.id!} />}
+        {aba === 'Posts' && <PerfilPosts idUsuario={user?.id!} isOwnProfile={isOwnProfile} />}
         {aba === 'Comentários' && (
           <PerfilAtividades idUsuario={user?.id!} isOwnProfile={isOwnProfile} />
         )}

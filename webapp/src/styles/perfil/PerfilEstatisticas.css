@@ -1,14 +1,14 @@
 @import url('https://fonts.googleapis.com/css2?family=Geologica:wght@100..900&family=Manrope:wght@200..800&display=swap');
 
 :root {
-  --panel-bg: #373737;
-  --panel-bd: #545454;
-  --text: #fff;
+  --panel-bg: #1a1a1f;
+  --panel-bd: rgba(110, 247, 195, 0.2);
+  --text: #f5f5f5;
   --muted: #e8e8e8;
 
-  --green: #5fffd4;
-  --red: #ff8585;
-  --pink: #ff9de0;
+  --green: #6ef7c3;
+  --red: #f87171;
+  --pink: #ff6ec7;
 }
 
 .stats-wrap {
@@ -18,11 +18,18 @@
 }
 
 .stats-card {
-  background: var(--panel-bg);
+  background: linear-gradient(135deg, #1a1a1f 0%, #252530 100%);
   border: 2px solid var(--panel-bd);
   border-radius: 16px;
-  padding: 16px 18px;
+  padding: 18px 20px;
   color: var(--text);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(110, 247, 195, 0.1);
+  transition: all 0.3s ease;
+}
+
+.stats-card:hover {
+  border-color: rgba(110, 247, 195, 0.3);
+  box-shadow: 0 12px 48px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(110, 247, 195, 0.2);
 }
 
 .stats-card h3 {
@@ -44,10 +51,18 @@
   display: grid;
   grid-template-columns: 1fr auto;
   align-items: center;
-  background: #3f3f3f;
-  border: 1.5px solid #6b6b6b;
+  background: linear-gradient(135deg, rgba(110, 247, 195, 0.05) 0%, rgba(139, 92, 246, 0.05) 100%);
+  border: 2px solid rgba(110, 247, 195, 0.2);
   border-radius: 12px;
-  padding: 12px 14px;
+  padding: 14px 16px;
+  transition: all 0.3s ease;
+  cursor: default;
+}
+
+.stats-list li:hover {
+  border-color: rgba(110, 247, 195, 0.4);
+  transform: translateX(4px);
+  box-shadow: 0 4px 16px rgba(110, 247, 195, 0.15);
 }
 
 .stats-list span {
@@ -71,12 +86,15 @@
 
 .c-green {
   color: var(--green);
+  text-shadow: 0 0 10px rgba(110, 247, 195, 0.5);
 }
 .c-red {
   color: var(--red);
+  text-shadow: 0 0 10px rgba(248, 113, 113, 0.5);
 }
 .c-pink {
   color: var(--pink);
+  text-shadow: 0 0 10px rgba(255, 110, 199, 0.5);
 }
 
 @media (max-width: 980px) {
