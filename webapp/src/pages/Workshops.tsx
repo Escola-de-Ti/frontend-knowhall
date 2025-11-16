@@ -11,6 +11,7 @@ import { inscricaoService } from '../services/inscricaoService';
 import { usuarioService } from '../services/usuarioService';
 import { useNotification } from '../contexts/NotificationContext';
 import NavBar from '../components/NavBar';
+import Loading from '../components/Loading';
 import '../styles/Workshops.css';
 import '../styles/FilterWorkshop.css';
 
@@ -51,14 +52,6 @@ interface WorkshopFilterMenuProps {
   onClear: () => void;
 }
 
-interface WorkshopFilterMenuProps {
-  isOpen: boolean;
-  onClose: () => void;
-  filters: WorkshopFilterState;
-  onChange: (next: WorkshopFilterState) => void;
-  onClear: () => void;
-}
-
 function WorkshopFilterMenu({
   isOpen,
   onClose,
@@ -73,11 +66,9 @@ function WorkshopFilterMenu({
       onChange({ ...filters, [field]: e.target.value });
     };
 
-  // máscara simples dd/mm/aaaa
   const handleDateChange =
     (field: 'startDate' | 'endDate') => (e: React.ChangeEvent<HTMLInputElement>) => {
       const raw = e.target.value;
-
       const digits = raw.replace(/\D/g, '').slice(0, 8);
 
       let formatted = digits;
@@ -305,7 +296,7 @@ function parseBrDate(value: string): Date | null {
 export default function Workshops() {
   const [tab, setTab] = useState<Tab>('disponiveis');
   const [allData, setAllData] = useState<UiWorkshop[]>([]);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [page, setPage] = useState(1);
 
@@ -328,7 +319,6 @@ export default function Workshops() {
   const navigate = useNavigate();
   const { addNotification } = useNotification();
 
-  // carrega tipo de usuário
   useEffect(() => {
     let mounted = true;
 
@@ -389,14 +379,12 @@ export default function Workshops() {
     return 'Nenhum workshop disponível no momento.';
   }, [tab]);
 
-  // garante que aluno não fique na tab "meus"
   useEffect(() => {
     if (!canSeeMeusTab && tab === 'meus') {
       setTab('disponiveis');
     }
   }, [canSeeMeusTab, tab]);
 
-  // carrega a lista de workshops conforme a aba
   useEffect(() => {
     let mounted = true;
 
@@ -418,7 +406,6 @@ export default function Workshops() {
           }
         } else if (tab === 'inscritos') {
           const inscricoes = await inscricaoService.listarMinhas();
-
           const inscricoesAtivas = inscricoes.filter((i) => i.status === 'INSCRITO');
 
           if (inscricoesAtivas.length === 0) {
@@ -457,7 +444,6 @@ export default function Workshops() {
     };
   }, [tab, canSeeMeusTab, tipoUsuario, usuarioId]);
 
-  // sempre que filtros ou aba mudarem, volta pra página 1
   useEffect(() => {
     setPage(1);
   }, [
@@ -534,7 +520,6 @@ export default function Workshops() {
   const showEmpty = !loading && !error && filtered.length === 0;
   const showContent = !loading && !error && filtered.length > 0;
 
-  // botão de inscrição com loading + sucesso + notificação de erro
   async function handleInscrever(w: UiWorkshop) {
     if (inscrevendoId != null) return;
 
@@ -646,6 +631,15 @@ export default function Workshops() {
 
   const tabsClassName = `wk-tabs ${canSeeMeusTab ? 'three-tabs' : 'two-tabs'}`;
 
+  if (loading) {
+    return (
+      <div className="wk-wrap">
+        <NavBar />
+        <Loading fullscreen message="Carregando workshops..." />
+      </div>
+    );
+  }
+
   return (
     <>
       <NavBar />
@@ -714,8 +708,7 @@ export default function Workshops() {
           </div>
         </div>
 
-        {loading && <div className="wk-empty">Carregando workshops...</div>}
-        {error && !loading && <div className="wk-empty">Erro: {error}</div>}
+        {error && <div className="wk-empty">Erro: {error}</div>}
 
         {showEmpty && <div className="wk-empty">{emptyMessage}</div>}
 
