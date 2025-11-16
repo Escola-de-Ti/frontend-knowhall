@@ -1,3 +1,4 @@
+/* PostDetailsModal.tsx - Com limite de 2 níveis */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -344,10 +345,6 @@ export default function PostDetailsModal({ open, onClose, post: initialPost }: P
                 {activePost.autor.nome}
               </span>
               <span className="dot" />
-              <span className="level-pill">
-                <span className="level-text">Nvl. {activePost.autor.nivel}</span>
-              </span>
-              <span className="dot" />
               <span className="tempo">{activePost.tempo}</span>
             </div>
           </div>
@@ -676,116 +673,129 @@ function CommentNode({
 }) {
   const isReplyingHere = replyTarget === c.id;
   const hasReplies = c.respostas && c.respostas.length > 0;
-  const canLoadReplies = !c.repliesLoaded && !hasReplies;
+  const canLoadReplies = !c.repliesLoaded && !hasReplies && depth < 2;
+  const canReply = depth < 2;
 
   return (
-    <div className="comment" style={{ marginLeft: depth * 16 }}>
-      <div className="comment-head">
-        <div className="post-avatar post-avatar--sm" aria-hidden>
-          {c.autor.iniciais}
+    <div className="comment">
+      <div className="comment-container">
+        <div className="comment-line-wrapper">
+          <div className="comment-avatar-wrapper">
+            <div className="post-avatar post-avatar--sm" aria-hidden>
+              {c.autor.iniciais}
+            </div>
+          </div>
+          {hasReplies && <div className="comment-line" />}
         </div>
-        <div className="author">
-          <span
-            className="nome"
-            onClick={(e) => {
-              e.stopPropagation();
-              if (c.autor.id) {
-                onAutorClick(c.autor.id);
-              }
-            }}
-            style={{ cursor: c.autor.id ? 'pointer' : 'default' }}
-          >
-            {c.autor.nome}
-          </span>
-        </div>
-      </div>
 
-      <p className="comment-text">{c.texto}</p>
+        <div className="comment-content">
+          <div className="comment-head">
+            <div className="author">
+              <span
+                className="nome"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  if (c.autor.id) {
+                    onAutorClick(c.autor.id);
+                  }
+                }}
+                style={{ cursor: c.autor.id ? 'pointer' : 'default' }}
+              >
+                {c.autor.nome}
+              </span>
+              <span className="tempo">{c.tempo}</span>
+            </div>
+          </div>
 
-      <div className="comment-actions">
-        <button
-          className={`btn sm up ${c.jaVotou ? 'active' : ''} ${isVoting ? 'voting' : ''}`}
-          type="button"
-          aria-label={c.jaVotou ? 'Remover voto' : 'Votar no comentário'}
-          onClick={() => onVoteComment(c.id)}
-          disabled={isVoting}
-        >
-          <span className="ico-up" aria-hidden />
-          <span>{c.upvotes}</span>
-        </button>
-        <button
-          className={`btn sm super ${c.jaSuperVotou ? 'active' : ''} ${isSuperVoting ? 'voting' : ''}`}
-          type="button"
-          aria-label={c.jaSuperVotou ? 'Remover super voto' : 'Super votar comentário'}
-          onClick={() => onSuperVoteComment(c.id)}
-          disabled={isSuperVoting}
-        >
-          <span className="ico-star" aria-hidden />
-          <span>{c.supervotes}</span>
-        </button>
-        <button
-          className="btn sm link"
-          type="button"
-          onClick={() => onResponderClick(c.id)}
-          aria-label="Responder comentário"
-        >
-          <span className="ico-com" aria-hidden />
-          <span>Responder</span>
-        </button>
+          <p className="comment-text">{c.texto}</p>
 
-        {canLoadReplies && (
-          <button
-            className="btn sm link"
-            type="button"
-            onClick={() => onLoadReplies(c.id)}
-            disabled={isLoadingReplies}
-            aria-label="Ver respostas"
-          >
-            <span className="ico-com" aria-hidden />
-            <span>{isLoadingReplies ? 'Carregando...' : 'Ver respostas'}</span>
-          </button>
-        )}
-      </div>
+          <div className="comment-actions">
+            <button
+              className={`btn sm up ${c.jaVotou ? 'active' : ''} ${isVoting ? 'voting' : ''}`}
+              type="button"
+              aria-label={c.jaVotou ? 'Remover voto' : 'Votar no comentário'}
+              onClick={() => onVoteComment(c.id)}
+              disabled={isVoting}
+            >
+              <span className="ico-up" aria-hidden />
+              <span>{c.upvotes}</span>
+            </button>
+            <button
+              className={`btn sm super ${c.jaSuperVotou ? 'active' : ''} ${isSuperVoting ? 'voting' : ''}`}
+              type="button"
+              aria-label={c.jaSuperVotou ? 'Remover super voto' : 'Super votar comentário'}
+              onClick={() => onSuperVoteComment(c.id)}
+              disabled={isSuperVoting}
+            >
+              <span className="ico-star" aria-hidden />
+              <span>{c.supervotes}</span>
+            </button>
 
-      {isReplyingHere && (
-        <ReplyBox
-          value={replyText}
-          onChange={setReplyText}
-          onCancel={cancelReply}
-          onSubmit={submitReply}
-          onKeyDown={onReplyKeyDown}
-          placeholder="Responder este comentário…"
-          disabled={submittingComment}
-          isSubmitting={submittingComment}
-        />
-      )}
+            {canReply && (
+              <button
+                className="btn sm link"
+                type="button"
+                onClick={() => onResponderClick(c.id)}
+                aria-label="Responder comentário"
+              >
+                Responder
+              </button>
+            )}
 
-      {hasReplies && (
-        <div className="children">
-          {c.respostas!.map((r) => (
-            <CommentNode
-              key={r.id}
-              c={r}
-              depth={depth + 1}
-              onResponderClick={onResponderClick}
-              onLoadReplies={onLoadReplies}
-              onVoteComment={onVoteComment}
-              onSuperVoteComment={onSuperVoteComment}
-              replyTarget={replyTarget}
-              replyText={replyText}
-              setReplyText={setReplyText}
-              cancelReply={cancelReply}
-              submitReply={submitReply}
-              onReplyKeyDown={onReplyKeyDown}
-              isLoadingReplies={isLoadingReplies}
-              submittingComment={submittingComment}
-              isVoting={isVoting}
-              isSuperVoting={isSuperVoting}
-              onAutorClick={onAutorClick}
+            {canLoadReplies && (
+              <button
+                className="btn sm link"
+                type="button"
+                onClick={() => onLoadReplies(c.id)}
+                disabled={isLoadingReplies}
+                aria-label="Ver respostas"
+              >
+                {isLoadingReplies ? 'Carregando...' : 'Ver respostas'}
+              </button>
+            )}
+          </div>
+
+          {isReplyingHere && (
+            <ReplyBox
+              value={replyText}
+              onChange={setReplyText}
+              onCancel={cancelReply}
+              onSubmit={submitReply}
+              onKeyDown={onReplyKeyDown}
+              placeholder="Responder este comentário…"
+              disabled={submittingComment}
+              isSubmitting={submittingComment}
             />
-          ))}
+          )}
+
+          {hasReplies && (
+            <div className="children">
+              {c.respostas!.map((r) => (
+                <CommentNode
+                  key={r.id}
+                  c={r}
+                  depth={depth + 1}
+                  onResponderClick={onResponderClick}
+                  onLoadReplies={onLoadReplies}
+                  onVoteComment={onVoteComment}
+                  onSuperVoteComment={onSuperVoteComment}
+                  replyTarget={replyTarget}
+                  replyText={replyText}
+                  setReplyText={setReplyText}
+                  cancelReply={cancelReply}
+                  submitReply={submitReply}
+                  onReplyKeyDown={onReplyKeyDown}
+                  isLoadingReplies={isLoadingReplies}
+                  submittingComment={submittingComment}
+                  isVoting={isVoting}
+                  isSuperVoting={isSuperVoting}
+                  onAutorClick={onAutorClick}
+                />
+              ))}
+            </div>
+          )}
         </div>
-      )}
+      </div>
     </div>
   );
 }
