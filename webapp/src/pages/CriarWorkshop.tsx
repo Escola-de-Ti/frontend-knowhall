@@ -232,17 +232,17 @@ export default function CriarWorkshop() {
       <NavBar />
 
       <div className="ws-container">
-        <div className="ws-header">
+        <div className="ws-layout">
           <div className="ws-header-left">
             <button type="button" className="ws-btn-back" onClick={() => navigate(-1)}>
               <span className="ws-ico-back" />
               Voltar
             </button>
+          </div>
 
-            <div className="ws-head-text">
-              <h1>Criar Workshop</h1>
-              <p>Compartilhe seu conhecimento com a comunidade.</p>
-            </div>
+          <div className="ws-head-text">
+            <h1>Criar Workshop</h1>
+            <p>Compartilhe seu conhecimento com a comunidade.</p>
           </div>
 
           <div className="ws-actions">
@@ -253,9 +253,7 @@ export default function CriarWorkshop() {
               {loading ? 'Salvando...' : 'Publicar'}
             </button>
           </div>
-        </div>
 
-        <div className="ws-grid">
           <aside className="ws-left">
             <section className="ws-card ws-summary">
               <h3 className="ws-summary-title">Resumo do Workshop</h3>

@@ -67,14 +67,14 @@ label {
   padding: 24px 20px 72px;
 }
 
-.ws-header {
+.ws-layout {
   max-width: 1200px;
-  margin: 0 auto 24px;
-  display: flex;
-  flex-direction: column;
-  gap: 14px;
-  padding-left: 0;
-  padding-right: 0;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 300px minmax(620px, 1fr) 340px;
+  column-gap: 24px;
+  row-gap: 24px;
+  align-items: flex-start;
 }
 
 .ws-header-left {
@@ -82,6 +82,10 @@ label {
   align-items: center;
   justify-content: center;
   gap: 14px;
+  text-align: center;
+}
+
+.ws-head-text {
   text-align: center;
 }
 
@@ -93,6 +97,12 @@ label {
   font-size: 15px;
   color: var(--text-2);
   margin-top: 4px;
+}
+
+.ws-actions {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
 }
 
 .ws-btn-back {
@@ -134,12 +144,6 @@ label {
     center/contain no-repeat;
   mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M15 18 9 12l6-6' fill='white'/%3E%3C/svg%3E")
     center/contain no-repeat;
-}
-
-.ws-actions {
-  display: flex;
-  justify-content: center;
-  gap: 12px;
 }
 
 .ws-btn-cancel {
@@ -192,13 +196,6 @@ label {
   box-shadow: none;
 }
 
-.ws-grid {
-  display: grid;
-  grid-template-columns: 300px minmax(620px, 1fr) 340px;
-  gap: 24px;
-  align-items: start;
-}
-
 .ws-left {
   grid-column: 1;
   position: sticky;
@@ -216,11 +213,6 @@ label {
   grid-column: 3;
   display: grid;
   gap: 24px;
-}
-
-.ws-tags {
-  grid-column: 2;
-  margin-top: -4px;
 }
 
 .ws-card {
@@ -485,44 +477,28 @@ label {
   line-height: 1.55;
 }
 
-.ws-card.ws-tags {
-  padding-top: 26px;
-}
-
 @media (max-width: 1100px) {
-  .ws-grid {
+  .ws-layout {
     grid-template-columns: 1fr;
   }
 
+  .ws-header-left,
+  .ws-head-text,
+  .ws-actions,
   .ws-left,
   .ws-center,
   .ws-right {
-    grid-column: auto;
+    grid-column: 1;
   }
 
-  .ws-tags {
-    grid-column: auto;
-    margin-top: 0;
+  .ws-header-left,
+  .ws-head-text,
+  .ws-actions {
+    justify-content: center;
+    text-align: center;
   }
 
   .ws-left {
     position: static;
-  }
-}
-
-@media (min-width: 900px) {
-  .ws-header {
-    flex-direction: row;
-    align-items: center;
-    justify-content: space-between;
-  }
-
-  .ws-header-left {
-    justify-content: flex-start;
-    text-align: left;
-  }
-
-  .ws-actions {
-    justify-content: flex-end;
   }
 }
