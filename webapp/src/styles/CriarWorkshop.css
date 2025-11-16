@@ -355,6 +355,11 @@ label {
   color: #f0f0f0;
 }
 
+.ws-dates .ws-field input {
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.02em;
+}
+
 /* RESUMO */
 .ws-summary {
   border: 2px solid transparent;

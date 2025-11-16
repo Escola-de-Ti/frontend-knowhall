@@ -579,13 +579,15 @@ export default function Workshops() {
       setCancelandoId(w.id);
       await inscricaoService.cancelar(w.id);
 
-      // remove o workshop da lista atual de "inscritos"
       setAllData((prev) => prev.filter((item) => item.id !== w.id));
 
       addNotification({
         title: 'Inscrição cancelada',
         subtitle: `Você cancelou sua inscrição em "${w.title}".`,
+        path: '/workshops?tab=disponiveis',
       });
+
+      setTab('disponiveis');
     } catch (e: any) {
       const resp = e?.response?.data;
       const msg = resp?.message || resp?.error || e?.message || 'Erro ao cancelar inscrição';
