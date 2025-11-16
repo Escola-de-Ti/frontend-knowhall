@@ -194,7 +194,7 @@ export default function EditarPerfil() {
     const foneDigits = telefone.replace(/\D/g, '');
     if (!nome.trim()) es.nome = 'Informe seu nome.';
     if (!email.trim() || !emailOk) es.email = 'E-mail inválido.';
-    if (!telefone.trim() || foneDigits.length < 10) es.telefone = 'Telefone inválido.';
+    if (telefone.trim() && foneDigits.length < 10) es.telefone = 'Telefone inválido.';
     setErrors(es);
     return Object.keys(es).length === 0;
   }
@@ -352,7 +352,7 @@ export default function EditarPerfil() {
 
             <label className="ep-field">
               <span className="ep-label">
-                Telefone <b>*</b>
+                Telefone
               </span>
               <input
                 className={`ep-input ${errors.telefone ? 'ep-input-err' : ''}`}

@@ -2,6 +2,7 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import NavBar from '../components/NavBar';
+import Loading from '../components/Loading';
 import { workshopService, type WorkshopResponseDTO } from '../services/workshopService';
 import { inscricaoService, type InscricaoResponseDTO } from '../services/inscricaoService';
 import '../styles/Workshops.css';
@@ -96,6 +97,24 @@ export default function WorkshopParticipantes() {
     return nome.includes(term) || id.includes(term);
   });
 
+  if (loading) {
+    return (
+      <>
+        <NavBar />
+        <Loading fullscreen message="Carregando participantes..." />
+      </>
+    );
+  }
+
+  if (error) {
+    return (
+      <>
+        <NavBar />
+        <Loading fullscreen message={error} />
+      </>
+    );
+  }
+
   return (
     <>
       <NavBar />
@@ -112,38 +131,44 @@ export default function WorkshopParticipantes() {
             </button>
 
             <div className="wk-header-center">
-              <h1 className="wk-title">Participantes</h1>
-              <p className="wk-sub">
+              <div className="wk-header-badge-row">
+                <h1 className="wk-title">Participantes</h1>
+                {participantes.length > 0 && (
+                  <span className="wk-header-badge">
+                    {participantes.length}
+                  </span>
+                )}
+              </div>
+              <p className="wk-sub wk-sub-workshop">
                 {workshop ? workshop.titulo : 'Carregando informações do workshop...'}
               </p>
-              {!loading && !error && (
-                <p className="wk-sub wk-sub-count">
-                  {participantes.length === 0
-                    ? 'Nenhum participante inscrito ainda'
-                    : `${participantes.length} participante${
-                        participantes.length === 1 ? '' : 's'
-                      } inscrito${participantes.length === 1 ? '' : 's'}`}
-                </p>
-              )}
             </div>
           </div>
         </div>
 
-        {loading && <div className="wk-empty">Carregando participantes...</div>}
-
-        {error && !loading && <div className="wk-empty">Erro: {error}</div>}
-
-        {naoEhInstrutorDoWorkshop && !loading && !error && (
-          <div className="wk-empty">
-            Você não é instrutor deste workshop. Lista exibida apenas para conferência.
+        {naoEhInstrutorDoWorkshop && (
+          <div className="wk-info-banner">
+            <span className="wk-ico wk-info-icon" />
+            <span>Você não é instrutor deste workshop. Lista exibida apenas para conferência.</span>
           </div>
         )}
 
-        {!loading && !error && participantes.length === 0 && (
-          <div className="wk-empty">Nenhum participante inscrito até o momento.</div>
+        {participantes.length === 0 && (
+          <div className="wk-empty-state">
+            <div className="wk-empty-icon-wrapper">
+              <span className="wk-empty-icon" />
+            </div>
+            <h3 className="wk-empty-title">Nenhum participante ainda</h3>
+            <p className="wk-empty-desc">
+              Este workshop ainda não possui inscrições confirmadas.
+              {workshop && workshop.instrutorId === instrutorIdLogado && (
+                <> Compartilhe o link do workshop para atrair mais participantes!</>
+              )}
+            </p>
+          </div>
         )}
 
-        {!loading && !error && participantes.length > 0 && (
+        {participantes.length > 0 && (
           <div className="wk-participants-toolbar">
             <div className="wk-participants-search">
               <span className="wk-ico wk-search" />
@@ -160,11 +185,17 @@ export default function WorkshopParticipantes() {
           </div>
         )}
 
-        {!loading && !error && participantes.length > 0 && filteredParticipantes.length === 0 && (
-          <div className="wk-empty">Nenhum participante encontrado com a busca atual.</div>
+        {participantes.length > 0 && filteredParticipantes.length === 0 && (
+          <div className="wk-empty-state wk-empty-search">
+            <div className="wk-empty-icon-wrapper small">
+              <span className="wk-ico wk-search" />
+            </div>
+            <h3 className="wk-empty-title small">Nenhum resultado encontrado</h3>
+            <p className="wk-empty-desc">Tente ajustar os termos da busca ou limpar o filtro.</p>
+          </div>
         )}
 
-        {!loading && !error && filteredParticipantes.length > 0 && (
+        {filteredParticipantes.length > 0 && (
           <div className="wk-grid is-enrolled">
             {filteredParticipantes.map((p) => (
               <article key={p.id} className="wk-card enrolled">
