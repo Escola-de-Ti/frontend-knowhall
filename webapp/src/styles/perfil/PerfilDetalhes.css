@@ -13,10 +13,10 @@
   background: linear-gradient(135deg, #1a1a1f 0%, #252530 100%);
   border: 2px solid var(--background-border);
   border-radius: 20px;
-  padding: 28px;
+  padding: 24px;
   color: var(--text-color);
   display: grid;
-  gap: 20px;
+  gap: 18px;
   font-family:
     Manrope,
     system-ui,
@@ -41,8 +41,8 @@
 }
 
 .perfil-avatar {
-  width: 120px;
-  height: 120px;
+  width: 100px;
+  height: 100px;
   border-radius: 999px;
   background: radial-gradient(100% 100% at 30% 20%, #ff6ec7 0%, #8b5cf6 60%, #6366f1 100%);
   display: grid;
@@ -66,7 +66,7 @@
 .perfil-avatar span {
   font-family: Geologica, Manrope, sans-serif;
   font-weight: 800;
-  font-size: 42px;
+  font-size: 36px;
   color: #171717;
 }
 

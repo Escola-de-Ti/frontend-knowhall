@@ -58,6 +58,11 @@ class ApiService {
         throw new Error(msg);
       }
 
+      // Status 204 (No Content) indica sucesso sem corpo de resposta
+      if (response.status === 204) {
+        return undefined as T;
+      }
+
       if (!response.ok) {
         const errorData = await response.json().catch(() => ({}));
 
@@ -65,9 +70,6 @@ class ApiService {
 
         toast.error(errorMessage);
 
-        if (response.status === 204) {
-          return undefined as T;
-        }
         throw new Error(errorMessage);
       }
 

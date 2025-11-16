@@ -138,7 +138,7 @@ const Perfil: React.FC = () => {
           />
         </div>
 
-        {aba === 'Posts' && <PerfilPosts idUsuario={user?.id!} />}
+        {aba === 'Posts' && <PerfilPosts idUsuario={user?.id!} isOwnProfile={isOwnProfile} />}
         {aba === 'Comentários' && (
           <PerfilAtividades idUsuario={user?.id!} isOwnProfile={isOwnProfile} />
         )}
