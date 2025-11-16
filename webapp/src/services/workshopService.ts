@@ -158,6 +158,8 @@ class WorkshopService {
   }
 
   formatarData(dataISO: string): string {
+    if (!dataISO) return '-';
+
     const meses = [
       'Jan',
       'Fev',
@@ -172,11 +174,18 @@ class WorkshopService {
       'Nov',
       'Dez',
     ];
-    const data = new Date(dataISO);
-    const dia = String(data.getDate()).padStart(2, '0');
-    const mes = meses[data.getMonth()];
-    const ano = data.getFullYear();
-    return `${dia} ${mes} ${ano}`;
+
+    const [datePart] = dataISO.split('T'); // pega só a parte YYYY-MM-DD
+    if (!datePart) return '-';
+
+    const [year, month, day] = datePart.split('-');
+    if (!year || !month || !day) return '-';
+
+    const dia = day.padStart(2, '0');
+    const mesIndex = Number(month) - 1;
+    const mes = meses[mesIndex] ?? month;
+
+    return `${dia} ${mes} ${year}`;
   }
 
   formatarHora(dataISO: string): string {

@@ -40,6 +40,15 @@ interface WorkshopFilterState {
   endDate: string;
   minTokens: string;
   maxTokens: string;
+  searchTerm: string;
+}
+
+interface WorkshopFilterMenuProps {
+  isOpen: boolean;
+  onClose: () => void;
+  filters: WorkshopFilterState;
+  onChange: (next: WorkshopFilterState) => void;
+  onClear: () => void;
 }
 
 interface WorkshopFilterMenuProps {
@@ -64,6 +73,23 @@ function WorkshopFilterMenu({
       onChange({ ...filters, [field]: e.target.value });
     };
 
+  // máscara simples dd/mm/aaaa
+  const handleDateChange =
+    (field: 'startDate' | 'endDate') => (e: React.ChangeEvent<HTMLInputElement>) => {
+      const raw = e.target.value;
+
+      const digits = raw.replace(/\D/g, '').slice(0, 8);
+
+      let formatted = digits;
+      if (digits.length > 4) {
+        formatted = `${digits.slice(0, 2)}/${digits.slice(2, 4)}/${digits.slice(4)}`;
+      } else if (digits.length > 2) {
+        formatted = `${digits.slice(0, 2)}/${digits.slice(2)}`;
+      }
+
+      onChange({ ...filters, [field]: formatted });
+    };
+
   const handleClear = () => {
     onClear();
     onClose();
@@ -77,71 +103,93 @@ function WorkshopFilterMenu({
     <>
       <div className="filter-menu-overlay" onClick={onClose} />
       <div className="filter-menu wk-filter-menu">
-        <div className="filter-option wk-filter-header">
+        <div className="wk-filter-header-pill">
+          <span className="wk-filter-header-icon">★</span>
           <span>Filtros de Workshops</span>
         </div>
 
-        <div className="filter-option">
-          <div className="wk-filter-group">
-            <span className="wk-filter-label">Data inicial</span>
+        <div className="wk-filter-section full">
+          <span className="wk-filter-label">Buscar por título</span>
+          <div className="wk-filter-field">
             <input
-              type="date"
+              type="text"
               className="wk-filter-input"
-              value={filters.startDate}
-              onChange={handleChange('startDate')}
+              value={filters.searchTerm}
+              onChange={handleChange('searchTerm')}
+              placeholder="Ex: Spring, React, Docker..."
             />
           </div>
         </div>
 
-        <div className="filter-option">
-          <div className="wk-filter-group">
-            <span className="wk-filter-label">Data final</span>
-            <input
-              type="date"
-              className="wk-filter-input"
-              value={filters.endDate}
-              onChange={handleChange('endDate')}
-            />
+        <div className="wk-filter-row">
+          <div className="wk-filter-section">
+            <span className="wk-filter-label">Data inicial (dd/mm/yyyy)</span>
+            <div className="wk-filter-field">
+              <input
+                type="text"
+                inputMode="numeric"
+                maxLength={10}
+                className="wk-filter-input"
+                value={filters.startDate}
+                onChange={handleDateChange('startDate')}
+                placeholder="dd/mm/aaaa"
+              />
+            </div>
+          </div>
+
+          <div className="wk-filter-section">
+            <span className="wk-filter-label">Data final (dd/mm/yyyy)</span>
+            <div className="wk-filter-field">
+              <input
+                type="text"
+                inputMode="numeric"
+                maxLength={10}
+                className="wk-filter-input"
+                value={filters.endDate}
+                onChange={handleDateChange('endDate')}
+                placeholder="dd/mm/aaaa"
+              />
+            </div>
           </div>
         </div>
 
-        <div className="filter-option">
-          <div className="wk-filter-group">
+        <div className="wk-filter-row">
+          <div className="wk-filter-section">
             <span className="wk-filter-label">Tokens mínimos</span>
-            <input
-              type="number"
-              min={0}
-              className="wk-filter-input"
-              value={filters.minTokens}
-              onChange={handleChange('minTokens')}
-            />
+            <div className="wk-filter-field">
+              <input
+                type="number"
+                min={0}
+                className="wk-filter-input"
+                value={filters.minTokens}
+                onChange={handleChange('minTokens')}
+              />
+            </div>
           </div>
-        </div>
 
-        <div className="filter-option">
-          <div className="wk-filter-group">
+          <div className="wk-filter-section">
             <span className="wk-filter-label">Tokens máximos</span>
-            <input
-              type="number"
-              min={0}
-              className="wk-filter-input"
-              value={filters.maxTokens}
-              onChange={handleChange('maxTokens')}
-            />
+            <div className="wk-filter-field">
+              <input
+                type="number"
+                min={0}
+                className="wk-filter-input"
+                value={filters.maxTokens}
+                onChange={handleChange('maxTokens')}
+              />
+            </div>
           </div>
         </div>
 
-        <button type="button" className="filter-option wk-filter-clear" onClick={handleClear}>
-          Limpar filtros
-        </button>
+        <div className="wk-filter-footer">
+          <button type="button" className="wk-filter-clear" onClick={handleClear}>
+            Limpar filtros
+          </button>
 
-        <button
-          type="button"
-          className="filter-option active wk-filter-apply"
-          onClick={handleApply}
-        >
-          Aplicar
-        </button>
+          <button type="button" className="wk-filter-apply" onClick={handleApply}>
+            Aplicar
+          </button>
+        </div>
       </div>
     </>
   );
@@ -186,6 +234,12 @@ function isWorkshopExpired(w: UiWorkshop): boolean {
   return end.getTime() < Date.now() && (w.status === 'ABERTO' || w.status === 'EM_ANDAMENTO');
 }
 
+function hasWorkshopStarted(w: UiWorkshop): boolean {
+  const start = new Date(w.rawDate);
+  if (Number.isNaN(start.getTime())) return false;
+  return start.getTime() <= Date.now();
+}
+
 function getStatusChipLabelList(w: UiWorkshop, isInscritos: boolean): string {
   if (isInscritos) return getStatusChipLabelInscritos(w.status);
 
@@ -214,13 +268,45 @@ function getStatusChipClass(w: UiWorkshop, isInscritos: boolean): string {
   return 'info';
 }
 
+function parseBrDate(value: string): Date | null {
+  const clean = value.trim();
+  if (!clean) return null;
+
+  const parts = clean.split('/');
+  if (parts.length !== 3) return null;
+
+  const [dayStr, monthStr, yearStr] = parts;
+  const day = Number(dayStr);
+  const month = Number(monthStr);
+  const year = Number(yearStr);
+
+  if (
+    Number.isNaN(day) ||
+    Number.isNaN(month) ||
+    Number.isNaN(year) ||
+    day <= 0 ||
+    month <= 0 ||
+    month > 12
+  ) {
+    return null;
+  }
+
+  const date = new Date(year, month - 1, day);
+  if (Number.isNaN(date.getTime())) return null;
+
+  return date;
+}
+
 export default function Workshops() {
   const [tab, setTab] = useState<Tab>('disponiveis');
   const [allData, setAllData] = useState<UiWorkshop[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [page, setPage] = useState(1);
+
   const [inscrevendoId, setInscrevendoId] = useState<number | null>(null);
+  const [inscricaoSucessoId, setInscricaoSucessoId] = useState<number | null>(null);
+  const [cancelandoId, setCancelandoId] = useState<number | null>(null);
 
   const [isFilterOpen, setIsFilterOpen] = useState(false);
   const [filters, setFilters] = useState<WorkshopFilterState>({
@@ -228,6 +314,7 @@ export default function Workshops() {
     endDate: '',
     minTokens: '',
     maxTokens: '',
+    searchTerm: '',
   });
 
   const [tipoUsuario, setTipoUsuario] = useState<TipoUsuario | null>(null);
@@ -236,6 +323,7 @@ export default function Workshops() {
   const navigate = useNavigate();
   const { addNotification } = useNotification();
 
+  // carrega tipo de usuário
   useEffect(() => {
     let mounted = true;
 
@@ -296,12 +384,14 @@ export default function Workshops() {
     return 'Nenhum workshop disponível no momento.';
   }, [tab]);
 
+  // garante que aluno não fique na tab "meus"
   useEffect(() => {
     if (!canSeeMeusTab && tab === 'meus') {
       setTab('disponiveis');
     }
   }, [canSeeMeusTab, tab]);
 
+  // carrega a lista de workshops conforme a aba
   useEffect(() => {
     let mounted = true;
 
@@ -316,19 +406,21 @@ export default function Workshops() {
           workshops = await workshopService.listarPorStatus('ABERTO');
         } else if (tab === 'meus' && canSeeMeusTab) {
           if (usuarioId != null) {
-            const todos = await workshopService.listar();
-            workshops = todos.filter((w) => w.instrutorId === usuarioId);
+            const meus = await workshopService.buscarPorInstrutor(usuarioId);
+            workshops = meus;
           } else {
             workshops = [];
           }
         } else if (tab === 'inscritos') {
           const inscricoes = await inscricaoService.listarMinhas();
 
-          if (inscricoes.length === 0) {
+          const inscricoesAtivas = inscricoes.filter((i) => i.status === 'INSCRITO');
+
+          if (inscricoesAtivas.length === 0) {
             workshops = [];
           } else {
             const detalhes = await Promise.all(
-              inscricoes.map((i) => workshopService.buscarPorId(i.workshopId))
+              inscricoesAtivas.map((i) => workshopService.buscarPorId(i.workshopId))
             );
             workshops = detalhes;
           }
@@ -360,28 +452,50 @@ export default function Workshops() {
     };
   }, [tab, canSeeMeusTab, tipoUsuario, usuarioId]);
 
+  // sempre que filtros ou aba mudarem, volta pra página 1
   useEffect(() => {
     setPage(1);
-  }, [tab, filters.startDate, filters.endDate, filters.minTokens, filters.maxTokens]);
+  }, [
+    tab,
+    filters.startDate,
+    filters.endDate,
+    filters.minTokens,
+    filters.maxTokens,
+    filters.searchTerm,
+  ]);
 
   const filtered = useMemo(() => {
     let list = [...allData];
-    const { startDate, endDate, minTokens, maxTokens } = filters;
+    const { startDate, endDate, minTokens, maxTokens, searchTerm } = filters;
 
-    if (startDate) {
-      const start = new Date(`${startDate}T00:00:00`);
-      list = list.filter((w) => {
-        const d = new Date(w.rawDate);
-        return !Number.isNaN(d.getTime()) && d >= start;
-      });
+    if (searchTerm.trim()) {
+      const term = searchTerm.trim().toLowerCase();
+      list = list.filter(
+        (w) => w.title.toLowerCase().includes(term) || w.description.toLowerCase().includes(term)
+      );
     }
 
-    if (endDate) {
-      const end = new Date(`${endDate}T23:59:59`);
-      list = list.filter((w) => {
-        const d = new Date(w.rawDate);
-        return !Number.isNaN(d.getTime()) && d <= end;
-      });
+    if (startDate.trim()) {
+      const start = parseBrDate(startDate);
+      if (start) {
+        list = list.filter((w) => {
+          const d = new Date(w.rawDate);
+          return !Number.isNaN(d.getTime()) && d >= start;
+        });
+      }
+    }
+
+    if (endDate.trim()) {
+      const endBase = parseBrDate(endDate);
+      if (endBase) {
+        const end = new Date(endBase);
+        end.setHours(23, 59, 59, 999);
+
+        list = list.filter((w) => {
+          const d = new Date(w.rawDate);
+          return !Number.isNaN(d.getTime()) && d <= end;
+        });
+      }
     }
 
     if (minTokens !== '') {
@@ -415,12 +529,17 @@ export default function Workshops() {
   const showEmpty = !loading && !error && filtered.length === 0;
   const showContent = !loading && !error && filtered.length > 0;
 
+  // botão de inscrição com loading + sucesso + notificação de erro
   async function handleInscrever(w: UiWorkshop) {
+    if (inscrevendoId != null) return;
+
     try {
       setInscrevendoId(w.id);
-      setError(null);
+      setInscricaoSucessoId(null);
 
       await inscricaoService.inscrever(w.id);
+
+      setInscricaoSucessoId(w.id);
 
       addNotification({
         title: 'Inscrição realizada',
@@ -428,13 +547,57 @@ export default function Workshops() {
         path: '/workshops?tab=inscritos',
       });
 
-      setTab('inscritos');
+      setTimeout(() => {
+        setTab('inscritos');
+        setInscricaoSucessoId(null);
+      }, 650);
     } catch (e: any) {
       const resp = e?.response?.data;
       const msg = resp?.message || resp?.error || e?.message || 'Erro ao realizar inscrição';
-      setError(msg);
+
+      addNotification({
+        title: 'Não foi possível inscrever',
+        subtitle: msg,
+      });
     } finally {
       setInscrevendoId(null);
+    }
+  }
+
+  async function handleCancelarInscricao(w: UiWorkshop) {
+    if (cancelandoId != null) return;
+
+    if (hasWorkshopStarted(w)) {
+      addNotification({
+        title: 'Não é possível cancelar',
+        subtitle: 'Este workshop já começou, então a inscrição não pode ser cancelada.',
+      });
+      return;
+    }
+
+    try {
+      setCancelandoId(w.id);
+      await inscricaoService.cancelar(w.id);
+
+      setAllData((prev) => prev.filter((item) => item.id !== w.id));
+
+      addNotification({
+        title: 'Inscrição cancelada',
+        subtitle: `Você cancelou sua inscrição em "${w.title}".`,
+        path: '/workshops?tab=disponiveis',
+      });
+
+      setTab('disponiveis');
+    } catch (e: any) {
+      const resp = e?.response?.data;
+      const msg = resp?.message || resp?.error || e?.message || 'Erro ao cancelar inscrição';
+
+      addNotification({
+        title: 'Não foi possível cancelar',
+        subtitle: msg,
+      });
+    } finally {
+      setCancelandoId(null);
     }
   }
 
@@ -472,8 +635,11 @@ export default function Workshops() {
       endDate: '',
       minTokens: '',
       maxTokens: '',
+      searchTerm: '',
     });
   }
+
+  const tabsClassName = `wk-tabs ${canSeeMeusTab ? 'three-tabs' : 'two-tabs'}`;
 
   return (
     <>
@@ -515,7 +681,7 @@ export default function Workshops() {
         </div>
 
         <div className="wk-tabs-wrap">
-          <div className="wk-tabs">
+          <div className={tabsClassName}>
             <span className={`wk-tabs-thumb pos-${activeIdx}`} />
             <button
               className={`wk-tab ${activeIdx === 0 ? 'is-active' : ''}`}
@@ -555,6 +721,12 @@ export default function Workshops() {
                 const statusLabel = getStatusChipLabelList(w, isInscritos);
                 const statusClass = getStatusChipClass(w, isInscritos);
                 const expired = isWorkshopExpired(w);
+                const showDescription = !!w.description;
+
+                const isLoading = inscrevendoId === w.id;
+                const isSuccess = inscricaoSucessoId === w.id;
+                const isCancelando = cancelandoId === w.id;
+                const started = hasWorkshopStarted(w);
 
                 return (
                   <article
@@ -563,17 +735,21 @@ export default function Workshops() {
                       w.status === 'CONCLUIDO' ? 'done' : ''
                     }`}
                   >
-                    <header className="wk-row">
-                      <h2 className="wk-card-title">{w.title}</h2>
+                    <header className="wk-card-header">
+                      <div className="wk-card-header-main">
+                        <h2 className="wk-card-title">{w.title}</h2>
+                        {!isInscritos && showDescription && (
+                          <p className="wk-desc">{w.description}</p>
+                        )}
+                      </div>
 
-                      {typeof w.tokens === 'number' && !isInscritos && (
-                        <span className="wk-chip-tokens">{w.tokens} tokens</span>
-                      )}
-
-                      <span className={`wk-chip-status ${statusClass}`}>{statusLabel}</span>
+                      <div className="wk-card-header-side">
+                        {typeof w.tokens === 'number' && !isInscritos && (
+                          <span className="wk-chip-tokens">{w.tokens} tokens</span>
+                        )}
+                        <span className={`wk-chip-status ${statusClass}`}>{statusLabel}</span>
+                      </div>
                     </header>
-
-                    <p className="wk-desc">{w.description}</p>
 
                     {!isInscritos && (
                       <>
@@ -608,18 +784,22 @@ export default function Workshops() {
                         {!isMeus ? (
                           <div className="wk-cta-row">
                             <button
-                              className="wk-cta"
+                              className={`wk-cta ${isLoading ? 'is-loading' : ''} ${
+                                isSuccess ? 'is-success' : ''
+                              }`}
                               type="button"
-                              disabled={inscrevendoId === w.id || expired}
+                              disabled={expired || isLoading || isSuccess}
                               onClick={() => handleInscrever(w)}
                             >
-                              <span className="wk-cta-ico" />
+                              <span className={isSuccess ? 'wk-cta-ico-check' : 'wk-cta-ico'} />
                               <span>
                                 {expired
                                   ? 'Encerrado'
-                                  : inscrevendoId === w.id
-                                    ? 'Inscrevendo...'
-                                    : 'Inscreva-se'}
+                                  : isSuccess
+                                    ? 'Inscrito!'
+                                    : isLoading
+                                      ? 'Inscrevendo...'
+                                      : 'Inscreva-se'}
                               </span>
                             </button>
                           </div>
@@ -647,28 +827,45 @@ export default function Workshops() {
                     )}
 
                     {isInscritos && (
-                      <div className="wk-enroll-footer">
-                        <div className="wk-enroll-meta">
-                          <div className="wk-inline">
-                            <span className="wk-ico wk-cal" />
-                            <span className="wk-inline-text">{w.date}</span>
-                          </div>
-                          {typeof w.rating === 'number' && (
+                      <>
+                        {showDescription && (
+                          <p className="wk-desc wk-desc-small">{w.description}</p>
+                        )}
+
+                        <div className="wk-enroll-footer">
+                          <div className="wk-enroll-meta">
                             <div className="wk-inline">
-                              <span className="wk-ico wk-star" />
-                              <span className="wk-inline-text">{w.rating.toFixed(1)}</span>
+                              <span className="wk-ico wk-cal" />
+                              <span className="wk-inline-text">{w.date}</span>
                             </div>
-                          )}
+                            {typeof w.rating === 'number' && (
+                              <div className="wk-inline">
+                                <span className="wk-ico wk-star" />
+                                <span className="wk-inline-text">{w.rating.toFixed(1)}</span>
+                              </div>
+                            )}
+                          </div>
+                          <div className="wk-enroll-actions">
+                            <button
+                              className="wk-btn-cancel"
+                              type="button"
+                              disabled={isCancelando || started}
+                              onClick={() => handleCancelarInscricao(w)}
+                            >
+                              {isCancelando ? 'Cancelando...' : 'Cancelar inscrição'}
+                            </button>
+                            <button
+                              className="wk-btn-join"
+                              type="button"
+                              disabled={isCancelando}
+                              onClick={() => handleEntrar(w)}
+                            >
+                              <span className="ico-video" />
+                              Entrar
+                            </button>
+                          </div>
                         </div>
-                        <button
-                          className="wk-btn-join"
-                          type="button"
-                          onClick={() => handleEntrar(w)}
-                        >
-                          <span className="ico-video" />
-                          Entrar
-                        </button>
-                      </div>
+                      </>
                     )}
                   </article>
                 );

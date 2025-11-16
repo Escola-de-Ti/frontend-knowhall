@@ -14,7 +14,8 @@ export default function WorkshopParticipantes() {
   const workshopId = Number(id);
 
   const [workshop, setWorkshop] = useState<WorkshopResponseDTO | null>(null);
-const [participantes, setParticipantes] = useState<InscricaoResponseDTO[]>([]);
+  const [participantes, setParticipantes] = useState<InscricaoResponseDTO[]>([]);
+  const [searchTerm, setSearchTerm] = useState('');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -69,8 +70,31 @@ const [participantes, setParticipantes] = useState<InscricaoResponseDTO[]>([]);
     });
   }
 
+  function getInitials(name: string | null | undefined) {
+    if (!name) return '?';
+    const parts = name.trim().split(' ').filter(Boolean);
+    if (parts.length === 1) return parts[0].slice(0, 2).toUpperCase();
+    return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
+  }
+
+  function getStatusClass(status: string | null | undefined) {
+    if (!status) return 'info';
+    const s = status.toLowerCase();
+    if (s.includes('confirm') || s.includes('aprov')) return 'ok';
+    if (s.includes('cancel') || s.includes('recus')) return 'warn';
+    return 'info';
+  }
+
   const naoEhInstrutorDoWorkshop =
     workshop && instrutorIdLogado != null && workshop.instrutorId !== instrutorIdLogado;
+
+  const filteredParticipantes = participantes.filter((p) => {
+    if (!searchTerm) return true;
+    const term = searchTerm.toLowerCase();
+    const nome = p.usuarioNome?.toLowerCase() ?? '';
+    const id = String(p.usuarioId ?? '');
+    return nome.includes(term) || id.includes(term);
+  });
 
   return (
     <>
@@ -92,6 +116,15 @@ const [participantes, setParticipantes] = useState<InscricaoResponseDTO[]>([]);
               <p className="wk-sub">
                 {workshop ? workshop.titulo : 'Carregando informações do workshop...'}
               </p>
+              {!loading && !error && (
+                <p className="wk-sub wk-sub-count">
+                  {participantes.length === 0
+                    ? 'Nenhum participante inscrito ainda'
+                    : `${participantes.length} participante${
+                        participantes.length === 1 ? '' : 's'
+                      } inscrito${participantes.length === 1 ? '' : 's'}`}
+                </p>
+              )}
             </div>
           </div>
         </div>
@@ -111,22 +144,45 @@ const [participantes, setParticipantes] = useState<InscricaoResponseDTO[]>([]);
         )}
 
         {!loading && !error && participantes.length > 0 && (
+          <div className="wk-participants-toolbar">
+            <div className="wk-participants-search">
+              <span className="wk-ico wk-search" />
+              <input
+                type="text"
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                placeholder="Buscar participante pelo nome ou ID..."
+              />
+            </div>
+            <div className="wk-participants-count">
+              {filteredParticipantes.length} de {participantes.length} participantes
+            </div>
+          </div>
+        )}
+
+        {!loading && !error && participantes.length > 0 && filteredParticipantes.length === 0 && (
+          <div className="wk-empty">Nenhum participante encontrado com a busca atual.</div>
+        )}
+
+        {!loading && !error && filteredParticipantes.length > 0 && (
           <div className="wk-grid is-enrolled">
-            {participantes.map((p) => (
+            {filteredParticipantes.map((p) => (
               <article key={p.id} className="wk-card enrolled">
-                <header className="wk-row">
-                  <h2 className="wk-card-title">{p.usuarioNome}</h2>
-                  <span className="wk-chip-status info">{p.status}</span>
+                <header className="wk-card-header">
+                  <div className="wk-participant-main">
+                    <div className="wk-avatar">{getInitials(p.usuarioNome)}</div>
+                    <div className="wk-participant-texts">
+                      <h2 className="wk-card-title">{p.usuarioNome}</h2>
+                    </div>
+                  </div>
+
+                  <span className={`wk-chip-status ${getStatusClass(p.status)}`}>{p.status}</span>
                 </header>
 
-                <div className="wk-meta">
+                <div className="wk-meta wk-meta-full">
                   <div className="wk-meta-item">
                     <span className="wk-ico wk-cal" />
                     <span>Inscrito em {formatarDataInscricao(p.dataInscricao)}</span>
-                  </div>
-                  <div className="wk-meta-item">
-                    <span className="wk-ico wk-user" />
-                    <span>ID Usuário: {p.usuarioId}</span>
                   </div>
                 </div>
               </article>
