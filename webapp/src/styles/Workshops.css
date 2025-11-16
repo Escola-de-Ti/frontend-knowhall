@@ -272,6 +272,11 @@
   font-family: 'Press Start 2P', monospace;
   font-size: 22px;
   color: #e7d8ff;
+  overflow-wrap: anywhere;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 }
 
 .wk-desc {

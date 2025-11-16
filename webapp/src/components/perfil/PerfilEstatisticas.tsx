@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import '../../styles/perfil/PerfilEstatisticas.css';
-import { getUsuarioDetalhes } from '../../services/perfil.service';
 import { buscarResumoTransacoes } from '../../services/historicoService';
+import Loading from '../Loading';
 
 type ContribuicaoStats = {
   posts: number;
@@ -19,25 +19,23 @@ type TokenStats = {
 
 type PerfilEstatisticasProps = {
   idUsuario: number;
+  estatisticasIniciais?: {
+    contrib: ContribuicaoStats;
+    tokens?: TokenStats;
+  };
 };
 
-export default function PerfilEstatisticas({ idUsuario }: PerfilEstatisticasProps) {
-  const [contrib, setContrib] = useState<ContribuicaoStats | null>(null);
-  const [tokens, setTokens] = useState<TokenStats | null>(null);
-  const [, setLoading] = useState(true);
+export default function PerfilEstatisticas({ idUsuario, estatisticasIniciais }: PerfilEstatisticasProps) {
+  const [contrib, setContrib] = useState<ContribuicaoStats | null>(estatisticasIniciais?.contrib || null);
+  const [tokens, setTokens] = useState<TokenStats | null>(estatisticasIniciais?.tokens || null);
+  const [loading, setLoading] = useState(!estatisticasIniciais);
 
   useEffect(() => {
+    if (estatisticasIniciais) return;
+
     const carregarEstatisticas = async () => {
       try {
         setLoading(true);
-        const detalhes = await getUsuarioDetalhes(idUsuario);
-
-        setContrib({
-          posts: detalhes.qtdPosts,
-          comentarios: detalhes.qtdComentarios,
-          upvotesDados: detalhes.qtdUpVotes + detalhes.qtdSuperVotes,
-          workshops: detalhes.qtdWorkshops,
-        });
 
         const resumo = await buscarResumoTransacoes();
         setTokens({
@@ -56,9 +54,13 @@ export default function PerfilEstatisticas({ idUsuario }: PerfilEstatisticasProp
     if (idUsuario) {
       carregarEstatisticas();
     }
-  }, [idUsuario]);
+  }, [idUsuario, estatisticasIniciais]);
 
   const n = (v: number) => v.toLocaleString('pt-BR');
+
+  if (loading) {
+    return <Loading fullscreen message="Carregando estatísticas..." />;
+  }
 
   return (
     <section className="stats-wrap">
@@ -84,27 +86,29 @@ export default function PerfilEstatisticas({ idUsuario }: PerfilEstatisticasProp
         </ul>
       </div>
 
-      <div className="stats-card">
-        <h3>Histórico de Tokens</h3>
-        <ul className="stats-list">
-          <li>
-            <span>Tokens Ganhos (Total)</span>
-            <strong className="c-green">+{tokens ? n(tokens.ganhos_total) : '--'}</strong>
-          </li>
-          <li>
-            <span>Tokens Gastos (Total)</span>
-            <strong className="c-red">-{tokens ? n(tokens.gastos_total) : '--'}</strong>
-          </li>
-          <li>
-            <span>Saldo Atual</span>
-            <strong className="c-pink">{tokens ? n(tokens.saldo_atual) : '--'}</strong>
-          </li>
-          <li>
-            <span>Total de Transações</span>
-            <strong className="c-green">{tokens ? n(tokens.total_transacoes) : '--'}</strong>
-          </li>
-        </ul>
-      </div>
+      {tokens && (
+        <div className="stats-card">
+          <h3>Histórico de Tokens</h3>
+          <ul className="stats-list">
+            <li>
+              <span>Tokens Ganhos (Total)</span>
+              <strong className="c-green">+{n(tokens.ganhos_total)}</strong>
+            </li>
+            <li>
+              <span>Tokens Gastos (Total)</span>
+              <strong className="c-red">-{n(tokens.gastos_total)}</strong>
+            </li>
+            <li>
+              <span>Saldo Atual</span>
+              <strong className="c-pink">{n(tokens.saldo_atual)}</strong>
+            </li>
+            <li>
+              <span>Total de Transações</span>
+              <strong className="c-green">{n(tokens.total_transacoes)}</strong>
+            </li>
+          </ul>
+        </div>
+      )}
     </section>
   );
 }

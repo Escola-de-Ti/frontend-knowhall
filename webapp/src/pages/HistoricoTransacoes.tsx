@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import '../styles/HistoricoTransacoes.css';
 import NavBar from '../components/NavBar';
+import Loading from '../components/Loading';
 import { buscarHistoricoTransacoes } from '../services/historicoService';
 import { MoreHorizontal } from 'lucide-react';
 
@@ -70,7 +71,7 @@ export default function HistoricoTransacoes() {
         <h1 className="historico-title">Histórico de Transações</h1>
 
         {loading ? (
-          <div className="historico-loading">Carregando...</div>
+          <Loading fullscreen message="Carregando histórico..." />
         ) : transacoes.length === 0 ? (
           <div className="historico-empty">
             <div className="empty-icon">📊</div>

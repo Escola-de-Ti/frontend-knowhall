@@ -1,8 +1,9 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import React, { useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import '../styles/CriarWorkshop.css';
 import NavBar from '../components/NavBar';
+import Loading from '../components/Loading';
 import { workshopService } from '../services/workshopService';
 import { useNotification } from '../contexts/NotificationContext';
 
@@ -95,6 +96,7 @@ export default function CriarWorkshop() {
   const [capacidade, setCapacidade] = useState('');
 
   const [loading, setLoading] = useState(false);
+  const [initialLoading, setInitialLoading] = useState(true);
   const [errorGlobal, setErrorGlobal] = useState<string | null>(null);
   const [touched, setTouched] = useState({
     titulo: false,
@@ -139,6 +141,14 @@ export default function CriarWorkshop() {
   function markTouched(name: keyof typeof touched) {
     setTouched((t) => ({ ...t, [name]: true }));
   }
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setInitialLoading(false);
+    }, 300);
+
+    return () => clearTimeout(timer);
+  }, []);
 
   async function onSubmit() {
     setErrorGlobal(null);
@@ -227,22 +237,36 @@ export default function CriarWorkshop() {
     setErrorGlobal(null);
   }
 
+  if (initialLoading || loading) {
+    return (
+      <>
+        <NavBar />
+        <div className="ws-container">
+          <Loading
+            fullscreen
+            message={initialLoading ? 'Carregando tela...' : 'Salvando workshop...'}
+          />
+        </div>
+      </>
+    );
+  }
+
   return (
     <>
       <NavBar />
 
       <div className="ws-container">
-        <div className="ws-header">
+        <div className="ws-layout">
           <div className="ws-header-left">
             <button type="button" className="ws-btn-back" onClick={() => navigate(-1)}>
               <span className="ws-ico-back" />
               Voltar
             </button>
+          </div>
 
-            <div className="ws-head-text">
-              <h1>Criar Workshop</h1>
-              <p>Compartilhe seu conhecimento com a comunidade.</p>
-            </div>
+          <div className="ws-head-text">
+            <h1>Criar Workshop</h1>
+            <p>Compartilhe seu conhecimento com a comunidade.</p>
           </div>
 
           <div className="ws-actions">
@@ -250,12 +274,10 @@ export default function CriarWorkshop() {
               Cancelar
             </button>
             <button type="button" className="ws-btn-save" disabled={loading} onClick={onSubmit}>
-              {loading ? 'Salvando...' : 'Publicar'}
+              Publicar
             </button>
           </div>
-        </div>
 
-        <div className="ws-grid">
           <aside className="ws-left">
             <section className="ws-card ws-summary">
               <h3 className="ws-summary-title">Resumo do Workshop</h3>

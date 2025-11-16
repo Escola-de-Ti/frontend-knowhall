@@ -3,6 +3,7 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import '../styles/EditarWorkshop.css';
 import NavBar from '../components/NavBar';
+import Loading from '../components/Loading';
 import {
   workshopService,
   type WorkshopResponseDTO,
@@ -65,14 +66,16 @@ function isoToBrDate(iso?: string | null): string {
   return `${day.padStart(2, '0')}/${month.padStart(2, '0')}/${year}`;
 }
 
-function toIsoDayFromBr(date: string, end?: boolean): string | undefined {
+function toBackendTimestampFromBr(date: string, end?: boolean): string | undefined {
   const dt = parseBrDate(date);
   if (!dt) return undefined;
+
   const year = dt.getFullYear();
   const month = String(dt.getMonth() + 1).padStart(2, '0');
   const day = String(dt.getDate()).padStart(2, '0');
-  const base = `${year}-${month}-${day}`;
-  return `${base}${end ? 'T23:59:59' : 'T00:00:00'}`;
+  const time = end ? '23:59:59.000+00:00' : '00:00:00.000+00:00';
+
+  return `${year}-${month}-${day}T${time}`;
 }
 
 function calcDurationDays(start?: string, end?: string) {
@@ -172,8 +175,8 @@ export default function EditarWorkshop() {
         setLinkMeet(wk.linkMeet ?? '');
         setCusto(wk.custo != null ? String(wk.custo) : '');
         setCapacidade(wk.capacidade != null ? String(wk.capacidade) : '');
-        setDataInicio(isoToBrDate(wk.dataInicio));
-        setDataTermino(isoToBrDate(wk.dataTermino));
+        setDataInicio(isoToBrDate(wk.dataInicio as unknown as string));
+        setDataTermino(isoToBrDate(wk.dataTermino as unknown as string));
       } catch (e: any) {
         const resp = e?.response?.data;
         const msg = resp?.message || resp?.error || e?.message || 'Erro ao carregar workshop';
@@ -212,8 +215,13 @@ export default function EditarWorkshop() {
       return;
     }
 
-    const inicioIso = toIsoDayFromBr(dataInicio, false);
-    const terminoIso = toIsoDayFromBr(dataTermino, true);
+    const inicioIso = toBackendTimestampFromBr(dataInicio, false);
+    const terminoIso = toBackendTimestampFromBr(dataTermino, true);
+
+    if (!inicioIso || !terminoIso) {
+      setErrorGlobal('Datas inválidas, verifique os campos.');
+      return;
+    }
 
     const custoNum = Number(custo);
     const capacidadeNum = Number(capacidade);
@@ -259,24 +267,15 @@ export default function EditarWorkshop() {
     }
   }
 
-  if (loadingInit) {
+  if (loadingInit || saving) {
     return (
       <>
         <NavBar />
         <div className="ws-container">
-          <div className="ws-header">
-            <div className="ws-header-left">
-              <button type="button" className="ws-btn-back" onClick={() => navigate(-1)}>
-                <span className="ws-ico-back" />
-                Voltar
-              </button>
-
-              <div className="ws-head-text">
-                <h1>Editar Workshop</h1>
-                <p>Carregando dados do workshop...</p>
-              </div>
-            </div>
-          </div>
+          <Loading
+            fullscreen
+            message={loadingInit ? 'Carregando workshop...' : 'Salvando workshop...'}
+          />
         </div>
       </>
     );
@@ -287,17 +286,17 @@ export default function EditarWorkshop() {
       <NavBar />
 
       <div className="ws-container">
-        <div className="ws-header">
+        <div className="ws-layout">
           <div className="ws-header-left">
             <button type="button" className="ws-btn-back" onClick={() => navigate(-1)}>
               <span className="ws-ico-back" />
               Voltar
             </button>
+          </div>
 
-            <div className="ws-head-text">
-              <h1>Editar Workshop</h1>
-              <p>Ajuste título, datas, custo e descrição.</p>
-            </div>
+          <div className="ws-head-text">
+            <h1>Editar Workshop</h1>
+            <p>Ajuste título, datas, custo e descrição.</p>
           </div>
 
           <div className="ws-actions">
@@ -310,12 +309,10 @@ export default function EditarWorkshop() {
               disabled={saving || hasErrors}
               onClick={onSubmit}
             >
-              {saving ? 'Salvando...' : 'Salvar alterações'}
+              Salvar alterações
             </button>
           </div>
-        </div>
 
-        <div className="ws-grid">
           <aside className="ws-left">
             <section className="ws-card ws-summary">
               <h3 className="ws-summary-title">Resumo do Workshop</h3>
