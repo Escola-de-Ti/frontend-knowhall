@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useEffect, useMemo, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import '../styles/CriarWorkshop.css';
+import '../styles/EditarWorkshop.css';
 import NavBar from '../components/NavBar';
 import {
   workshopService,
@@ -359,26 +359,30 @@ export default function EditarWorkshop() {
           <section className="ws-card ws-center">
             <h2 className="ws-title-gradient">Conteúdo do Workshop</h2>
 
-            <div className={`ws-field ${touched.titulo && fieldErrors.titulo ? 'ws-invalid' : ''}`}>
-              <label htmlFor="titulo">Título *</label>
-              <div className="ws-input-wrap">
-                <input
-                  id="titulo"
-                  value={titulo}
-                  onChange={(e) => setTitulo(e.target.value.slice(0, 100))}
-                  onBlur={() => markTouched('titulo')}
-                  placeholder="Ex: Spring Boot Avançado: Performance e Escalabilidade"
-                  maxLength={100}
-                  aria-invalid={!!(touched.titulo && fieldErrors.titulo)}
-                />
-                <span className="ws-counter">{titleCount}</span>
+            <div className="ws-form-grid">
+              <div
+                className={`ws-field ws-field-full ${
+                  touched.titulo && fieldErrors.titulo ? 'ws-invalid' : ''
+                }`}
+              >
+                <label htmlFor="titulo">Título *</label>
+                <div className="ws-input-wrap">
+                  <input
+                    id="titulo"
+                    value={titulo}
+                    onChange={(e) => setTitulo(e.target.value.slice(0, 100))}
+                    onBlur={() => markTouched('titulo')}
+                    placeholder="Ex: Spring Boot Avançado: Performance e Escalabilidade"
+                    maxLength={100}
+                    aria-invalid={!!(touched.titulo && fieldErrors.titulo)}
+                  />
+                  <span className="ws-counter">{titleCount}</span>
+                </div>
+                {touched.titulo && fieldErrors.titulo && (
+                  <span className="ws-field-error">{fieldErrors.titulo}</span>
+                )}
               </div>
-              {touched.titulo && fieldErrors.titulo && (
-                <span className="ws-field-error">{fieldErrors.titulo}</span>
-              )}
-            </div>
 
-            <div className="ws-row-2">
               <div className={`ws-field ${touched.tema && fieldErrors.tema ? 'ws-invalid' : ''}`}>
                 <label htmlFor="tema">Tema *</label>
                 <input
@@ -413,11 +417,9 @@ export default function EditarWorkshop() {
                   <span className="ws-field-error">{fieldErrors.linkMeet}</span>
                 )}
               </div>
-            </div>
 
-            <div className="ws-row-2 ws-dates">
               <div
-                className={`ws-field ${
+                className={`ws-field ws-field-date ${
                   touched.dataInicio && fieldErrors.dataInicio ? 'ws-invalid' : ''
                 }`}
               >
@@ -433,13 +435,14 @@ export default function EditarWorkshop() {
                   placeholder="dd/mm/aaaa"
                   aria-invalid={!!(touched.dataInicio && fieldErrors.dataInicio)}
                 />
+                <span className="ws-field-hint">Formato: dd/mm/aaaa</span>
                 {touched.dataInicio && fieldErrors.dataInicio && (
                   <span className="ws-field-error">{fieldErrors.dataInicio}</span>
                 )}
               </div>
 
               <div
-                className={`ws-field ${
+                className={`ws-field ws-field-date ${
                   touched.dataTermino && fieldErrors.dataTermino ? 'ws-invalid' : ''
                 }`}
               >
@@ -455,13 +458,12 @@ export default function EditarWorkshop() {
                   placeholder="dd/mm/aaaa"
                   aria-invalid={!!(touched.dataTermino && fieldErrors.dataTermino)}
                 />
+                <span className="ws-field-hint">Formato: dd/mm/aaaa</span>
                 {touched.dataTermino && fieldErrors.dataTermino && (
                   <span className="ws-field-error">{fieldErrors.dataTermino}</span>
                 )}
               </div>
-            </div>
 
-            <div className="ws-row-2">
               <div className={`ws-field ${touched.custo && fieldErrors.custo ? 'ws-invalid' : ''}`}>
                 <label htmlFor="custo">Custo (tokens) *</label>
                 <input
@@ -473,6 +475,9 @@ export default function EditarWorkshop() {
                   onBlur={() => markTouched('custo')}
                   aria-invalid={!!(touched.custo && fieldErrors.custo)}
                 />
+                <span className="ws-field-hint">
+                  Esse valor é debitado do aluno e creditado ao instrutor.
+                </span>
                 {touched.custo && fieldErrors.custo && (
                   <span className="ws-field-error">{fieldErrors.custo}</span>
                 )}
@@ -493,37 +498,38 @@ export default function EditarWorkshop() {
                   onBlur={() => markTouched('capacidade')}
                   aria-invalid={!!(touched.capacidade && fieldErrors.capacidade)}
                 />
+                <span className="ws-field-hint">Quantidade máxima de participantes.</span>
                 {touched.capacidade && fieldErrors.capacidade && (
                   <span className="ws-field-error">{fieldErrors.capacidade}</span>
                 )}
               </div>
-            </div>
 
-            <div
-              className={`ws-field ${
-                touched.descricao && fieldErrors.descricao ? 'ws-invalid' : ''
-              }`}
-            >
-              <label htmlFor="descricao">Descrição *</label>
-              <div className="ws-input-wrap">
-                <textarea
-                  id="descricao"
-                  value={descricaoTxt}
-                  onChange={(e) => setDescricaoTxt(e.target.value.slice(0, 1000))}
-                  onBlur={() => markTouched('descricao')}
-                  placeholder="Descreva o foco do workshop, pré-requisitos, público-alvo..."
-                  rows={6}
-                  maxLength={1000}
-                  aria-invalid={!!(touched.descricao && fieldErrors.descricao)}
-                />
-                <span className="ws-counter">{descCount}</span>
+              <div
+                className={`ws-field ws-field-full ${
+                  touched.descricao && fieldErrors.descricao ? 'ws-invalid' : ''
+                }`}
+              >
+                <label htmlFor="descricao">Descrição *</label>
+                <div className="ws-input-wrap">
+                  <textarea
+                    id="descricao"
+                    value={descricaoTxt}
+                    onChange={(e) => setDescricaoTxt(e.target.value.slice(0, 1000))}
+                    onBlur={() => markTouched('descricao')}
+                    placeholder="Descreva o foco do workshop, pré-requisitos, público-alvo..."
+                    rows={6}
+                    maxLength={1000}
+                    aria-invalid={!!(touched.descricao && fieldErrors.descricao)}
+                  />
+                  <span className="ws-counter">{descCount}</span>
+                </div>
+                {touched.descricao && fieldErrors.descricao && (
+                  <span className="ws-field-error">{fieldErrors.descricao}</span>
+                )}
               </div>
-              {touched.descricao && fieldErrors.descricao && (
-                <span className="ws-field-error">{fieldErrors.descricao}</span>
-              )}
-            </div>
 
-            {errorGlobal && <div className="ws-alert ws-error">{errorGlobal}</div>}
+              {errorGlobal && <div className="ws-alert ws-error ws-field-full">{errorGlobal}</div>}
+            </div>
           </section>
 
           <aside className="ws-right">
