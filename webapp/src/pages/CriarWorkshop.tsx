@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import React, { useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import '../styles/CriarWorkshop.css';
 import NavBar from '../components/NavBar';
@@ -96,6 +96,7 @@ export default function CriarWorkshop() {
   const [capacidade, setCapacidade] = useState('');
 
   const [loading, setLoading] = useState(false);
+  const [initialLoading, setInitialLoading] = useState(true);
   const [errorGlobal, setErrorGlobal] = useState<string | null>(null);
   const [touched, setTouched] = useState({
     titulo: false,
@@ -140,6 +141,14 @@ export default function CriarWorkshop() {
   function markTouched(name: keyof typeof touched) {
     setTouched((t) => ({ ...t, [name]: true }));
   }
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setInitialLoading(false);
+    }, 300);
+
+    return () => clearTimeout(timer);
+  }, []);
 
   async function onSubmit() {
     setErrorGlobal(null);
@@ -228,12 +237,15 @@ export default function CriarWorkshop() {
     setErrorGlobal(null);
   }
 
-  if (loading) {
+  if (initialLoading || loading) {
     return (
       <>
         <NavBar />
         <div className="ws-container">
-          <Loading fullscreen message="Salvando workshop..." />
+          <Loading
+            fullscreen
+            message={initialLoading ? 'Carregando tela...' : 'Salvando workshop...'}
+          />
         </div>
       </>
     );
