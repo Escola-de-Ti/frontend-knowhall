@@ -127,6 +127,25 @@
   white-space: nowrap;
 }
 
+.tags-info {
+  padding: 6px 12px;
+  border-radius: 999px;
+  background: linear-gradient(135deg, rgba(167, 139, 250, 0.1) 0%, rgba(139, 92, 246, 0.1) 100%);
+  color: #a78bfa;
+  border: 2px solid rgba(167, 139, 250, 0.3);
+  font-size: 13px;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 8px rgba(167, 139, 250, 0.15);
+}
+
+.tags-info:hover {
+  background: linear-gradient(135deg, rgba(167, 139, 250, 0.2) 0%, rgba(139, 92, 246, 0.2) 100%);
+  border-color: rgba(167, 139, 250, 0.5);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 16px rgba(167, 139, 250, 0.3);
+}
+
 .atividade-edit-area {
   display: grid;
   gap: 10px;

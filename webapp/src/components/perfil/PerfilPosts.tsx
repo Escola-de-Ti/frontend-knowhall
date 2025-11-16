@@ -200,7 +200,6 @@ export default function PerfilPosts({ idUsuario, isOwnProfile = false }: Props) 
                 )}
 
                 <div className="atividade-info">
-                    <span>👍 {post.totalUpVotes}</span>
                     {post.tags && post.tags.length > 0 && (
                     <span className="tags-info">{post.tags.map((tag) => tag.name).join(', ')}</span>
                     )}

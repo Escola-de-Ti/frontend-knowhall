@@ -10,6 +10,7 @@ import PerfilSlide from '../components/perfil/PerfilSlide';
 import PerfilEstatisticas from '../components/perfil/PerfilEstatisticas';
 import PerfilPosts from '../components/perfil/PerfilPosts';
 import NavBar from '../components/NavBar';
+import Loading from '../components/Loading';
 import { getUsuario, getUsuarioDetalhes, getMyUser, type UsuarioDetalhesDTO, UsuarioDTO } from '../services/perfil.service';
 import { useUser } from '../contexts/UserContext';
 
@@ -79,9 +80,7 @@ const Perfil: React.FC = () => {
     return (
       <div className="perfil-page-container">
         <NavBar />
-        <div className="perfil-wrap">
-          <p>Carregando perfil...</p>
-        </div>
+        <Loading fullscreen message="Carregando perfil..." />
       </div>
     );
   }
