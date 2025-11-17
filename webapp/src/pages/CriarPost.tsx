@@ -227,69 +227,73 @@ const CriarPost: React.FC = () => {
 
         {errors.geral && <div className="error-message">{errors.geral}</div>}
 
-        <form id="post-form" className="np-grid" onSubmit={handleSubmit}>
-          <Recompensas />
-
-          <section className="np-card">
-            <h2>Conteúdo do Post</h2>
-
-            <div className="np-field">
-              <label htmlFor="titulo">
-                Título <span className="required">*</span>
-              </label>
-              <input
-                id="titulo"
-                name="titulo"
-                type="text"
-                value={formData.titulo}
-                onChange={handleInputChange}
-                placeholder="Digite um título chamativo para seu post..."
-                maxLength={100}
-                disabled={loading}
-                className={errors.titulo ? 'input-error' : ''}
-              />
-              <span className="np-counter">{titleCount}</span>
-              {errors.titulo && <span className="error">{errors.titulo}</span>}
+          <form id="post-form" className="np-grid" onSubmit={handleSubmit}>
+            <div className="np-side-stack">
+              <Recompensas />
             </div>
 
-            <div className="np-field">
-              <label htmlFor="descricao">
-                Descrição <span className="required">*</span>
-              </label>
-              <textarea
-                id="descricao"
-                name="descricao"
-                value={formData.descricao}
-                onChange={handleInputChange}
-                placeholder="Compartilhe seu conhecimento, experiência ou dicas..."
-                rows={8}
-                maxLength={2500}
-                disabled={loading}
-                className={errors.descricao ? 'input-error' : ''}
-              />
-              <span className="np-counter">{contentCount}</span>
-              {errors.descricao && <span className="error">{errors.descricao}</span>}
-            </div>
+            <section className="np-card">
+              <h2>Conteúdo do Post</h2>
 
-            <div className="np-field">
-              <label>Imagens (máximo 3)</label>
-              <ImagePicker
-                value={formData.imagens}
-                onChange={handleImagesChange}
-                maxFiles={3}
-                maxSizeMB={10}
-              />
-            </div>
-          </section>
+              <div className="np-field">
+                <label htmlFor="titulo">
+                  Título <span className="required">*</span>
+                </label>
+                <input
+                  id="titulo"
+                  name="titulo"
+                  type="text"
+                  value={formData.titulo}
+                  onChange={handleInputChange}
+                  placeholder="Digite um título chamativo para seu post..."
+                  maxLength={100}
+                  disabled={loading}
+                  className={errors.titulo ? 'input-error' : ''}
+                />
+                <span className="np-counter">{titleCount}</span>
+                {errors.titulo && <span className="error">{errors.titulo}</span>}
+              </div>
 
-          <DicasPost />
+              <div className="np-field">
+                <label htmlFor="descricao">
+                  Descrição <span className="required">*</span>
+                </label>
+                <textarea
+                  id="descricao"
+                  name="descricao"
+                  value={formData.descricao}
+                  onChange={handleInputChange}
+                  placeholder="Compartilhe seu conhecimento, experiência ou dicas..."
+                  rows={8}
+                  maxLength={2500}
+                  disabled={loading}
+                  className={errors.descricao ? 'input-error' : ''}
+                />
+                <span className="np-counter">{contentCount}</span>
+                {errors.descricao && <span className="error">{errors.descricao}</span>}
+              </div>
 
-          <section className="np-card">
-            <h2>Tags</h2>
-            <Tags value={formData.tags} onChange={handleTagsChange} maxTags={10} />
-            {errors.tags && <span className="error">{errors.tags}</span>}
-          </section>
-        </form>
+              <div className="np-field">
+                <label>Imagens (máximo 3)</label>
+                <ImagePicker
+                  value={formData.imagens}
+                  onChange={handleImagesChange}
+                  maxFiles={3}
+                  maxSizeMB={10}
+                />
+              </div>
+            </section>
+
+            <aside className="np-aside">
+              <DicasPost />
+            </aside>
+
+            <section className="np-card">
+              <h2>Tags</h2>
+              <Tags value={formData.tags} onChange={handleTagsChange} maxTags={10} />
+              {errors.tags && <span className="error">{errors.tags}</span>}
+            </section>
+          </form>
       </div>
     </>
   );

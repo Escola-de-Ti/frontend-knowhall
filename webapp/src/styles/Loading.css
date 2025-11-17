@@ -104,6 +104,39 @@
   letter-spacing: 0.2px;
 }
 
+/* Responsividade para mobile */
+@media (max-width: 768px) {
+  .loading-message {
+    font-size: 14px;
+  }
+  
+  .loading-inline {
+    gap: 14px;
+    padding: 32px 16px;
+  }
+}
+
+@media (max-width: 480px) {
+  .loading-message {
+    font-size: 13px;
+  }
+  
+  .loading-inline {
+    gap: 12px;
+    padding: 24px 12px;
+  }
+  
+  .loading-spinner--lg {
+    width: 60px;
+    height: 60px;
+  }
+  
+  .loading-spinner--md {
+    width: 50px;
+    height: 50px;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .loading-overlay,
   .spinner-ring {

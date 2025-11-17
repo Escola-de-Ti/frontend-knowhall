@@ -370,3 +370,105 @@
 .search-dropdown::-webkit-scrollbar-thumb:hover {
   background: rgba(255, 255, 255, 0.3);
 }
+
+/* Responsividade para mobile */
+@media (max-width: 768px) {
+  .nav-root {
+    padding: 8px 12px;
+    gap: 12px;
+  }
+  /* Esconde logo, token e ícone de usuário no mobile */
+  .nav-logo,
+  .token-chip,
+  .profile {
+    display: none !important;
+  }
+  .nav-search-wrapper {
+    min-width: 0;
+  }
+  .nav-search {
+    height: 40px;
+    padding: 0 12px;
+  }
+  .nav-search input {
+    font-size: 14px;
+  }
+  .nav-burger {
+    width: 36px;
+    height: 36px;
+  }
+  .notif-btn {
+    width: 36px;
+    height: 36px;
+  }
+  .bell {
+    width: 18px;
+    height: 18px;
+  }
+  .profile-name {
+    display: none;
+  }
+  .avatar,
+  .avatar-img {
+    width: 36px;
+    height: 36px;
+  }
+  .nav-logout {
+    padding: 8px 12px;
+    font-size: 13px;
+  }
+}
+
+/* Responsividade para mobile muito pequeno */
+@media (max-width: 480px) {
+  .nav-root {
+    padding: 6px 8px;
+    gap: 8px;
+  }
+  
+  .nav-burger {
+    width: 32px;
+    height: 32px;
+  }
+  
+  .nav-search {
+    height: 36px;
+    padding: 0 10px;
+  }
+  
+  .nav-search input {
+    font-size: 13px;
+  }
+  
+  .search-ico {
+    width: 16px;
+    height: 16px;
+  }
+  
+  .notif-btn {
+    width: 32px;
+    height: 32px;
+  }
+  
+  .bell {
+    width: 16px;
+    height: 16px;
+  }
+  
+  .notif-badge {
+    min-width: 16px;
+    height: 16px;
+    font-size: 10px;
+  }
+  
+  .avatar,
+  .avatar-img {
+    width: 32px;
+    height: 32px;
+  }
+  
+  .nav-logout {
+    padding: 6px 10px;
+    font-size: 12px;
+  }
+}

@@ -111,3 +111,41 @@
   content: '▼';
   font-size: 12px;
 }
+
+/* Responsividade para mobile */
+@media (max-width: 768px) {
+  .filter-menu {
+    min-width: 220px;
+    right: 0;
+    left: auto;
+  }
+  
+  .filter-option {
+    padding: 12px 14px;
+    font-size: 14px;
+  }
+  
+  .filter-icon {
+    width: 18px;
+    height: 18px;
+  }
+}
+
+/* Responsividade para mobile pequeno */
+@media (max-width: 480px) {
+  .filter-menu {
+    min-width: 200px;
+    padding: 6px;
+  }
+  
+  .filter-option {
+    padding: 10px 12px;
+    font-size: 13px;
+    gap: 10px;
+  }
+  
+  .filter-icon {
+    width: 16px;
+    height: 16px;
+  }
+}
