@@ -778,6 +778,32 @@
   gap: 12px;
 }
 
+.wk-participant-main.clickable {
+  cursor: pointer;
+  padding: 8px;
+  margin: -8px;
+  border-radius: 12px;
+  transition: all 0.2s ease;
+}
+
+.wk-participant-main.clickable:hover {
+  background: rgba(110, 247, 195, 0.1);
+  transform: translateX(4px);
+}
+
+.wk-participant-main.clickable:hover .wk-card-title {
+  color: #6ef7c3;
+}
+
+.wk-participant-main.clickable:hover .wk-avatar {
+  transform: scale(1.05);
+  box-shadow: 0 0 0 2px rgba(110, 247, 195, 0.3);
+}
+
+.wk-participant-main .wk-avatar {
+  transition: all 0.2s ease;
+}
+
 .wk-participant-texts {
   display: flex;
   flex-direction: column;

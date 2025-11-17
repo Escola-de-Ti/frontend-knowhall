@@ -97,6 +97,10 @@ export default function WorkshopParticipantes() {
     return nome.includes(term) || id.includes(term);
   });
 
+  const handleClickParticipante = (usuarioId: number) => {
+    navigate(`/perfil/${usuarioId}`);
+  };
+
   if (loading) {
     return (
       <>
@@ -200,7 +204,18 @@ export default function WorkshopParticipantes() {
             {filteredParticipantes.map((p) => (
               <article key={p.id} className="wk-card enrolled">
                 <header className="wk-card-header">
-                  <div className="wk-participant-main">
+                  <div 
+                    className="wk-participant-main clickable"
+                    onClick={() => handleClickParticipante(p.usuarioId)}
+                    role="button"
+                    tabIndex={0}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault();
+                        handleClickParticipante(p.usuarioId);
+                      }
+                    }}
+                  >
                     <div className="wk-avatar">{getInitials(p.usuarioNome)}</div>
                     <div className="wk-participant-texts">
                       <h2 className="wk-card-title">{p.usuarioNome}</h2>
