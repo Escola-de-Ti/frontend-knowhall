@@ -389,46 +389,155 @@
     inset 0 -2px 8px rgba(0, 0, 0, 0.3);
 }
 
+/* Responsividade para tablet */
 @media (max-width: 980px) {
   .position-ranking {
     font-size: 18px;
   }
+  
   .kpis {
     grid-template-columns: repeat(2, 1fr);
   }
+  
   .kpi strong {
     font-size: 18px;
   }
+  
   .kpi span {
     font-size: 9px;
   }
 }
+
+/* Responsividade para mobile */
+@media (max-width: 768px) {
+  .history-container {
+    padding: 18px;
+    gap: 14px;
+    border-radius: 18px;
+  }
+  
+  .history-header {
+    gap: 10px;
+  }
+  
+  .history-title {
+    padding: 9px 14px;
+    font-size: 13px;
+  }
+  
+  .title-icon {
+    width: 16px;
+    height: 16px;
+  }
+  
+  .ranking-global {
+    padding: 9px 12px;
+    gap: 10px;
+  }
+  
+  .ranking-label {
+    font-size: 9px;
+  }
+  
+  .ranking-medal {
+    width: 24px;
+    height: 24px;
+  }
+  
+  .position-ranking {
+    font-size: 17px;
+  }
+  
+  .history-chips {
+    gap: 10px;
+  }
+  
+  .chip {
+    padding: 8px 12px;
+    font-size: 12px;
+  }
+}
+
 @media (max-width: 560px) {
   .history-header {
     flex-direction: column;
     align-items: stretch;
     gap: 10px;
   }
+  
   .ranking-global {
     justify-content: center;
   }
+  
   .kpis {
     grid-template-columns: repeat(2, 1fr);
   }
+  
   .kpi strong {
     font-size: 16px;
   }
+  
   .kpi span {
     font-size: 8px;
   }
 }
+
+/* Responsividade para mobile pequeno */
+@media (max-width: 480px) {
+  .history-container {
+    padding: 16px;
+    gap: 12px;
+    border-radius: 16px;
+  }
+  
+  .history-title {
+    padding: 8px 12px;
+    font-size: 12px;
+    gap: 8px;
+  }
+  
+  .title-icon {
+    width: 14px;
+    height: 14px;
+  }
+  
+  .ranking-global {
+    padding: 8px 10px;
+  }
+  
+  .ranking-label {
+    font-size: 8px;
+  }
+  
+  .ranking-medal {
+    width: 22px;
+    height: 22px;
+  }
+  
+  .position-ranking {
+    font-size: 16px;
+  }
+  
+  .history-chips {
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+  
+  .chip {
+    padding: 7px 10px;
+    font-size: 11px;
+  }
+}
+
 @media (max-width: 420px) {
   .kpis {
     grid-template-columns: 1fr;
   }
+  
   .kpi strong {
     font-size: 14px;
   }
+  
   .kpi span {
     font-size: 8px;
   }

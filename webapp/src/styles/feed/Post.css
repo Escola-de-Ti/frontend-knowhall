@@ -275,24 +275,136 @@
   outline-offset: 2px;
 }
 
+/* Responsividade para tablet */
+@media (max-width: 1024px) {
+  .post-card {
+    max-width: 100%;
+  }
+}
+
+/* Responsividade para mobile */
 @media (max-width: 768px) {
-  .post-title {
-    font-size: 19px;
+  .post-card {
+    padding: 16px 18px;
+    gap: 12px;
+    border-radius: 12px;
   }
+  
+  .post-head {
+    gap: 12px;
+  }
+  
   .post-avatar {
-    width: 48px;
-    height: 48px;
+    width: 44px;
+    height: 44px;
+    font-size: 16px;
   }
+  
+  .post-autor {
+    font-size: 16px;
+  }
+  
+  .post-sub {
+    font-size: 12px;
+    gap: 8px;
+  }
+  
+  .post-title {
+    font-size: 18px;
+    margin: 2px 0 0;
+  }
+  
+  .post-body {
+    font-size: 14px;
+    line-height: 1.5;
+  }
+  
+  .post-tags {
+    gap: 6px;
+    flex-wrap: wrap;
+  }
+  
+  .post-tag {
+    font-size: 11px;
+    padding: 5px 10px;
+  }
+  
+  .post-foot {
+    gap: 10px;
+  }
+  
   .kpi {
-    padding: 7px 11px;
+    padding: 8px 12px;
+    gap: 6px;
   }
-  .kpi .kpi-val {
+  
+  .kpi-val {
     font-size: 13px;
   }
+  
   .ico-up,
   .ico-com {
-    width: 15px;
-    height: 15px;
+    width: 16px;
+    height: 16px;
+  }
+}
+
+/* Responsividade para mobile pequeno */
+@media (max-width: 480px) {
+  .post-card {
+    padding: 14px 14px;
+    gap: 10px;
+  }
+  
+  .post-head {
+    gap: 10px;
+  }
+  
+  .post-avatar {
+    width: 40px;
+    height: 40px;
+    font-size: 15px;
+  }
+  
+  .post-autor {
+    font-size: 15px;
+  }
+  
+  .post-sub {
+    font-size: 11px;
+  }
+  
+  .post-title {
+    font-size: 17px;
+  }
+  
+  .post-body {
+    font-size: 13px;
+  }
+  
+  .post-tag {
+    font-size: 10px;
+    padding: 4px 8px;
+  }
+  
+  .post-foot {
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+  
+  .kpi {
+    padding: 7px 10px;
+    gap: 5px;
+  }
+  
+  .kpi-val {
+    font-size: 12px;
+  }
+  
+  .ico-up,
+  .ico-com {
+    width: 14px;
+    height: 14px;
   }
 }
 

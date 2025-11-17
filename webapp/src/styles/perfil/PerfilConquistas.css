@@ -80,13 +80,107 @@
   font-weight: 800;
 }
 
+/* Responsividade para tablet */
 @media (max-width: 980px) {
   .badges-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
   }
 }
+
+/* Responsividade para mobile */
+@media (max-width: 768px) {
+  .badges-container {
+    padding: 16px;
+    gap: 14px;
+    border-radius: 18px;
+  }
+  
+  .badges-head h2 {
+    font-size: 17px;
+  }
+  
+  .badges-ico {
+    width: 26px;
+    height: 26px;
+  }
+  
+  .badge-card {
+    padding: 14px 16px;
+    gap: 12px;
+  }
+  
+  .badge-emoji {
+    width: 52px;
+    height: 52px;
+    font-size: 26px;
+  }
+  
+  .badge-info h3 {
+    font-size: 15px;
+  }
+  
+  .badge-info p {
+    font-size: 12px;
+  }
+  
+  .badge-pill {
+    font-size: 11px;
+    padding: 5px 9px;
+  }
+}
+
 @media (max-width: 600px) {
   .badges-grid {
     grid-template-columns: 1fr;
+  }
+}
+
+/* Responsividade para mobile pequeno */
+@media (max-width: 480px) {
+  .badges-container {
+    padding: 14px;
+    gap: 12px;
+    border-radius: 16px;
+  }
+  
+  .badges-head h2 {
+    font-size: 16px;
+  }
+  
+  .badges-ico {
+    width: 24px;
+    height: 24px;
+  }
+  
+  .badges-grid {
+    gap: 10px;
+  }
+  
+  .badge-card {
+    padding: 12px 14px;
+    gap: 10px;
+    border-radius: 14px;
+  }
+  
+  .badge-emoji {
+    width: 48px;
+    height: 48px;
+    font-size: 24px;
+    border-radius: 12px;
+  }
+  
+  .badge-info h3 {
+    font-size: 14px;
+  }
+  
+  .badge-info p {
+    font-size: 11px;
+  }
+  
+  .badge-pill {
+    font-size: 10px;
+    padding: 4px 8px;
+    margin-top: 4px;
   }
 }

@@ -148,3 +148,98 @@
   transform: translateY(-2px);
   box-shadow: 0 4px 16px rgba(167, 139, 250, 0.3);
 }
+
+/* Responsividade para tablet */
+@media (max-width: 768px) {
+  .perfil-details-container {
+    padding: 20px;
+    gap: 16px;
+    border-radius: 18px;
+  }
+  
+  .perfil-avatar {
+    width: 90px;
+    height: 90px;
+  }
+  
+  .perfil-avatar span {
+    font-size: 32px;
+  }
+  
+  .perfil-name {
+    font-size: 22px;
+  }
+  
+  .perfil-email {
+    font-size: 13px;
+  }
+  
+  .perfil-bio {
+    font-size: 14px;
+  }
+  
+  .perfil-edit-btn {
+    padding: 11px 18px;
+    font-size: 14px;
+  }
+  
+  .perfil-interests h3 {
+    font-size: 17px;
+  }
+  
+  .perfil-tag {
+    padding: 7px 12px;
+    font-size: 13px;
+  }
+}
+
+/* Responsividade para mobile */
+@media (max-width: 480px) {
+  .perfil-details-container {
+    padding: 18px;
+    gap: 14px;
+    border-radius: 16px;
+  }
+  
+  .perfil-avatar {
+    width: 80px;
+    height: 80px;
+    border-width: 2px;
+  }
+  
+  .perfil-avatar span {
+    font-size: 28px;
+  }
+  
+  .perfil-name {
+    font-size: 20px;
+  }
+  
+  .perfil-email {
+    font-size: 12px;
+  }
+  
+  .perfil-bio {
+    font-size: 13px;
+  }
+  
+  .perfil-edit-btn {
+    padding: 10px 16px;
+    font-size: 13px;
+    width: 100%;
+  }
+  
+  .perfil-interests h3 {
+    font-size: 16px;
+    margin: 8px 0 6px;
+  }
+  
+  .perfil-tags {
+    gap: 8px;
+  }
+  
+  .perfil-tag {
+    padding: 6px 10px;
+    font-size: 12px;
+  }
+}

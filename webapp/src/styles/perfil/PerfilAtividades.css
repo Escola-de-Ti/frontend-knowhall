@@ -339,6 +339,7 @@
   color: #6ef7c3;
 }
 
+/* Responsividade para tablet */
 @media (max-width: 880px) {
   .atividade-card {
     grid-template-columns: 1fr auto;
@@ -347,21 +348,104 @@
       'snippet snippet'
       'info info';
     align-items: start;
+    gap: 12px;
+    padding: 14px;
   }
+  
   .atividade-left {
     grid-area: meta;
     min-width: 0;
   }
+  
   .atividade-snippet {
     grid-area: snippet;
   }
+  
   .atividade-edit-area {
     grid-area: snippet;
   }
+  
   .atividade-info {
     grid-area: info;
   }
+  
   .atividade-actions {
     grid-area: actions;
+  }
+}
+
+/* Responsividade para mobile */
+@media (max-width: 768px) {
+  .atividades-container {
+    padding: 18px;
+    gap: 14px;
+    border-radius: 18px;
+  }
+  
+  .atividades-head h3 {
+    font-size: 17px;
+  }
+  
+  .atividades-ico {
+    width: 26px;
+    height: 26px;
+  }
+  
+  .atividades-list {
+    gap: 10px;
+  }
+  
+  .atividade-card {
+    border-radius: 14px;
+  }
+}
+
+/* Responsividade para mobile pequeno */
+@media (max-width: 480px) {
+  .atividades-container {
+    padding: 16px;
+    gap: 12px;
+    border-radius: 16px;
+  }
+  
+  .atividades-head h3 {
+    font-size: 16px;
+  }
+  
+  .atividades-ico {
+    width: 24px;
+    height: 24px;
+  }
+  
+  .atividade-card {
+    padding: 12px;
+    gap: 10px;
+    border-radius: 12px;
+  }
+  
+  .atividade-left {
+    gap: 10px;
+  }
+  
+  .dot {
+    width: 8px;
+    height: 8px;
+  }
+  
+  .atividade-tipo {
+    font-size: 12px;
+  }
+  
+  .atividade-titulo {
+    font-size: 13px;
+  }
+  
+  .atividade-snippet {
+    font-size: 12px;
+  }
+  
+  .atividade-info {
+    font-size: 11px;
+    gap: 8px;
   }
 }
